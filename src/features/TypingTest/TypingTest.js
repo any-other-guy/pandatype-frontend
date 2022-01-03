@@ -9,7 +9,7 @@ const TypingTest = () => {
 
   //Handling input letters
   useKeyPress((key) => {
-    dispatch(keyAction({key: key}));
+    dispatch(keyAction({ key: key }));
   });
 
   //Select loading status from store
@@ -32,7 +32,7 @@ const TypingTest = () => {
   const wordIds = useSelector(selectWordsIds);
 
   if (testContentLoadingStatus === "loading") {
-    content = ""; //TODO:
+    content = "Loading..."; //TODO:
   } else if (testContentLoadingStatus === "succeeded") {
     // console.log(wordIds);
     content = wordIds.map((wordId) => {

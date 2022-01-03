@@ -8,15 +8,16 @@ const Word = ({ wordId }) => {
   return (
     <div className="word">
       {/* Render blinking cursor on active word */}
-      {wordObj.active ? 
-          <span
-            className="cursor"
-            style={{
-              left: wordObj.cursorPosition * 15,
-            }}
-          >
-            |
-          </span>: null}
+      {wordObj.active ? (
+        <span
+          className="cursor"
+          style={{
+            left: wordObj.cursorPosition * 15,
+          }}
+        >
+          |
+        </span>
+      ) : null}
       {/* Render letters in the word */}
       {wordObj.letters.map((letterObj) => {
         return (
@@ -30,17 +31,15 @@ const Word = ({ wordId }) => {
         );
       })}
       {/* Render extra letters typed in mistake color */}
-      {wordObj.extraLetters.length !== 0 ? 
-      wordObj.extraLetters.map((plainLetter, index) => {
-        return (
-          <div 
-            className="extraLetters"
-            key={'Extra'+plainLetter+index}
-          >
-            {plainLetter}
-          </div>
-        )
-      }): null}
+      {wordObj.extraLetters.length !== 0
+        ? wordObj.extraLetters.map((plainLetter, index) => {
+            return (
+              <div className="extraLetters" key={"Extra" + plainLetter + index}>
+                {plainLetter}
+              </div>
+            );
+          })
+        : null}
     </div>
   );
 };

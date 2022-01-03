@@ -16,18 +16,16 @@ const initialState = typingtestAdapter.getInitialState({
   statistics: {
     elapsedTime: null,
     accuracy: null,
-    chars: null,
+    rawCharacterCount: null,
     wpm: null,
     raw_wpm: null,
     mistakeCount: null,
     backspaceCount: null,
     date: null,
+    rawTypingHistory: "",
   },
   //states for notifying changes to the frontend
-  typedWordsArray: [''],
-  rawTypingHistory: '',
-  // currentWordIndex: 0,
-  // currentLetterIndex: 0,
+  typedWordsArray: [""],
 });
 
 export const fetchTestContent = createAsyncThunk(
@@ -61,24 +59,26 @@ export const typingtestSlice = createSlice({
         switch (true) {
           //Space bar is the word splitter
           case /\s/.test(key):
-            if(currentWord !== ''){
+            if (currentWord !== "") {
               //check if current word has untyped letters, mark them mistake
               wordObj.letters.forEach((letter) => {
-                if(letter.status === 'untyped'){
-                  letter.status = 'mistake';
+                if (letter.status === "untyped") {
+                  letter.status = "mistake";
                 }
-              })
+              });
               //making current word inactive and next word active
               wordObj.active = false;
-              const nextWordId = state.ids[currentWordIndex+1];
-              if(state.entities[nextWordId] != null) state.entities[nextWordId].active = true;
+              const nextWordId = state.ids[currentWordIndex + 1];
+              if (state.entities[nextWordId] != null)
+                state.entities[nextWordId].active = true;
               //add a new empty entry to typedWordsArray
-              typedWordsArray.push('');
+              typedWordsArray.push("");
 
               wordObj.cursorPosition = 0;
+              state.statistics.rawCharacterCount++;
             }
 
-            state.rawTypingHistory+=' ';
+            state.statistics.rawTypingHistory += " ";
             break;
 
           //Alphabet character get pushed into current typing word
@@ -91,7 +91,7 @@ export const typingtestSlice = createSlice({
             wordObj = state.entities[wordId];
             letterObj = wordObj.letters[letterIndex];
 
-            if(wordId != null && wordObj != null){
+            if (wordId != null && wordObj != null) {
               wordObj.cursorPosition++;
 
               if (letterObj != null) {
@@ -103,14 +103,15 @@ export const typingtestSlice = createSlice({
                   state.statistics.mistakeCount++;
                 }
               }
-              //if extra letter typed, 
-              else if(letterIndex >= wordObj.word.length){
+              //if extra letter typed,
+              else if (letterIndex >= wordObj.word.length) {
                 wordObj.extraLetters.push(key);
-                state.mistakeCount++;
+                state.statistics.mistakeCount++;
               }
+              state.statistics.rawCharacterCount++;
             }
-            
-            state.rawTypingHistory+=key;
+
+            state.statistics.rawTypingHistory += key;
             break;
 
           //Backspace slices from current typing word
@@ -120,36 +121,33 @@ export const typingtestSlice = createSlice({
             wordObj = state.entities[wordId];
             letterObj = wordObj.letters[letterIndex];
 
-            if(wordId !== null && wordObj !== null){
-              if(wordObj.cursorPosition !== 0) wordObj.cursorPosition--;
+            if (wordId !== null && wordObj !== null) {
+              if (wordObj.cursorPosition !== 0) wordObj.cursorPosition--;
               if (letterObj != null) {
-                letterObj.status = 'untyped';
+                letterObj.status = "untyped";
                 letterObj.actuallyTyped = null;
                 letterObj.mistake = false;
               }
               //if extra letter exists, delete the last one since backspace was pressed
-              else if(letterIndex >= wordObj.word.length){
+              else if (letterIndex >= wordObj.word.length) {
                 wordObj.extraLetters = wordObj.extraLetters.slice(0, -1);
               }
+              state.statistics.backspaceCount++;
             }
-            
 
             //Edit typedWordsArray after changing entities because indexing is more intuitive/easier
             //还是有点奇怪的。。
             typedWordsArray[currentWordIndex] = currentWord.slice(0, -1);
             state.currentLetterIndex--;
 
-            state.rawTypingHistory+='⌫';
+            state.statistics.rawTypingHistory += "⌫";
             break;
 
           default:
         }
       } else {
-        
         console.log("something else pressed: " + key);
       }
-
-
     },
   },
   extraReducers(builder) {
@@ -165,7 +163,7 @@ export const typingtestSlice = createSlice({
             word: word,
             wordIndex: wordIndex,
             wordId: word + wordIndex,
-            active: wordIndex === 0? true : false,
+            active: wordIndex === 0 ? true : false,
             cursorPosition: 0,
             letters: word.split("").map((letter, letterIndex) => {
               return {
@@ -173,10 +171,10 @@ export const typingtestSlice = createSlice({
                 letterIndex: letterIndex,
                 status: "untyped",
                 mistake: false,
-                actuallyTyped: null
+                actuallyTyped: null,
               };
             }),
-            extraLetters:[],
+            extraLetters: [],
           };
         });
         typingtestAdapter.setAll(state, wordsObj);
