@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { selectWordsById } from "./typingtestSlice";
 
 const Word = ({ wordId }) => {
+  // By only passing in the wordId itself instead of the wordObj, unnecessary rerender is prevented
   const wordObj = useSelector((state) => selectWordsById(state, wordId));
 
   return (
@@ -34,7 +35,11 @@ const Word = ({ wordId }) => {
       {wordObj.extraLetters.length !== 0
         ? wordObj.extraLetters.map((plainLetter, index) => {
             return (
-              <div className="extraLetters" key={"Extra" + plainLetter + index}>
+              <div
+                className="letter"
+                status="extra"
+                key={"Extra" + plainLetter + index}
+              >
                 {plainLetter}
               </div>
             );

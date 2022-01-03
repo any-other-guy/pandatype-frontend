@@ -40,14 +40,13 @@ body {
   color: var(--error-color);
 }
 
-.extraLetters{
+.letter[status='extra']{
   color: var(--error-color);
 }
 
 
 .cursor {
   position: absolute;/*这个也血妈关键，只有absolute的child，才能在flex的parent里面被忽略*/
-  /* flex-shrink: 0; */
   transition: left 0.1s ease;
   margin-left: -0.4rem;
   color: var(--main-color);

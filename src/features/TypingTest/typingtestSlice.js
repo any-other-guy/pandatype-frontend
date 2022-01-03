@@ -24,7 +24,7 @@ const initialState = typingtestAdapter.getInitialState({
     date: null,
     rawTypingHistory: "",
   },
-  //states for notifying changes to the frontend
+  // States for notifying changes to the frontend
   typedWordsArray: [""],
 });
 
@@ -43,12 +43,12 @@ export const typingtestSlice = createSlice({
     keyAction: (state, action) => {
       const typedWordsArray = state.typedWordsArray;
 
-      //states for notifying changes to the frontend
+      // states for notifying changes to the frontend
       const currentWordIndex = typedWordsArray.length - 1;
       const currentWord = typedWordsArray[currentWordIndex];
 
       const { key } = action.payload;
-      //Handle each type of key pressing
+      // Handle each type of key pressing
       if (/\w|\s/.test(key)) {
         let wordId = state.ids[currentWordIndex];
         let letterIndex = typedWordsArray[currentWordIndex].length - 1;
@@ -57,21 +57,21 @@ export const typingtestSlice = createSlice({
         wordObj.active = true;
 
         switch (true) {
-          //Space bar is the word splitter
+          // Space bar is the word splitter
           case /\s/.test(key):
             if (currentWord !== "") {
-              //check if current word has untyped letters, mark them mistake
+              // Check if current word has untyped letters, mark them mistake
               wordObj.letters.forEach((letter) => {
                 if (letter.status === "untyped") {
                   letter.status = "mistake";
                 }
               });
-              //making current word inactive and next word active
+              // Making current word inactive and next word active
               wordObj.active = false;
               const nextWordId = state.ids[currentWordIndex + 1];
               if (state.entities[nextWordId] != null)
                 state.entities[nextWordId].active = true;
-              //add a new empty entry to typedWordsArray
+              // Add a new empty entry to typedWordsArray
               typedWordsArray.push("");
 
               wordObj.cursorPosition = 0;
@@ -81,7 +81,7 @@ export const typingtestSlice = createSlice({
             state.statistics.rawTypingHistory += " ";
             break;
 
-          //Alphabet character get pushed into current typing word
+          // Alphabet character get pushed into current typing word
           case /^[a-zA-Z]{1,1}$/.test(key):
             typedWordsArray[currentWordIndex] = currentWord + key;
             state.currentLetterIndex++;
@@ -103,7 +103,7 @@ export const typingtestSlice = createSlice({
                   state.statistics.mistakeCount++;
                 }
               }
-              //if extra letter typed,
+              // If extra letter typed,
               else if (letterIndex >= wordObj.word.length) {
                 wordObj.extraLetters.push(key);
                 state.statistics.mistakeCount++;
@@ -114,7 +114,7 @@ export const typingtestSlice = createSlice({
             state.statistics.rawTypingHistory += key;
             break;
 
-          //Backspace slices from current typing word
+          // Backspace slices from current typing word
           case /^Backspace$/.test(key):
             wordId = state.ids[currentWordIndex];
             letterIndex = typedWordsArray[currentWordIndex].length - 1;
@@ -128,15 +128,15 @@ export const typingtestSlice = createSlice({
                 letterObj.actuallyTyped = null;
                 letterObj.mistake = false;
               }
-              //if extra letter exists, delete the last one since backspace was pressed
+              // If extra letter exists, delete the last one since backspace was pressed
               else if (letterIndex >= wordObj.word.length) {
                 wordObj.extraLetters = wordObj.extraLetters.slice(0, -1);
               }
               state.statistics.backspaceCount++;
             }
 
-            //Edit typedWordsArray after changing entities because indexing is more intuitive/easier
-            //还是有点奇怪的。。
+            // Edit typedWordsArray after changing entities because indexing is more intuitive/easier
+            // 还是有点奇怪的。。
             typedWordsArray[currentWordIndex] = currentWord.slice(0, -1);
             state.currentLetterIndex--;
 
@@ -178,7 +178,6 @@ export const typingtestSlice = createSlice({
           };
         });
         typingtestAdapter.setAll(state, wordsObj);
-        // console.log(wordsObj);
       })
       .addCase(fetchTestContent.rejected, (state, action) => {
         state.loadingStatus = "failed";
