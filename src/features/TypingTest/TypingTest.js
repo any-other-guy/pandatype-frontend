@@ -1,33 +1,45 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchTestContent, selectWordsIds } from "./typingtestSlice";
+import { fetchTestContent, selectWordsIds, keyAction } from "./typingtestSlice";
 import Word from "./Word";
+import { useKeyPress } from "./keypressHook";
+
 const TypingTest = () => {
   const dispatch = useDispatch();
-  const wordIds = useSelector(selectWordsIds);
 
-  const testContentStatus = useSelector(
+  //Handling input letters
+  useKeyPress((key) => {
+    dispatch(keyAction({key: key}));
+  });
+
+  //Select loading status from store
+  const testContentLoadingStatus = useSelector(
     (state) => state.typingtest.loadingStatus
   );
-  const error = useSelector((state) => state.typingtest.loadingError);
+  const testContentLoadingError = useSelector(
+    (state) => state.typingtest.loadingError
+  );
 
+  //Fetch test content only after the first render
   useEffect(() => {
-    if (testContentStatus === "idle") {
+    if (testContentLoadingStatus === "idle") {
       dispatch(fetchTestContent());
     }
-  }, [testContentStatus, dispatch]);
+  }, [testContentLoadingStatus, dispatch]);
 
+  //Populate test content UI
   let content;
+  const wordIds = useSelector(selectWordsIds);
 
-  if (testContentStatus === "loading") {
+  if (testContentLoadingStatus === "loading") {
     content = ""; //TODO:
-  } else if (testContentStatus === "succeeded") {
-    console.log(wordIds);
+  } else if (testContentLoadingStatus === "succeeded") {
+    // console.log(wordIds);
     content = wordIds.map((wordId) => {
       return <Word key={wordId} wordId={wordId}></Word>;
     });
-  } else if (testContentStatus === "failed") {
-    content = <div>{error}</div>;
+  } else if (testContentLoadingStatus === "failed") {
+    content = <div>{testContentLoadingError}</div>;
   }
 
   return <div className="typingTest">{content}</div>;

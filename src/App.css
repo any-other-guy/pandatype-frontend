@@ -1,3 +1,65 @@
+*{
+  box-sizing: border-box;
+}
+
 body {
-  background-color: grey;
+  background-color: var(--bg-color);
+  font-family: 'Roboto Mono';
+  --bg-color:#323437;
+  --main-color: MediumSpringGreen;
+  --sub-color: #646669;
+  --text-color: #d1d0c5;
+  --error-color: #ca4754;
+}
+
+.typingTest{
+  display: flex;
+  flex-flow: row wrap;
+  gap: 0.75rem 0.75rem;
+  align-content: flex-start;
+  margin: auto;
+  width: 700px;
+  font-size: 1.5rem;
+  pointer-events: none;
+  user-select: none;
+  color: var(--sub-color);
+}
+
+.word{
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-content: flex-start;
+  position: relative; /*这个血妈关键，要parent relative这样如果child是absolute才能really do be relative to absolute*/
+}
+
+.letter[status='typed']{
+  color: var(--text-color);
+}
+
+.letter[status='mistake']{
+  color: var(--error-color);
+}
+
+.extraLetters{
+  color: var(--error-color);
+}
+
+
+.cursor {
+  position: absolute;/*这个也血妈关键，只有absolute的child，才能在flex的parent里面被忽略*/
+  /* flex-shrink: 0; */
+  transition: left 0.1s ease;
+  margin-left: -0.4rem;
+  color: var(--main-color);
+  animation: blink 1s infinite 1s;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
