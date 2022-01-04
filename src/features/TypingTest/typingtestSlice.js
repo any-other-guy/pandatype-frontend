@@ -15,7 +15,7 @@ const initialState = typingtestAdapter.getInitialState({
   loadingError: null,
   testStatus: "unstarted",
   testMode: "time",
-  testModeOption: 3,
+  testModeOption: 30,
   statistics: {
     elapsedTime: null,
     accuracy: null,
@@ -105,10 +105,10 @@ export const typingtestSlice = createSlice({
                 if (key === letterObj.letter) {
                   letterObj.status = "typed";
                   // Detecting if last letter typed correctly, end test
-                  if(state.testMode === 'words'){
+                  if (state.testMode === "words") {
                     if (
                       wordObj.wordIndex + 1 === state.ids.length &&
-                      letterIndex + 1 == wordObj.letters.length
+                      letterIndex + 1 === wordObj.letters.length
                     ) {
                       state.testStatus = "completed";
                     }
@@ -166,14 +166,14 @@ export const typingtestSlice = createSlice({
       }
     },
     testCompleted: (state, action) => {
-      state.testStatus = 'completed';
+      state.testStatus = "completed";
     },
     setTestMode: (state, action) => {
       const { testMode, testModeOption } = action.payload;
       state.testMode = testMode;
       //TODO: make testModeOption to ...arguments
       state.testModeOption = testModeOption;
-    }
+    },
   },
   extraReducers(builder) {
     builder

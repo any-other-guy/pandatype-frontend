@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useInterval } from "./useIntervalHook";
 import { testCompleted } from "./typingtestSlice";
@@ -7,7 +7,6 @@ const Timer = ({ status }) => {
   const dispatch = useDispatch();
 
   const testStatus = useSelector((state) => state.typingtest.testStatus);
-  const testMode = useSelector((state) => state.typingtest.testMode);
   const testModeOption = useSelector(
     (state) => state.typingtest.testModeOption
   );
