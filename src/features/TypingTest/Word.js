@@ -13,7 +13,7 @@ const Word = ({ wordId }) => {
         <span
           className="cursor"
           style={{
-            left: wordObj.cursorPosition * 15,
+            left: wordObj.cursorPosition * 14.6,
           }}
         >
           |

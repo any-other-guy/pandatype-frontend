@@ -13,6 +13,9 @@ const typingtestAdapter = createEntityAdapter({
 const initialState = typingtestAdapter.getInitialState({
   loadingStatus: "idle",
   loadingError: null,
+  testStatus: "unstarted",
+  testMode: "time",
+  testModeOption: 3,
   statistics: {
     elapsedTime: null,
     accuracy: null,
@@ -41,6 +44,10 @@ export const typingtestSlice = createSlice({
   initialState,
   reducers: {
     keyAction: (state, action) => {
+      // Start the test if unstarted
+      state.testStatus =
+        state.testStatus === "unstarted" ? "started" : state.testStatus;
+
       const typedWordsArray = state.typedWordsArray;
 
       // states for notifying changes to the frontend
@@ -97,6 +104,15 @@ export const typingtestSlice = createSlice({
               if (letterObj != null) {
                 if (key === letterObj.letter) {
                   letterObj.status = "typed";
+                  // Detecting if last letter typed correctly, end test
+                  if(state.testMode === 'words'){
+                    if (
+                      wordObj.wordIndex + 1 === state.ids.length &&
+                      letterIndex + 1 == wordObj.letters.length
+                    ) {
+                      state.testStatus = "completed";
+                    }
+                  }
                 } else {
                   letterObj.status = "mistake";
                   letterObj.actualyTyped = key;
@@ -149,6 +165,15 @@ export const typingtestSlice = createSlice({
         console.log("something else pressed: " + key);
       }
     },
+    testCompleted: (state, action) => {
+      state.testStatus = 'completed';
+    },
+    setTestMode: (state, action) => {
+      const { testMode, testModeOption } = action.payload;
+      state.testMode = testMode;
+      //TODO: make testModeOption to ...arguments
+      state.testModeOption = testModeOption;
+    }
   },
   extraReducers(builder) {
     builder
@@ -186,7 +211,7 @@ export const typingtestSlice = createSlice({
   },
 });
 
-export const { keyAction } = typingtestSlice.actions;
+export const { keyAction, testCompleted } = typingtestSlice.actions;
 
 export default typingtestSlice.reducer;
 

@@ -1,12 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTestContent, selectWordsIds, keyAction } from "./typingtestSlice";
 import Word from "./Word";
 import { useKeyPress } from "./keypressHook";
+import { Spinner } from "./Spinner";
+import Timer from "./Timer";
 
 const TypingTest = () => {
   const dispatch = useDispatch();
+  const wordIds = useSelector(selectWordsIds);
 
+  const testStatus = useSelector((state) => state.typingtest.testStatus);
+  const testMode = useSelector((state) => state.typingtest.testMode);
   // Handling input letters
   useKeyPress((key) => {
     dispatch(keyAction({ key: key }));
@@ -29,10 +34,9 @@ const TypingTest = () => {
 
   // Populate test content UI
   let content;
-  const wordIds = useSelector(selectWordsIds);
 
   if (testContentLoadingStatus === "loading") {
-    content = "Loading..."; //TODO:
+    content = <Spinner />; //TODO: add spinner here
   } else if (testContentLoadingStatus === "succeeded") {
     content = wordIds.map((wordId) => {
       return <Word key={wordId} wordId={wordId}></Word>;
@@ -41,7 +45,15 @@ const TypingTest = () => {
     content = <div>{testContentLoadingError}</div>;
   }
 
-  return <div className="typingTest">{content}</div>;
+  return (
+    <div className="typingTestWrapper">
+      {/* Timer/word count display area */}
+      {testMode === "time" ? <Timer status={testStatus} /> : null}
+      {/* The words area */}
+      <div className="typingTest">{content}</div>
+      {/* TODO: Restart Button here */}
+    </div>
+  );
 };
 
 export default TypingTest;

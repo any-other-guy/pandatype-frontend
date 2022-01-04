@@ -12,13 +12,28 @@ body {
   --error-color: #ca4754;
 }
 
+.typingTestWrapper{
+  display: flex;
+  width: 700px;
+  flex-flow: row wrap;
+  margin: auto;
+
+}
+
+.timer{
+  width: 100%;
+  height: 3rem;
+  color: var(--main-color);
+  font-size: 2rem;
+}
+
 .typingTest{
   display: flex;
   flex-flow: row wrap;
-  gap: 0.75rem 0.75rem;
+  gap: 0.5rem 0.7rem;
   align-content: flex-start;
-  margin: auto;
   width: 700px;
+  height: max(200px);
   font-size: 1.5rem;
   pointer-events: none;
   user-select: none;
@@ -26,7 +41,7 @@ body {
 }
 
 .word{
-  display: inline-flex;
+  display: flex;
   flex-wrap: nowrap;
   align-content: flex-start;
   position: relative; /*这个血妈关键，要parent relative这样如果child是absolute才能really do be relative to absolute*/
@@ -48,9 +63,11 @@ body {
 .cursor {
   position: absolute;/*这个也血妈关键，只有absolute的child，才能在flex的parent里面被忽略*/
   transition: left 0.1s ease;
-  margin-left: -0.4rem;
+  margin-left: -0.75rem;
   color: var(--main-color);
   animation: blink 1s infinite 1s;
+  font-size: 2.2rem;
+  top: -0.6rem;
 }
 
 @keyframes blink {
@@ -60,5 +77,68 @@ body {
   }
   50% {
     opacity: 0;
+  }
+}
+
+.spinner{
+  width: 100%;
+  height: 100%;
+}
+
+.loader,
+.loader:before,
+.loader:after {
+  border-radius: 50%;
+  width: 2.5em;
+  height: 2.5em;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation: load7 1.8s infinite ease-in-out;
+  animation: load7 1.8s infinite ease-in-out;
+}
+.loader {
+  color: #ffffff;
+  font-size: 10px;
+  margin: auto;
+  position: relative;
+  text-indent: -9999em;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+.loader:before,
+.loader:after {
+  content: '';
+  position: absolute;
+  top: 0;
+}
+.loader:before {
+  left: -3.5em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+.loader:after {
+  left: 3.5em;
+}
+@-webkit-keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
+@keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
   }
 }
