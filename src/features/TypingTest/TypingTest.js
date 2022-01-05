@@ -9,9 +9,8 @@ import Timer from "./Timer";
 const TypingTest = () => {
   const dispatch = useDispatch();
   const wordIds = useSelector(selectWordsIds);
-
-  const testStatus = useSelector((state) => state.typingtest.testStatus);
   const testMode = useSelector((state) => state.typingtest.testMode);
+
   // Handling input letters
   useKeyPress((key) => {
     dispatch(keyAction({ key: key }));
@@ -25,7 +24,7 @@ const TypingTest = () => {
     (state) => state.typingtest.loadingError
   );
 
-  // Fetch test content only after the first render
+  // Fetch test content only after first load
   useEffect(() => {
     if (testContentLoadingStatus === "idle") {
       dispatch(fetchTestContent());
@@ -48,7 +47,7 @@ const TypingTest = () => {
   return (
     <div className="typingTestWrapper">
       {/* Timer/word count display area */}
-      {testMode === "time" ? <Timer status={testStatus} /> : null}
+      {testMode === "time" ? <Timer /> : null}
       {/* The words area */}
       <div className="typingTest">{content}</div>
       {/* TODO: Restart Button here */}

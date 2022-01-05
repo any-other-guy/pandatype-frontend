@@ -29,12 +29,12 @@ const Header = () => {
           <div className="text-button" mode="30">30</div>
           <div className="text-button" mode="60">60</div>
         </div>
-        <div className="configGroup">
+        {/* <div className="configGroup">
           <div className="text-button" mode="10">15</div>
           <div className="text-button" mode="25">25</div>
           <div className="text-button" mode="50">50</div>
           <div className="text-button" mode="100">100</div>
-        </div>
+        </div> */}
       </div>
 
     </div>

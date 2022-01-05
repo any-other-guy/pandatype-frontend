@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useInterval } from "./useIntervalHook";
 import { testCompleted } from "./typingtestSlice";
 
-const Timer = ({ status }) => {
+const Timer = () => {
   const dispatch = useDispatch();
 
   const testStatus = useSelector((state) => state.typingtest.testStatus);
@@ -11,6 +11,7 @@ const Timer = ({ status }) => {
     (state) => state.typingtest.testModeOption
   );
   const [timeRemaining, setTimeRemaining] = useState(testModeOption);
+
   // Timer
   useInterval(() => {
     if (testStatus === "started") {
@@ -30,7 +31,9 @@ const Timer = ({ status }) => {
 
   return (
     <div className="timer">
-      {status === "started" ? formattedTime.toISOString().slice(17, 19) : null}
+      {testStatus === "started"
+        ? formattedTime.toISOString().slice(17, 19)
+        : null}
     </div>
   );
 };
