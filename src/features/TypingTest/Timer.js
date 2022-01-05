@@ -7,10 +7,10 @@ const Timer = () => {
   const dispatch = useDispatch();
 
   const testStatus = useSelector((state) => state.typingtest.testStatus);
-  const testModeOption = useSelector(
-    (state) => state.typingtest.testModeOption
+  const totalTime = useSelector(
+    (state) => state.typingtest.testTimeOption
   );
-  const [timeRemaining, setTimeRemaining] = useState(testModeOption);
+  const [timeRemaining, setTimeRemaining] = useState(totalTime);
 
   // Timer
   useInterval(() => {
@@ -28,11 +28,13 @@ const Timer = () => {
   // Setup timer UI
   let formattedTime = new Date(0);
   formattedTime.setSeconds(timeRemaining);
+  //TODO: better formatting, no zeros on single digit
+  let formattedTimeString = formattedTime.toISOString().slice(17, 19);
 
   return (
     <div className="timer">
       {testStatus === "started"
-        ? formattedTime.toISOString().slice(17, 19)
+        ? formattedTimeString
         : null}
     </div>
   );

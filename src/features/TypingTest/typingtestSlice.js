@@ -14,14 +14,17 @@ const initialState = typingtestAdapter.getInitialState({
   // Test load up related
   loadingStatus: "idle",
   loadingError: null,
-  // Test itself related
-  testStatus: "unstarted",
+  // Test options related
   testLanguage: "english",
   testMode: "time",
   testTimeOption: 30,
   testWordOption: 50,
   testQuoteOption: "medium",
+  // Test itself related
+  testStatus: "unstarted",
+  isTestCompleted: false,
   typedWordsArray: [""],
+  wordsCompleted: 0,
   // Test result related
   statistics: {
     elapsedTime: null,
@@ -107,6 +110,7 @@ export const typingtestSlice = createSlice({
               wordObj.cursorPosition++;
 
               if (letterObj != null) {
+                // Update states when letter typed is correct
                 if (key === letterObj.letter) {
                   letterObj.status = "typed";
                   // Detecting if last letter typed correctly, end test
@@ -123,8 +127,13 @@ export const typingtestSlice = createSlice({
                   letterObj.actualyTyped = key;
                   state.statistics.mistakeCount++;
                 }
+                // Mark current word as completed
+                if(letterIndex === wordObj.word.length - 1 && key === letterObj.letter){
+                  state.wordsCompleted++;
+                  wordObj.isCompleted = true;
+                }
               }
-              // If extra letter typed,
+              // If extra letter typed, beyond wordObj.letters[letterIndex]
               else if (letterIndex >= wordObj.word.length) {
                 wordObj.extraLetters.push(key);
                 state.statistics.mistakeCount++;
@@ -171,6 +180,7 @@ export const typingtestSlice = createSlice({
       }
     },
     testCompletedAction: (state, action) => {
+      state.isTestCompleted = true; //prevent rerender on testStatus started
       state.testStatus = "completed";
     },
     setLanguageAction: (state, action) => {
@@ -208,6 +218,7 @@ export const typingtestSlice = createSlice({
             wordIndex: wordIndex,
             wordId: word + wordIndex,
             active: wordIndex === 0 ? true : false,
+            isCompleted: false,
             cursorPosition: 0,
             letters: word.split("").map((letter, letterIndex) => {
               return {

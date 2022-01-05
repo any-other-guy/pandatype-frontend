@@ -5,6 +5,7 @@ import Word from "./Word";
 import { useKeyPress } from "./keypressHook";
 import { Spinner } from "./Spinner";
 import Timer from "./Timer";
+import WordCounter from "./WordCounter";
 
 const TypingTest = () => {
   const dispatch = useDispatch();
@@ -48,6 +49,7 @@ const TypingTest = () => {
     <div className="typingTestWrapper">
       {/* Timer/word count display area */}
       {testMode === "time" ? <Timer /> : null}
+      {testMode === "word" || testMode === "quote" ? <WordCounter /> : null}
       {/* The words area */}
       <div className="typingTest">{content}</div>
       {/* TODO: Restart Button here */}

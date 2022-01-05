@@ -7,13 +7,13 @@ import TestResult from "./features/TypingTest/TestResult";
 import TypingTest from "./features/TypingTest/TypingTest";
 
 const App = () => {
-  //TODO: findout how to not letting this trigger rerender on test start
-  const testStatus = useSelector((state) => state.typingtest.testStatus);
+  // Not using testStatus as a flag to prevent rerender when the test started
+  const isTestCompleted = useSelector((state) => state.typingtest.isTestCompleted);
 
   return (
     <div className='mainWrapper'>
       <Header />
-      {testStatus === 'completed' ? <TestResult /> : <TypingTest />}
+      {isTestCompleted ? <TestResult /> : <TypingTest />}
       <Footer />
     </div>
   );

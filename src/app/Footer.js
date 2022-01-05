@@ -7,7 +7,8 @@ const Footer = () => {
     <div className='footerWrapper'>
       <div className='keyTips'>
         <span>tab</span> - restart test<br/>
-        <span>esc</span> or <span>ctrl/cmd</span>+<span>shift</span>+<span>p</span> - command line
+        <br/>
+        {/* <span>esc</span> or <span>ctrl/cmd</span>+<span>shift</span>+<span>p</span> - command line */}
       </div>
       <div className='footer'>
         <div className='linksGroup'>
