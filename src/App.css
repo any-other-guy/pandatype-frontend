@@ -5,6 +5,7 @@
 body {
   background-color: var(--bg-color);
   font-family: "Roboto Mono";
+  overflow: hidden;
   --bg-color: #323437;
   --main-color: MediumSpringGreen;
   --sub-color: #646669;
@@ -16,7 +17,7 @@ body {
   max-width: 1000px;
   display: grid;
   grid-auto-flow: row;
-  min-height: 98vh; /* why does 100vh creates scrollbar?? */
+  min-height: 100vh; /* why does 100vh creates scrollbar?? */
   padding: 1.5rem;
   margin-left: auto;
   margin-right: auto;
