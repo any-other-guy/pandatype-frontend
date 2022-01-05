@@ -31,7 +31,7 @@ body {
 /* Header */
 .headerWrapper {
   display: grid;
-  line-height: 2.3rem;
+  height: 2.3rem;
   grid-auto-flow: column;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -59,12 +59,13 @@ body {
   width: fit-content;
   padding-top: 0.5rem;
 }
-
 .configGroupWrapper {
   display: grid;
   justify-self: right;
-  grid-template-rows: 0.7rem 0.7rem 0.7rem;
-  grid-gap: 0.2rem;
+  grid-auto-flow: row;
+  grid-template-rows: repeat(3, 1fr);
+  height: 100%;
+  align-self: start;
   justify-items: self-end;
   user-select: none;
   color: var(--text-color);
@@ -74,14 +75,23 @@ body {
   display: grid;
   grid-auto-flow: column;
   font-size: 0.8rem;
+  grid-gap: 0.3rem;
+
 }
 
 .text-button {
   transition: 0.25s;
   color: var(--sub-color);
-  margin-right: 0.25rem;
   cursor: pointer;
   outline: none;
+} 
+
+.active{
+  color: var(--main-color);
+}
+
+.hidden {
+  display: none!important;
 }
 
 /* Test Area */
@@ -140,6 +150,7 @@ body {
   margin-bottom: 2rem;
   color: var(--sub-color);
   text-align: center;
+  user-select: none;
 }
 
 .footer {

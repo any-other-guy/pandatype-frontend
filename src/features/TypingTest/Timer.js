@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useInterval } from "./useIntervalHook";
-import { testCompleted } from "./typingtestSlice";
+import { testCompletedAction } from "./typingtestSlice";
 
 const Timer = () => {
   const dispatch = useDispatch();
@@ -18,8 +18,8 @@ const Timer = () => {
       if (timeRemaining > 0) {
         setTimeRemaining(timeRemaining - 1);
       } else {
-        // Send testCompleted action to store
-        dispatch(testCompleted());
+        // Send testCompletedAction action to store
+        dispatch(testCompletedAction());
         // Timer should be unmounted along with TypingTest
       }
     }

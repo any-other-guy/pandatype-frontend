@@ -11,11 +11,18 @@ const typingtestAdapter = createEntityAdapter({
 });
 
 const initialState = typingtestAdapter.getInitialState({
+  // Test load up related
   loadingStatus: "idle",
   loadingError: null,
+  // Test itself related
   testStatus: "unstarted",
+  testLanguage: "english",
   testMode: "time",
-  testModeOption: 30,
+  testTimeOption: 30,
+  testWordOption: 50,
+  testQuoteOption: "medium",
+  typedWordsArray: [""],
+  // Test result related
   statistics: {
     elapsedTime: null,
     accuracy: null,
@@ -27,8 +34,6 @@ const initialState = typingtestAdapter.getInitialState({
     date: null,
     rawTypingHistory: "",
   },
-  // States for notifying changes to the frontend
-  typedWordsArray: [""],
 });
 
 export const fetchTestContent = createAsyncThunk(
@@ -165,14 +170,28 @@ export const typingtestSlice = createSlice({
         console.log("something else pressed: " + key);
       }
     },
-    testCompleted: (state, action) => {
+    testCompletedAction: (state, action) => {
       state.testStatus = "completed";
     },
-    setTestMode: (state, action) => {
-      const { testMode, testModeOption } = action.payload;
-      state.testMode = testMode;
-      //TODO: make testModeOption to ...arguments
-      state.testModeOption = testModeOption;
+    setLanguageAction: (state, action) => {
+      const { mode = "english" } = action.payload;
+      state.testLanguage = mode;
+    },
+    setTestModeAction: (state, action) => {
+      const { mode = "time" } = action.payload;
+      state.testMode = mode;
+    },
+    setTestTimeOptionAction: (state, action) => {
+      const { option = "30" } = action.payload;
+      state.testTimeOption = option;
+    },
+    setTestWordOptionAction: (state, action) => {
+      const { option = "50" } = action.payload;
+      state.testWordOption = option;
+    },
+    setTestQuoteOptionAction: (state, action) => {
+      const { option = "medium" } = action.payload;
+      state.testQuoteOption = option;
     },
   },
   extraReducers(builder) {
@@ -211,7 +230,15 @@ export const typingtestSlice = createSlice({
   },
 });
 
-export const { keyAction, testCompleted } = typingtestSlice.actions;
+export const {
+  keyAction,
+  testCompletedAction,
+  setLanguageAction,
+  setTestModeAction,
+  setTestTimeOptionAction,
+  setTestWordOptionAction,
+  setTestQuoteOptionAction,
+} = typingtestSlice.actions;
 
 export default typingtestSlice.reducer;
 

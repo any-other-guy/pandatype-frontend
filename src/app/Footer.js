@@ -2,6 +2,7 @@ import React from 'react'
 import { AiFillGithub } from "react-icons/ai";
 
 const Footer = () => {
+
   return (
     <div className='footerWrapper'>
       <div className='keyTips'>
