@@ -24,7 +24,7 @@ const Word = ({ wordId }) => {
         return (
           <div
             className="letter"
-            key={letterObj.letter + letterObj.letterIndex}
+            key={`${letterObj.letter}${letterObj.letterIndex}`}
             status={letterObj.status}
           >
             {letterObj.letter}
@@ -38,7 +38,7 @@ const Word = ({ wordId }) => {
               <div
                 className="letter"
                 status="extra"
-                key={"Extra" + plainLetter + index}
+                key={`Extra${plainLetter}${index}`}
               >
                 {plainLetter}
               </div>

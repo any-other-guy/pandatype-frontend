@@ -31,7 +31,7 @@ const Header = () => {
     markAllSiblingNotActive(target);
     target.classList.add("active");
     target.parentNode.parentNode.childNodes.forEach((node, index) => {
-      if(node.classList.contains(mode+"Options")){
+      if(node.classList.contains(`${mode}Options`)){
         node.classList.remove("hidden");
       }
       else if(!node.classList.contains('modeOptions')){

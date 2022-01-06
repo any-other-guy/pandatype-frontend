@@ -39,14 +39,14 @@ const TestResult = () => {
         </div>
         <div className="resultGroup acc">
           <div className="top">acc</div>
-          <div className="bottom">{accuracy.toFixed(0) + "%"}</div>
+          <div className="bottom">{`${accuracy.toFixed(0)}%`}</div>
         </div>
       </div>
       <div className="chart"></div>
       <div className="moreStats">
         <div className="resultGroup testType">
           <div className="top">test type</div>
-          <div className="bottom">{testLanguage + " " + testMode}</div>
+          <div className="bottom">{`${testLanguage} ${testMode}`}</div>
         </div>
         <div className="resultGroup info">
           <div className="top">other</div>
@@ -59,22 +59,16 @@ const TestResult = () => {
         <div className="resultGroup keyStat">
           <div className="top">characters</div>
           <div className="bottom">
-            {correctCount +
-              "/" +
-              mistakeCount +
-              "/" +
-              extraCount +
-              "/" +
-              missedCount}
+            {`${correctCount}/${mistakeCount}/${extraCount}/${missedCount}`}
           </div>
         </div>
         <div className="resultGroup consistency">
           <div className="top">consistency</div>
-          <div className="bottom">{"100" + "%"}</div>
+          <div className="bottom">{`${"100"}%`}</div>
         </div>
         <div className="resultGroup time">
           <div className="top">time</div>
-          <div className="bottom">{formattedTimeString + "s"}</div>
+          <div className="bottom">{`${formattedTimeString}s`}</div>
         </div>
       </div>
       <div className="bottom"></div>
