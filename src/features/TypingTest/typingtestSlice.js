@@ -24,9 +24,6 @@ const initialState = typingtestAdapter.getInitialState({
   testStatus: "unstarted",
   isTestCompleted: false,
   typedWordsArray: [""],
-
-  // letterPerfected: 0,
-  // letterMistake: 0,
   // Test result related
   statistics: {
     perSecondWpm: [],
@@ -34,6 +31,7 @@ const initialState = typingtestAdapter.getInitialState({
     accuracy: null,
     startTime: null,
     endTime: null,
+    elapsedTime: null,
     rawWpm: null,
     wordsPerfected: 0,
     wordsCompleted: 0,
@@ -43,7 +41,6 @@ const initialState = typingtestAdapter.getInitialState({
     missedCount: 0,
     rawCharacterCount: 0,
     backspaceCount: 0,
-    date: null,
     rawTypingHistory: "",
   },
 });
@@ -152,15 +149,14 @@ export const typingtestSlice = createSlice({
                         state.statistics.mistakeCount +
                         state.statistics.extraCount +
                         state.statistics.missedCount;
-                      state.statistics.accuracy = (total - bad) / total;
+                      state.statistics.accuracy = (total - bad) / total * 100;
 
-                      const elapsedTime =
+                      state.statistics.elapsedTime =
                         state.statistics.endTime - state.statistics.startTime;
-                      console.log(elapsedTime);
                       const wpm =
-                        (60000 / elapsedTime) * state.statistics.wordsPerfected;
+                        (60000 / state.statistics.elapsedTime) * state.statistics.wordsPerfected;
                       const rawWpm =
-                        (60000 / elapsedTime) * state.statistics.wordsCompleted;
+                        (60000 / state.statistics.elapsedTime) * state.statistics.wordsCompleted;
                       state.statistics.wpm = wpm;
                       state.statistics.rawWpm = rawWpm;
                     }
@@ -281,7 +277,7 @@ export const typingtestSlice = createSlice({
         state.statistics.mistakeCount +
         state.statistics.extraCount +
         state.statistics.missedCount;
-      state.statistics.accuracy = (total - bad) / total;
+      state.statistics.accuracy = (total - bad) / total * 100;
 
       const elapsedTime = state.statistics.endTime - state.statistics.startTime;
       console.log(elapsedTime);
