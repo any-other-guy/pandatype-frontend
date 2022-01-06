@@ -52,7 +52,8 @@ const TypingTest = () => {
       {testMode === "word" || testMode === "quote" ? <WordCounter /> : null}
       {/* The words area */}
       <div className="typingTest">{content}</div>
-      {/* TODO: Restart Button here */}
+      {/* TODO: Restart button group */}
+      {/* Hidden stat tracker */}
     </div>
   );
 };

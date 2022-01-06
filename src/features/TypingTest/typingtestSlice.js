@@ -24,13 +24,17 @@ const initialState = typingtestAdapter.getInitialState({
   testStatus: "unstarted",
   isTestCompleted: false,
   typedWordsArray: [""],
+  wordsPerfected: 0,
   wordsCompleted: 0,
+  // letterPerfected: 0,
+  // letterMistake: 0,
   // Test result related
   statistics: {
     elapsedTime: null,
     accuracy: null,
     rawCharacterCount: null,
     wpm: null,
+    perSecondWpm: [],
     raw_wpm: null,
     mistakeCount: null,
     backspaceCount: null,
@@ -113,13 +117,15 @@ export const typingtestSlice = createSlice({
                 // Update states when letter typed is correct
                 if (key === letterObj.letter) {
                   letterObj.status = "typed";
-                  // Detecting if last letter typed correctly, end test
+                  console.log(state.testMode)
+                  // End test if the last letter word of the last letter is typed correctly
                   if (state.testMode === "words") {
                     if (
                       wordObj.wordIndex + 1 === state.ids.length &&
                       letterIndex + 1 === wordObj.letters.length
                     ) {
                       state.testStatus = "completed";
+                      console.log('test completed');
                     }
                   }
                 } else {
@@ -127,9 +133,23 @@ export const typingtestSlice = createSlice({
                   letterObj.actualyTyped = key;
                   state.statistics.mistakeCount++;
                 }
-                // Mark current word as completed
-                if(letterIndex === wordObj.word.length - 1 && key === letterObj.letter){
-                  state.wordsCompleted++;
+                // Mark current word as completed or perfected
+                if (letterIndex === wordObj.word.length - 1) {
+                  // if all no mistake found in the whole word, mark wordsPerfected++;
+                  if (
+                    wordObj.letters.every((letterObj) => {
+                      return (
+                        letterObj.status === "typed" &&
+                        letterObj.mistake === false
+                      );
+                    })
+                  ) {
+                    // To prevent counting error when correcting the last letter
+                    if(!wordObj.isPerfected) state.wordsPerfected++;
+                    wordObj.isPerfected = true;
+                  }
+                  // otherwise only mark wordsCompleted++;
+                  if(!wordObj.isCompleted) state.wordsCompleted++;
                   wordObj.isCompleted = true;
                 }
               }
@@ -179,6 +199,19 @@ export const typingtestSlice = createSlice({
         console.log("something else pressed: " + key);
       }
     },
+    perSecondWpmAction: (state, action) => {
+      const { atSecond } = action.payload;
+      const wpm = (60 / atSecond) * state.wordsPerfected;
+      const rawWpm = (60 / atSecond) * state.wordsCompleted;
+      //FIXME: atSecond很不准, 下面这个object的key暂时用array index代替秒数感觉有点准也
+      state.statistics.perSecondWpm.push({
+        [state.statistics.perSecondWpm.length]: { wpm: wpm, rawWpm: rawWpm, atSecond: atSecond },
+      });
+    },
+    elapsedTimeAction: (state, action) => {
+      const {elapsedTime} = action.payload;
+      state.statistics.elapsedTime = elapsedTime;
+    },
     testCompletedAction: (state, action) => {
       state.isTestCompleted = true; //prevent rerender on testStatus started
       state.testStatus = "completed";
@@ -218,7 +251,6 @@ export const typingtestSlice = createSlice({
             wordIndex: wordIndex,
             wordId: word + wordIndex,
             active: wordIndex === 0 ? true : false,
-            isCompleted: false,
             cursorPosition: 0,
             letters: word.split("").map((letter, letterIndex) => {
               return {
@@ -230,6 +262,8 @@ export const typingtestSlice = createSlice({
               };
             }),
             extraLetters: [],
+            isCompleted: false,
+            isPerfected: false,
           };
         });
         typingtestAdapter.setAll(state, wordsObj);
@@ -249,6 +283,8 @@ export const {
   setTestTimeOptionAction,
   setTestWordOptionAction,
   setTestQuoteOptionAction,
+  perSecondWpmAction,
+  elapsedTimeAction,
 } = typingtestSlice.actions;
 
 export default typingtestSlice.reducer;

@@ -104,10 +104,10 @@ const Header = () => {
           </div>
           <div
             className="text-button"
-            mode="word"
+            mode="words"
             onClick={(e) => setTestMode(e)}
           >
-            word
+            words
           </div>
           <div
             className="text-button"

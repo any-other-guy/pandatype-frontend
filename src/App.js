@@ -5,6 +5,7 @@ import Header from "./app/Header";
 import Footer from "./app/Footer"
 import TestResult from "./features/TypingTest/TestResult";
 import TypingTest from "./features/TypingTest/TypingTest";
+import StatsTracker from "./features/TypingTest/StatsTracker";
 
 const App = () => {
   // Not using testStatus as a flag to prevent rerender when the test started
@@ -14,6 +15,7 @@ const App = () => {
     <div className='mainWrapper'>
       <Header />
       {isTestCompleted ? <TestResult /> : <TypingTest />}
+      <StatsTracker />
       <Footer />
     </div>
   );
