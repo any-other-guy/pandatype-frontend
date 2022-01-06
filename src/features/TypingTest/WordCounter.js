@@ -6,7 +6,7 @@ const WordCounter = () => {
 
   const testStatus = useSelector((state) => state.typingtest.testStatus);
   const wordsCompleted = useSelector(
-    (state) => state.typingtest.wordsCompleted
+    (state) => state.typingtest.statistics.wordsCompleted
   );
   const totalNumber = useSelector((state) => state.typingtest.testWordOption);
 

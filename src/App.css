@@ -135,6 +135,10 @@ body {
   color: var(--error-color);
 }
 
+.letter[status="missed"] {
+  color: var(--error-color);
+}
+
 .letter[status="extra"] {
   color: var(--error-color);
 }

@@ -49,7 +49,7 @@ const TypingTest = () => {
     <div className="typingTestWrapper">
       {/* Timer/word count display area */}
       {testMode === "time" ? <Timer /> : null}
-      {testMode === "word" || testMode === "quote" ? <WordCounter /> : null}
+      {testMode === "words" || testMode === "quote" ? <WordCounter /> : null}
       {/* The words area */}
       <div className="typingTest">{content}</div>
       {/* TODO: Restart button group */}

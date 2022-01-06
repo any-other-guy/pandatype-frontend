@@ -19,15 +19,15 @@ const StatsTracker = () => {
     }
   }, 1000);
 
-  useEffect(() => {
-    if (testStatus === "started") {
-      startTimestamp.current = Date.now();
-    } else if (testStatus === "completed") {
-      endTimestamp.current = Date.now();
-      let elapsedTime = (endTimestamp.current - startTimestamp.current) / 1000;
-      dispatch(elapsedTimeAction({ elapsedTime: elapsedTime }));
-    }
-  }, [testStatus, dispatch]);
+  // useEffect(() => {
+  //   if (testStatus === "started") {
+  //     startTimestamp.current = Date.now();
+  //   } else if (testStatus === "completed") {
+  //     endTimestamp.current = Date.now();
+  //     let elapsedTime = (endTimestamp.current - startTimestamp.current) / 1000;
+  //     dispatch(elapsedTimeAction({ elapsedTime: elapsedTime, testDate: endTimestamp.current }));
+  //   }
+  // }, [testStatus, dispatch]);
 
   return <div className="hidden"></div>;
 };

@@ -24,20 +24,25 @@ const initialState = typingtestAdapter.getInitialState({
   testStatus: "unstarted",
   isTestCompleted: false,
   typedWordsArray: [""],
-  wordsPerfected: 0,
-  wordsCompleted: 0,
+
   // letterPerfected: 0,
   // letterMistake: 0,
   // Test result related
   statistics: {
-    elapsedTime: null,
-    accuracy: null,
-    rawCharacterCount: null,
-    wpm: null,
     perSecondWpm: [],
-    raw_wpm: null,
-    mistakeCount: null,
-    backspaceCount: null,
+    wpm: null,
+    accuracy: null,
+    startTime: null,
+    endTime: null,
+    rawWpm: null,
+    wordsPerfected: 0,
+    wordsCompleted: 0,
+    mistakeCount: 0,
+    correctCount: 0,
+    extraCount: 0,
+    missedCount: 0,
+    rawCharacterCount: 0,
+    backspaceCount: 0,
     date: null,
     rawTypingHistory: "",
   },
@@ -59,6 +64,9 @@ export const typingtestSlice = createSlice({
       // Start the test if unstarted
       state.testStatus =
         state.testStatus === "unstarted" ? "started" : state.testStatus;
+      if (state.statistics.startTime === null) {
+        state.statistics.startTime = Date.now();
+      }
 
       const typedWordsArray = state.typedWordsArray;
 
@@ -82,11 +90,17 @@ export const typingtestSlice = createSlice({
               // Check if current word has untyped letters, mark them mistake
               wordObj.letters.forEach((letter) => {
                 if (letter.status === "untyped") {
-                  letter.status = "mistake";
+                  letter.status = "missed";
+                  letter.mistake = true;
+                  state.statistics.missedCount++; //TODO: not sure how this counts towards result accuracy and etc
                 }
               });
               // Making current word inactive and next word active
+              // NOTE: 现在暂时回不来空格掉的字，所以stats先这么搞，不需要if (!wordObj.isCompleted)
+              state.statistics.wordsCompleted++;
+              wordObj.isCompleted = true;
               wordObj.active = false;
+
               const nextWordId = state.ids[currentWordIndex + 1];
               if (state.entities[nextWordId] != null)
                 state.entities[nextWordId].active = true;
@@ -117,20 +131,48 @@ export const typingtestSlice = createSlice({
                 // Update states when letter typed is correct
                 if (key === letterObj.letter) {
                   letterObj.status = "typed";
-                  console.log(state.testMode)
+                  state.statistics.correctCount++;
                   // End test if the last letter word of the last letter is typed correctly
                   if (state.testMode === "words") {
                     if (
                       wordObj.wordIndex + 1 === state.ids.length &&
                       letterIndex + 1 === wordObj.letters.length
                     ) {
-                      state.testStatus = "completed";
-                      console.log('test completed');
+                      state.testStatus = "completed"; // this only mutates testStatus from started to completed
+                      state.isTestCompleted = true; // this updates the UI, components are subscribed to this state actually
+                      state.statistics.endTime = Date.now();
+                      // Prepare test result related states in store
+                      // TODO: find a way to put these into reuseable function, how to pass states as plain object?
+                      const total =
+                        state.statistics.correctCount +
+                        state.statistics.mistakeCount +
+                        state.statistics.extraCount +
+                        state.statistics.missedCount;
+                      const bad =
+                        state.statistics.mistakeCount +
+                        state.statistics.extraCount +
+                        state.statistics.missedCount;
+                      state.statistics.accuracy = (total - bad) / total;
+
+                      const elapsedTime =
+                        state.statistics.endTime - state.statistics.startTime;
+                      console.log(elapsedTime);
+                      const wpm =
+                        (60000 / elapsedTime) * state.statistics.wordsPerfected;
+                      const rawWpm =
+                        (60000 / elapsedTime) * state.statistics.wordsCompleted;
+                      state.statistics.wpm = wpm;
+                      state.statistics.rawWpm = rawWpm;
                     }
                   }
                 } else {
                   letterObj.status = "mistake";
-                  letterObj.actualyTyped = key;
+                  letterObj.whatActuallyTyped = key;
+                  let currentPerSecondWpmObject =
+                    state.statistics.perSecondWpm[
+                      state.statistics.perSecondWpm.length - 1
+                    ];
+                  currentPerSecondWpmObject.mistakesHere++;
                   state.statistics.mistakeCount++;
                 }
                 // Mark current word as completed or perfected
@@ -145,18 +187,23 @@ export const typingtestSlice = createSlice({
                     })
                   ) {
                     // To prevent counting error when correcting the last letter
-                    if(!wordObj.isPerfected) state.wordsPerfected++;
+                    if (!wordObj.isPerfected) state.statistics.wordsPerfected++;
                     wordObj.isPerfected = true;
                   }
                   // otherwise only mark wordsCompleted++;
-                  if(!wordObj.isCompleted) state.wordsCompleted++;
+                  if (!wordObj.isCompleted) state.statistics.wordsCompleted++;
                   wordObj.isCompleted = true;
                 }
               }
               // If extra letter typed, beyond wordObj.letters[letterIndex]
               else if (letterIndex >= wordObj.word.length) {
                 wordObj.extraLetters.push(key);
-                state.statistics.mistakeCount++;
+                let currentPerSecondWpmObject =
+                  state.statistics.perSecondWpm[
+                    state.statistics.perSecondWpm.length - 1
+                  ];
+                currentPerSecondWpmObject.mistakesHere++;
+                state.statistics.extraCount++;
               }
               state.statistics.rawCharacterCount++;
             }
@@ -201,20 +248,47 @@ export const typingtestSlice = createSlice({
     },
     perSecondWpmAction: (state, action) => {
       const { atSecond } = action.payload;
-      const wpm = (60 / atSecond) * state.wordsPerfected;
-      const rawWpm = (60 / atSecond) * state.wordsCompleted;
+      const wpm = (60 / atSecond) * state.statistics.wordsPerfected;
+      const rawWpm = (60 / atSecond) * state.statistics.wordsCompleted;
       //FIXME: atSecond很不准, 下面这个object的key暂时用array index代替秒数感觉有点准也
       state.statistics.perSecondWpm.push({
-        [state.statistics.perSecondWpm.length]: { wpm: wpm, rawWpm: rawWpm, atSecond: atSecond },
+        [state.statistics.perSecondWpm.length]: {
+          wpm: wpm,
+          rawWpm: rawWpm,
+          atSecond: atSecond,
+          mistakesHere: 0,
+        },
       });
     },
-    elapsedTimeAction: (state, action) => {
-      const {elapsedTime} = action.payload;
-      state.statistics.elapsedTime = elapsedTime;
-    },
+    // elapsedTimeAction: (state, action) => {
+    //   const { elapsedTime, testDate } = action.payload;
+    //   state.statistics.elapsedTime = elapsedTime;
+    //   state.statistics.date = testDate;
+    // },
     testCompletedAction: (state, action) => {
       state.isTestCompleted = true; //prevent rerender on testStatus started
       state.testStatus = "completed";
+      state.statistics.endTime = Date.now();
+
+      // Prepare test result related states in store
+      // TODO: find a way to put these into reuseable function, how to pass states as plain object?
+      const total =
+        state.statistics.correctCount +
+        state.statistics.mistakeCount +
+        state.statistics.extraCount +
+        state.statistics.missedCount;
+      const bad =
+        state.statistics.mistakeCount +
+        state.statistics.extraCount +
+        state.statistics.missedCount;
+      state.statistics.accuracy = (total - bad) / total;
+
+      const elapsedTime = state.statistics.endTime - state.statistics.startTime;
+      console.log(elapsedTime);
+      const wpm = (60000 / elapsedTime) * state.statistics.wordsPerfected;
+      const rawWpm = (60000 / elapsedTime) * state.statistics.wordsCompleted;
+      state.statistics.wpm = wpm;
+      state.statistics.rawWpm = rawWpm;
     },
     setLanguageAction: (state, action) => {
       const { mode = "english" } = action.payload;
@@ -245,6 +319,7 @@ export const typingtestSlice = createSlice({
       .addCase(fetchTestContent.fulfilled, (state, action) => {
         state.loadingStatus = "succeeded";
         const { words } = action.payload;
+        // Populate test objects into store
         const wordsObj = words.map((word, wordIndex) => {
           return {
             word: word,
@@ -284,7 +359,6 @@ export const {
   setTestWordOptionAction,
   setTestQuoteOptionAction,
   perSecondWpmAction,
-  elapsedTimeAction,
 } = typingtestSlice.actions;
 
 export default typingtestSlice.reducer;
