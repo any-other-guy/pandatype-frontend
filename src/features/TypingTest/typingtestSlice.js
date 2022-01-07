@@ -82,7 +82,7 @@ export const typingtestSlice = createSlice({
               if (letter.status === "untyped") {
                 letter.status = "missed";
                 letter.mistake = true;
-                state.statistics.missedCount++; //TODO: not sure how this counts towards result accuracy and etc
+                state.statistics.missedCount++;
               }
             });
             // Making current word inactive and next word active
@@ -166,6 +166,7 @@ export const typingtestSlice = createSlice({
                       state.statistics.perSecondWpm[1].missedCount++;
                       state.statistics.perSecondWpm[0].missedCount = 0;
                     }
+                    return;
                   }
                 }
               } else {

@@ -36,7 +36,7 @@ const TypingTest = () => {
   let content;
 
   if (testContentLoadingStatus === "loading") {
-    content = <Spinner />; //TODO: add spinner here
+    content = <Spinner />;
   } else if (testContentLoadingStatus === "succeeded") {
     content = wordIds.map((wordId) => {
       return <Word key={wordId} wordId={wordId}></Word>;
@@ -53,7 +53,6 @@ const TypingTest = () => {
       {/* The words area */}
       <div className="typingTest">{content}</div>
       {/* TODO: Restart button group */}
-      {/* Hidden stat tracker */}
     </div>
   );
 };

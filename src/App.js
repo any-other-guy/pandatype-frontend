@@ -14,7 +14,9 @@ const App = () => {
   return (
     <div className='mainWrapper'>
       <Header />
+      {/* The test */}
       {isTestCompleted ? <TestResult /> : <TypingTest />}
+      {/* Hidden stat tracker */}
       <StatsTracker />
       <Footer />
     </div>
