@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { formatMilliseconds } from "../../utils/utils";
 
 const TestResult = () => {
   const {
@@ -16,12 +17,7 @@ const TestResult = () => {
     rawTypingHistory,
   } = useSelector((state) => state.typingtest.statistics);
 
-  let formattedTime = new Date(0);
-  formattedTime.setSeconds(elapsedTime);
-  //TODO: better formatting, no zeros on single digit
-  let formattedTimeString = formattedTime.toISOString().slice(17, 19);
-
-  //TODO: 研究下这样会不会只更改state.typingtest里面任何的obj就会trigger rerender?
+  //TODO: 研究下这样会不会只更改state.typingtest里面任何的obj就会trigger rerender? 不过反正结算界面目前也没修改typingtest state里的东西的
   const {
     testLanguage,
     testMode,
@@ -68,7 +64,7 @@ const TestResult = () => {
         </div>
         <div className="resultGroup time">
           <div className="top">time</div>
-          <div className="bottom">{`${formattedTimeString}s`}</div>
+          <div className="bottom">{`${formatMilliseconds(elapsedTime)}s`}</div>
         </div>
       </div>
       <div className="bottom"></div>

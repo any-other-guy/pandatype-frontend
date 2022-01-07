@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useInterval } from "./useIntervalHook";
 import { testCompletedAction } from "./typingtestSlice";
+import { formatMilliseconds } from "../../utils/utils";
 
 const Timer = () => {
   const dispatch = useDispatch();
@@ -25,16 +26,10 @@ const Timer = () => {
     }
   }, 1000);
 
-  // Setup timer UI
-  let formattedTime = new Date(0);
-  formattedTime.setSeconds(timeRemaining);
-  //TODO: better formatting, no zeros on single digit
-  let formattedTimeString = formattedTime.toISOString().slice(17, 19);
-
   return (
     <div className="timer">
       {testStatus === "started"
-        ? formattedTimeString
+        ? formatMilliseconds(timeRemaining*1000)
         : null}
     </div>
   );

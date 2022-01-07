@@ -86,8 +86,8 @@ export const typingtestSlice = createSlice({
               }
             });
             // Making current word inactive and next word active
-            // NOTE: 现在暂时回不来空格掉的字，所以stats先这么搞，不需要if (!wordObj.isCompleted)
-            state.statistics.wordsCompleted++;
+            // FIXME: 决定一下到底空格后算complete还是打完，暂时决定是空格吧
+            if (!wordObj.isCompleted) state.statistics.wordsCompleted++;
             wordObj.isCompleted = true;
             wordObj.active = false;
 
@@ -195,8 +195,9 @@ export const typingtestSlice = createSlice({
                   wordObj.isPerfected = true;
                 }
                 // otherwise only mark wordsCompleted++;
-                if (!wordObj.isCompleted) state.statistics.wordsCompleted++;
-                wordObj.isCompleted = true;
+                // FIXME: 决定一下到底空格后算complete还是打完，暂时决定是空格吧
+                // if (!wordObj.isCompleted) state.statistics.wordsCompleted++;
+                // wordObj.isCompleted = true;
               }
             }
             // If extra letter typed, beyond wordObj.letters[letterIndex]
