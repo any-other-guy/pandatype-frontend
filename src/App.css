@@ -184,6 +184,7 @@ body {
 .testResult > .chart {
   grid-area: 1 / 2 / 2 / 2;
   background-color: transparent;
+  min-height: 200px;
 }
 
 .testResult > .bottom {

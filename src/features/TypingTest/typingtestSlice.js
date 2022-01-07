@@ -252,10 +252,12 @@ export const typingtestSlice = createSlice({
       }
     },
     perSecondWpmAction: (state, action) => {
-      const { atSecond } = action.payload;
+      // const { atSecond } = action.payload;
+      //FIXME: atSecond很不准, 下面这个object的key暂时用array index代替秒数感觉有点准也
+      const atSecond = state.statistics.perSecondWpm.length;
+      // console.log(atSecond);
       const wpm = (60 / atSecond) * state.statistics.wordsPerfected;
       const rawWpm = (60 / atSecond) * state.statistics.wordsCompleted;
-      //FIXME: atSecond很不准, 下面这个object的key暂时用array index代替秒数感觉有点准也
       state.statistics.perSecondWpm.push({
         index: state.statistics.perSecondWpm.length,
         wpm: wpm,
@@ -283,7 +285,6 @@ export const typingtestSlice = createSlice({
       state.statistics.accuracy = ((total - bad) / total) * 100;
 
       const elapsedTime = state.statistics.endTime - state.statistics.startTime;
-      console.log(elapsedTime);
       const wpm = (60000 / elapsedTime) * state.statistics.wordsPerfected;
       const rawWpm = (60000 / elapsedTime) * state.statistics.wordsCompleted;
       state.statistics.wpm = wpm;
@@ -292,6 +293,15 @@ export const typingtestSlice = createSlice({
       if (state.statistics.perSecondWpm[0].missedCount > 0) {
         state.statistics.perSecondWpm[1].missedCount++;
         state.statistics.perSecondWpm[0].missedCount = 0;
+      }
+      // Cleanup the last overtimed entry in perSecondWpm, if any
+      //TODO: find out why this happens, for now just purge them away
+      while (
+        state.testMode === "time" &&
+        state.statistics.perSecondWpm[state.statistics.perSecondWpm.length - 1]
+          .index > state.testTimeOption
+      ) {
+        state.statistics.perSecondWpm.pop();
       }
     },
     setLanguageAction: (state, action) => {
