@@ -48,10 +48,10 @@ const TestResult = () => {
           <div className="top">test type</div>
           <div className="bottom">{`${testLanguage} ${testMode}`}</div>
         </div>
-        <div className="resultGroup info">
+        {/* <div className="resultGroup info">
           <div className="top">other</div>
           <div className="bottom">any-other-guy</div>
-        </div>
+        </div> */}
         <div className="resultGroup raw">
           <div className="top">raw</div>
           <div className="bottom">{rawWpm.toFixed(0)}</div>
