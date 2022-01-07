@@ -140,7 +140,7 @@ const Header = () => {
             60
           </div>
         </div>
-        <div className="configGroup wordOptions hidden">
+        <div className="configGroup wordsOptions hidden">
           <div
             className="text-button"
             mode="10"

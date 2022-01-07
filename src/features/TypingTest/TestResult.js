@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { formatMilliseconds } from "../../utils/utils";
+import ResultChart from "./ResultChart";
 
 const TestResult = () => {
   const {
@@ -38,7 +39,9 @@ const TestResult = () => {
           <div className="bottom">{`${accuracy.toFixed(0)}%`}</div>
         </div>
       </div>
-      <div className="chart"></div>
+      <div className="chart">
+        <ResultChart perSecondWpm={perSecondWpm} elapsedTime={elapsedTime} />
+      </div>
       <div className="moreStats">
         <div className="resultGroup testType">
           <div className="top">test type</div>

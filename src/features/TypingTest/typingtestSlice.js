@@ -257,12 +257,11 @@ export const typingtestSlice = createSlice({
       const rawWpm = (60 / atSecond) * state.statistics.wordsCompleted;
       //FIXME: atSecond很不准, 下面这个object的key暂时用array index代替秒数感觉有点准也
       state.statistics.perSecondWpm.push({
-        [state.statistics.perSecondWpm.length]: {
-          wpm: wpm,
-          rawWpm: rawWpm,
-          atSecond: atSecond,
-          mistakesHere: 0,
-        },
+        index: state.statistics.perSecondWpm.length,
+        wpm: wpm,
+        rawWpm: rawWpm,
+        atSecond: atSecond,
+        mistakesHere: 0,
       });
     },
     testCompletedAction: (state, action) => {
