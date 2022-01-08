@@ -119,10 +119,12 @@ const TypingTest = () => {
       {testMode === "time" ? <Timer /> : null}
       {testMode === "words" || testMode === "quote" ? <WordCounter /> : null}
       {/* The words area */}
-      <div className="mask">
-        <div className="typingTest" ref={wordWrapper} pos1={firstLineOffsetTop.current}>
-          {content}
-        </div>
+      <div
+        className="typingTest"
+        ref={wordWrapper}
+        pos1={firstLineOffsetTop.current}
+      >
+        {content}
       </div>
 
       {/* TODO: Restart button group */}

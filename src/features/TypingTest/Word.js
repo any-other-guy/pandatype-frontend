@@ -6,11 +6,11 @@ const Word = ({ wordId }) => {
   // By only passing in the wordId itself instead of the wordObj, unnecessary rerender is prevented
   const wordObj = useSelector((state) => selectWordsById(state, wordId));
   const thisWord = useRef(null);
+
   useEffect(() => {
     if (wordObj.active === true && thisWord.current !== null) {
       let parentNode = thisWord.current.parentNode;
       const firstLineOffsetTop = parentNode.childNodes[0].offsetTop;
-      
       if (
         thisWord.current.previousElementSibling !== null &&
         thisWord.current.previousElementSibling.offsetTop >
@@ -33,7 +33,7 @@ const Word = ({ wordId }) => {
       }
     }
   });
-
+  
   return (
     <div
       className="word"
@@ -46,7 +46,7 @@ const Word = ({ wordId }) => {
         <span
           className="cursor"
           style={{
-            left: wordObj.cursorPosition * 14.6,
+            left: wordObj.cursorPosition === 0? 2 : wordObj.cursorPosition * 16 - wordObj.cursorPosition*1.5 + 1,
           }}
         >
           |
