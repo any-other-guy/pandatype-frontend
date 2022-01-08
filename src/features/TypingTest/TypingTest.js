@@ -1,10 +1,10 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchTestContent,
   selectWordsIds,
   keyAction,
-  scrollPositionAction,
+  // scrollPositionAction,
 } from "./typingtestSlice";
 import Word from "./Word";
 import { useKeyPress } from "./keypressHook";
@@ -17,8 +17,8 @@ const TypingTest = () => {
   const wordIds = useSelector(selectWordsIds);
   const testMode = useSelector((state) => state.typingtest.testMode);
   const wordWrapper = useRef(null);
-  const remount = useRef(0);
-  const scrollCount = useSelector((state) => state.typingtest.scrollCount);
+  // const remount = useRef(0);
+  // const scrollCount = useSelector((state) => state.typingtest.scrollCount);
   const firstLineOffsetTop = useRef(null);
 
   // Handling input letters
@@ -55,62 +55,63 @@ const TypingTest = () => {
     content = <div>{testContentLoadingError}</div>;
   }
 
-  useLayoutEffect(() => {
-    const wordNodeArray = Array.from(wordWrapper.current.childNodes);
-    //TODO: I AM INSANE!!
-    if (wordNodeArray.length == 0) {
-      remount.current++;
-    }
-    if (wordNodeArray.length === 0) return;
-    firstLineOffsetTop.current = wordNodeArray[0].offsetTop;
-    // FIXME: hardcoding 80px here;
-    const thirdLineOffsetTop = firstLineOffsetTop.current + 80;
-    const scrollTriggerNode = wordNodeArray.find((obj) => {
-      if (obj.offsetTop == thirdLineOffsetTop) return obj.getAttribute("id");
-    });
-    console.log(scrollTriggerNode.getAttribute("id"));
-    dispatch(
-      scrollPositionAction({ wordId: scrollTriggerNode.getAttribute("id") })
-    );
-  }, [remount.current]);
+  // useLayoutEffect(() => {
+  //   const wordNodeArray = Array.from(wordWrapper.current.childNodes);
+  //   //TODO: I AM INSANE!!
+  //   if (wordNodeArray.length == 0) {
+  //     remount.current++;
+  //   }
+  //   if (wordNodeArray.length === 0) return;
+  //   firstLineOffsetTop.current = wordNodeArray[0].offsetTop;
 
-  useLayoutEffect(
-    (params) => {
-      if (scrollCount != 0) {
-        console.log("scroll");
-        // wordWrapper.current.setAttribute('style', 'margin-top: -2.5rem;');
+  //   // // FIXME: hardcoding 80px here;
+  //   // const thirdLineOffsetTop = firstLineOffsetTop.current + 80;
+  //   // const scrollTriggerNode = wordNodeArray.find((obj) => {
+  //   //   if (obj.offsetTop == thirdLineOffsetTop) return obj.getAttribute("id");
+  //   // });
+  //   // console.log(scrollTriggerNode.getAttribute("id"));
+  //   // dispatch(
+  //   //   scrollPositionAction({ wordId: scrollTriggerNode.getAttribute("id") })
+  //   // );
+  // }, [remount.current]);
 
-        let removeCount = 0;
-        while (
-          wordWrapper.current.childNodes[removeCount].offsetTop ===
-          firstLineOffsetTop.current
-        ) {
-          removeCount++;
-        }
+  // useLayoutEffect(
+  //   (params) => {
+  //     if (scrollCount != 0) {
+  //       // wordWrapper.current.setAttribute('style', 'margin-top: -2.5rem;');
 
-        while (removeCount > 0) {
-          wordWrapper.current.removeChild(wordWrapper.current.childNodes[0]);
-          removeCount--;
-        }
+  //       let removeCount = 0;
+  //       while (
+  //         wordWrapper.current.childNodes[removeCount].offsetTop ===
+  //         firstLineOffsetTop.current
+  //       ) {
+  //         removeCount++;
+  //       }
 
-        const wordNodeArray = Array.from(wordWrapper.current.childNodes);
-        const thirdLineOffsetTop = firstLineOffsetTop.current + 80;
-        const scrollTriggerNode = wordNodeArray.find((obj) => {
-          if (obj.offsetTop == thirdLineOffsetTop)
-            return obj.getAttribute("id");
-        });
-        // console.log(scrollTriggerNode.getAttribute("id"));
-        if (scrollTriggerNode !== undefined) {
-          dispatch(
-            scrollPositionAction({
-              wordId: scrollTriggerNode.getAttribute("id"),
-            })
-          );
-        }
-      }
-    },
-    [scrollCount]
-  );
+  //       while (removeCount > 0) {
+  //         wordWrapper.current.removeChild(wordWrapper.current.childNodes[0]);
+  //         removeCount--;
+  //       }
+
+  //       const wordNodeArray = Array.from(wordWrapper.current.childNodes);
+  //       const thirdLineOffsetTop = firstLineOffsetTop.current + 80;
+  //       const scrollTriggerNode = wordNodeArray.find((obj) => {
+  //         if (obj.offsetTop == thirdLineOffsetTop)
+  //           return obj.getAttribute("id");
+  //       });
+
+  //       if (scrollTriggerNode !== undefined) {
+  //         dispatch(
+  //           scrollPositionAction({
+  //             wordId: scrollTriggerNode.getAttribute("id"),
+  //           })
+  //         );
+  //         console.log(scrollTriggerNode.getAttribute("id"));
+  //       }
+  //     }
+  //   },
+  //   [scrollCount]
+  // );
 
   return (
     <div className="typingTestWrapper">
@@ -119,7 +120,7 @@ const TypingTest = () => {
       {testMode === "words" || testMode === "quote" ? <WordCounter /> : null}
       {/* The words area */}
       <div className="mask">
-        <div className="typingTest" ref={wordWrapper}>
+        <div className="typingTest" ref={wordWrapper} pos1={firstLineOffsetTop.current}>
           {content}
         </div>
       </div>

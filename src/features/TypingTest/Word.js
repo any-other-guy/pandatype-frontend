@@ -1,13 +1,46 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { selectWordsById } from "./typingtestSlice";
 
 const Word = ({ wordId }) => {
   // By only passing in the wordId itself instead of the wordObj, unnecessary rerender is prevented
   const wordObj = useSelector((state) => selectWordsById(state, wordId));
+  const thisWord = useRef(null);
+  useEffect(() => {
+    if (wordObj.active === true && thisWord.current !== null) {
+      let parentNode = thisWord.current.parentNode;
+      const firstLineOffsetTop = parentNode.childNodes[0].offsetTop;
+      
+      if (
+        thisWord.current.previousElementSibling !== null &&
+        thisWord.current.previousElementSibling.offsetTop >
+          firstLineOffsetTop &&
+        thisWord.current.previousElementSibling.offsetTop <
+          thisWord.current.offsetTop
+      ) {
+        let removeCount = 0;
+        while (
+          parentNode.childNodes[removeCount].offsetTop ===
+          firstLineOffsetTop
+        ) {
+          removeCount++;
+        }
+
+        while (removeCount > 0) {
+          parentNode.removeChild(parentNode.childNodes[0]);
+          removeCount--;
+        }
+      }
+    }
+  });
 
   return (
-    <div className="word" id={wordId} active={wordObj.active.toString()}>
+    <div
+      className="word"
+      id={wordId}
+      active={wordObj.active.toString()}
+      ref={thisWord}
+    >
       {/* Render blinking cursor on active word */}
       {wordObj.active ? (
         <span

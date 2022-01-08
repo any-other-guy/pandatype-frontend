@@ -24,8 +24,8 @@ const initialState = typingtestAdapter.getInitialState({
   testStatus: "unstarted",
   isTestCompleted: false,
   typedWordsArray: [""],
-  // Test UI related
-  scrollCount: 0,
+  // // Test UI related
+  // scrollCount: 0,
   // Test result related
   statistics: {
     perSecondWpm: [{ wpm: -1, rawWpm: -1, mistakesHere: 0 }],
@@ -93,12 +93,50 @@ export const typingtestSlice = createSlice({
             wordObj.isCompleted = true;
             wordObj.active = false;
 
-            const nextWordId = state.ids[currentWordIndex + 1];
-            if (state.entities[nextWordId] !== undefined){
-              state.entities[nextWordId].active = true;
-              if(state.entities[nextWordId].hasOwnProperty('scrollHere')){
+            const newWordId = state.ids[currentWordIndex + 1];
+            if (
+              newWordId !== undefined &&
+              state.entities[newWordId] !== undefined
+            ) {
+              state.entities[newWordId].active = true;
+              if (state.entities[newWordId].hasOwnProperty("scrollHere")) {
                 state.scrollCount++;
               }
+            }
+            // Ending test in a skipped way
+            else {
+              // TODO: find a way to put these into reuseable function, how to pass states as plain object?
+              state.testStatus = "completed"; // this only mutates testStatus from started to completed
+              state.isTestCompleted = true; // this updates the UI, components are subscribed to this state actually
+              state.statistics.endTime = Date.now();
+              // Prepare test result related states in store
+              const total =
+                state.statistics.correctCount +
+                state.statistics.mistakeCount +
+                state.statistics.extraCount +
+                state.statistics.missedCount;
+              const bad =
+                state.statistics.mistakeCount +
+                state.statistics.extraCount +
+                state.statistics.missedCount;
+              state.statistics.accuracy = ((total - bad) / total) * 100;
+
+              state.statistics.elapsedTime =
+                state.statistics.endTime - state.statistics.startTime;
+              const wpm =
+                (60000 / state.statistics.elapsedTime) *
+                state.statistics.wordsPerfected;
+              const rawWpm =
+                (60000 / state.statistics.elapsedTime) *
+                state.statistics.wordsCompleted;
+              state.statistics.wpm = wpm;
+              state.statistics.rawWpm = rawWpm;
+              // Cleanup the initial 0th-second object in perSecondWpm
+              if (state.statistics.perSecondWpm[0].missedCount > 0) {
+                state.statistics.perSecondWpm[1].missedCount++;
+                state.statistics.perSecondWpm[0].missedCount = 0;
+              }
+              return;
             }
             // Add a new empty entry to typedWordsArray
             typedWordsArray.push("");
@@ -141,11 +179,11 @@ export const typingtestSlice = createSlice({
                     wordObj.wordIndex + 1 === state.ids.length &&
                     letterIndex + 1 === wordObj.letters.length
                   ) {
+                    // TODO: find a way to put these into reuseable function, how to pass states as plain object?
                     state.testStatus = "completed"; // this only mutates testStatus from started to completed
                     state.isTestCompleted = true; // this updates the UI, components are subscribed to this state actually
                     state.statistics.endTime = Date.now();
                     // Prepare test result related states in store
-                    // TODO: find a way to put these into reuseable function, how to pass states as plain object?
                     const total =
                       state.statistics.correctCount +
                       state.statistics.mistakeCount +
@@ -257,13 +295,13 @@ export const typingtestSlice = createSlice({
         console.log("something else pressed: " + key);
       }
     },
-    scrollPositionAction: (state, action) => {
-      const { wordId } = action.payload;
-      state.entities[wordId] = {
-        ...state.entities[wordId],
-        scrollHere: true
-      }
-    },
+    // scrollPositionAction: (state, action) => {
+    //   const { wordId } = action.payload;
+    //   state.entities[wordId] = {
+    //     ...state.entities[wordId],
+    //     scrollHere: true,
+    //   };
+    // },
     perSecondWpmAction: (state, action) => {
       // const { atSecond } = action.payload;
       //FIXME: atSecond很不准, 下面这个object的key暂时用array index代替秒数感觉有点准也
@@ -280,12 +318,11 @@ export const typingtestSlice = createSlice({
       });
     },
     testCompletedAction: (state, action) => {
+      // TODO: find a way to put these into reuseable function, how to pass states as plain object?
       state.isTestCompleted = true; //prevent rerender on testStatus started
       state.testStatus = "completed";
       state.statistics.endTime = Date.now();
-
       // Prepare test result related states in store
-      // TODO: find a way to put these into reuseable function, how to pass states as plain object?
       const total =
         state.statistics.correctCount +
         state.statistics.mistakeCount +
@@ -386,7 +423,7 @@ export const {
   setTestWordOptionAction,
   setTestQuoteOptionAction,
   perSecondWpmAction,
-  scrollPositionAction,
+  // scrollPositionAction,
 } = typingtestSlice.actions;
 
 export default typingtestSlice.reducer;
