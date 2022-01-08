@@ -7,7 +7,7 @@ const Word = ({ wordId }) => {
   const wordObj = useSelector((state) => selectWordsById(state, wordId));
 
   return (
-    <div className="word">
+    <div className="word" id={wordId} active={wordObj.active.toString()}>
       {/* Render blinking cursor on active word */}
       {wordObj.active ? (
         <span

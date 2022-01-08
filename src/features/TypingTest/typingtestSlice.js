@@ -24,6 +24,8 @@ const initialState = typingtestAdapter.getInitialState({
   testStatus: "unstarted",
   isTestCompleted: false,
   typedWordsArray: [""],
+  // Test UI related
+  scrollCount: 0,
   // Test result related
   statistics: {
     perSecondWpm: [{ wpm: -1, rawWpm: -1, mistakesHere: 0 }],
@@ -92,8 +94,12 @@ export const typingtestSlice = createSlice({
             wordObj.active = false;
 
             const nextWordId = state.ids[currentWordIndex + 1];
-            if (state.entities[nextWordId] != null)
+            if (state.entities[nextWordId] !== undefined){
               state.entities[nextWordId].active = true;
+              if(state.entities[nextWordId].hasOwnProperty('scrollHere')){
+                state.scrollCount++;
+              }
+            }
             // Add a new empty entry to typedWordsArray
             typedWordsArray.push("");
 
@@ -251,6 +257,13 @@ export const typingtestSlice = createSlice({
         console.log("something else pressed: " + key);
       }
     },
+    scrollPositionAction: (state, action) => {
+      const { wordId } = action.payload;
+      state.entities[wordId] = {
+        ...state.entities[wordId],
+        scrollHere: true
+      }
+    },
     perSecondWpmAction: (state, action) => {
       // const { atSecond } = action.payload;
       //FIXME: atSecond很不准, 下面这个object的key暂时用array index代替秒数感觉有点准也
@@ -373,6 +386,7 @@ export const {
   setTestWordOptionAction,
   setTestQuoteOptionAction,
   perSecondWpmAction,
+  scrollPositionAction,
 } = typingtestSlice.actions;
 
 export default typingtestSlice.reducer;
