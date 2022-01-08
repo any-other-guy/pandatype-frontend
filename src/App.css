@@ -18,7 +18,7 @@ body {
   display: grid;
   grid-auto-flow: row;
   min-height: 100vh; /* why does 100vh creates scrollbar?? */
-  padding: 1.5rem;
+  padding: 1rem 2rem 2rem 2rem;
   margin-left: auto;
   margin-right: auto;
   gap: 2rem;
@@ -31,7 +31,7 @@ body {
 /* Header */
 .headerWrapper {
   display: grid;
-  height: 2.3rem;
+  /* height: 2.3rem; */
   grid-auto-flow: column;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -97,6 +97,7 @@ body {
 .typingTestWrapper {
   display: flex;
   flex-flow: row wrap;
+  margin-bottom: 5rem; /*temp value, adjust here vertical pos here*/
 }
 
 .typingTest {
