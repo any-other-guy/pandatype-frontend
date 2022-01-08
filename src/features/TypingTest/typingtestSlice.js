@@ -105,37 +105,7 @@ export const typingtestSlice = createSlice({
             }
             // Ending test in a skipped way
             else {
-              // TODO: find a way to put these into reuseable function, how to pass states as plain object?
-              state.testStatus = "completed"; // this only mutates testStatus from started to completed
-              state.isTestCompleted = true; // this updates the UI, components are subscribed to this state actually
-              state.statistics.endTime = Date.now();
-              // Prepare test result related states in store
-              const total =
-                state.statistics.correctCount +
-                state.statistics.mistakeCount +
-                state.statistics.extraCount +
-                state.statistics.missedCount;
-              const bad =
-                state.statistics.mistakeCount +
-                state.statistics.extraCount +
-                state.statistics.missedCount;
-              state.statistics.accuracy = ((total - bad) / total) * 100;
-
-              state.statistics.elapsedTime =
-                state.statistics.endTime - state.statistics.startTime;
-              const wpm =
-                (60000 / state.statistics.elapsedTime) *
-                state.statistics.wordsPerfected;
-              const rawWpm =
-                (60000 / state.statistics.elapsedTime) *
-                state.statistics.wordsCompleted;
-              state.statistics.wpm = wpm;
-              state.statistics.rawWpm = rawWpm;
-              // Cleanup the initial 0th-second object in perSecondWpm
-              if (state.statistics.perSecondWpm[0].missedCount > 0) {
-                state.statistics.perSecondWpm[1].missedCount++;
-                state.statistics.perSecondWpm[0].missedCount = 0;
-              }
+              completeTest(state);
               return;
             }
             // Add a new empty entry to typedWordsArray
@@ -179,37 +149,7 @@ export const typingtestSlice = createSlice({
                     wordObj.wordIndex + 1 === state.ids.length &&
                     letterIndex + 1 === wordObj.letters.length
                   ) {
-                    // TODO: find a way to put these into reuseable function, how to pass states as plain object?
-                    state.testStatus = "completed"; // this only mutates testStatus from started to completed
-                    state.isTestCompleted = true; // this updates the UI, components are subscribed to this state actually
-                    state.statistics.endTime = Date.now();
-                    // Prepare test result related states in store
-                    const total =
-                      state.statistics.correctCount +
-                      state.statistics.mistakeCount +
-                      state.statistics.extraCount +
-                      state.statistics.missedCount;
-                    const bad =
-                      state.statistics.mistakeCount +
-                      state.statistics.extraCount +
-                      state.statistics.missedCount;
-                    state.statistics.accuracy = ((total - bad) / total) * 100;
-
-                    state.statistics.elapsedTime =
-                      state.statistics.endTime - state.statistics.startTime;
-                    const wpm =
-                      (60000 / state.statistics.elapsedTime) *
-                      state.statistics.wordsPerfected;
-                    const rawWpm =
-                      (60000 / state.statistics.elapsedTime) *
-                      state.statistics.wordsCompleted;
-                    state.statistics.wpm = wpm;
-                    state.statistics.rawWpm = rawWpm;
-                    // Cleanup the initial 0th-second object in perSecondWpm
-                    if (state.statistics.perSecondWpm[0].missedCount > 0) {
-                      state.statistics.perSecondWpm[1].missedCount++;
-                      state.statistics.perSecondWpm[0].missedCount = 0;
-                    }
+                    completeTest(state);
                     return;
                   }
                 }
@@ -317,33 +257,8 @@ export const typingtestSlice = createSlice({
         mistakesHere: 0,
       });
     },
-    testCompletedAction: (state, action) => {
-      // TODO: find a way to put these into reuseable function, how to pass states as plain object?
-      state.isTestCompleted = true; //prevent rerender on testStatus started
-      state.testStatus = "completed";
-      state.statistics.endTime = Date.now();
-      // Prepare test result related states in store
-      const total =
-        state.statistics.correctCount +
-        state.statistics.mistakeCount +
-        state.statistics.extraCount +
-        state.statistics.missedCount;
-      const bad =
-        state.statistics.mistakeCount +
-        state.statistics.extraCount +
-        state.statistics.missedCount;
-      state.statistics.accuracy = ((total - bad) / total) * 100;
-
-      const elapsedTime = state.statistics.endTime - state.statistics.startTime;
-      const wpm = (60000 / elapsedTime) * state.statistics.wordsPerfected;
-      const rawWpm = (60000 / elapsedTime) * state.statistics.wordsCompleted;
-      state.statistics.wpm = wpm;
-      state.statistics.rawWpm = rawWpm;
-      // Cleanup the initial 0th-second object in perSecondWpm
-      if (state.statistics.perSecondWpm[0].missedCount > 0) {
-        state.statistics.perSecondWpm[1].missedCount++;
-        state.statistics.perSecondWpm[0].missedCount = 0;
-      }
+    testTimerDepletedAction: (state, action) => {
+      completeTest(state);
       // Cleanup the last overtimed entry in perSecondWpm, if any
       //TODO: find out why this happens, for now just purge them away
       while (
@@ -414,9 +329,37 @@ export const typingtestSlice = createSlice({
   },
 });
 
+const completeTest = (state) => {
+  state.isTestCompleted = true; //prevent rerender on testStatus started
+  state.testStatus = "completed";
+  state.statistics.endTime = Date.now();
+  // Prepare test result related states in store
+  const total =
+    state.statistics.correctCount +
+    state.statistics.mistakeCount +
+    state.statistics.extraCount +
+    state.statistics.missedCount;
+  const bad =
+    state.statistics.mistakeCount +
+    state.statistics.extraCount +
+    state.statistics.missedCount;
+  state.statistics.accuracy = ((total - bad) / total) * 100;
+
+  const elapsedTime = state.statistics.endTime - state.statistics.startTime;
+  const wpm = (60000 / elapsedTime) * state.statistics.wordsPerfected;
+  const rawWpm = (60000 / elapsedTime) * state.statistics.wordsCompleted;
+  state.statistics.wpm = wpm;
+  state.statistics.rawWpm = rawWpm;
+  // Cleanup the initial 0th-second object in perSecondWpm
+  if (state.statistics.perSecondWpm[0].missedCount > 0) {
+    state.statistics.perSecondWpm[1].missedCount++;
+    state.statistics.perSecondWpm[0].missedCount = 0;
+  }
+};
+
 export const {
   keyAction,
-  testCompletedAction,
+  testTimerDepletedAction,
   setLanguageAction,
   setTestModeAction,
   setTestTimeOptionAction,

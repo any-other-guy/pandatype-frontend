@@ -128,7 +128,7 @@ body {
   /* flex-wrap: nowrap; */
   align-content: flex-start;
   /*这个血妈关键，要parent relative这样如果child是absolute才能really do be relative to absolute*/
-  position: relative; 
+  position: relative;
   margin-left: 1px;
 }
 
@@ -230,7 +230,8 @@ body {
   color: var(--main-color);
 }
 
-.moreStats .testType .bottom , .moreStats .info .bottom {
+.moreStats .testType .bottom,
+.moreStats .info .bottom {
   font-size: 1rem;
   line-height: 1rem;
   color: var(--main-color);
@@ -304,11 +305,14 @@ body {
 }
 
 .cursor {
-  position: absolute; /*这个也血妈关键，只有absolute的child，才能在flex的parent里面被忽略*/
+  /*这个也血妈关键，只有absolute的child，才能在flex的parent里面被忽略*/
+  position: absolute;
   transition: left 0.1s ease;
+  /* transform-origin: top left; */
   margin-left: -0.75rem;
+  border-radius: 1rem;
   color: var(--main-color);
-  animation: blink 1s infinite 1s;
+  animation: blink 1s infinite;
   font-size: 2.2rem;
   top: -0.6rem;
 }
