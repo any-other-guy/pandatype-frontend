@@ -22,34 +22,42 @@ const TypingTest = () => {
   const firstLineOffsetTop = useRef(null);
   const [wordsToUnmount, setWordsToUnmount] = useState([]);
 
-  // Handling input letters
+  // Handling key input
   useKeyPress((key) => {
+    // Dispatch all keypress for now
+    // TODO: filter out some unnecessary ones
     dispatch(keyAction({ key: key }));
-    if (wordWrapper.current.childNodes.length < 50) {
-      console.log("fetching more tests");
-      dispatch(fetchTestContent({ language: testLanguage, type: testMode }));
-    }
     //TODO: might have better check on when to unmount first row
+    // Only check
     if (/\s/.test(key)) {
+      // Fetch for more, only do this after the initial render
+      if (wordWrapper.current.childNodes.length < 50) {
+        console.log("fetching more tests");
+        dispatch(fetchTestContent({ language: testLanguage, type: testMode }));
+      }
+      // Remove first row when cursor is at a specific position (buttom left)
       const activeWord = Array.from(wordWrapper.current.childNodes).find(
         (node) => {
           return node.getAttribute("active") === "true";
         }
       );
+      // Remember the relative position of the first row element
       if (activeWord === undefined) return;
       firstLineOffsetTop.current =
         activeWord.parentNode.childNodes[0].offsetTop;
+      // If the cursor is at bottom left, which means that the last sibling of the current word is at the last position on the second row
       if (
         activeWord.previousElementSibling !== null &&
         activeWord.previousElementSibling.offsetTop >
           firstLineOffsetTop.current &&
         activeWord.previousElementSibling.offsetTop < activeWord.offsetTop
       ) {
-        let arr = Array.from(activeWord.parentNode.childNodes)
+        // Add first row to wordsToUnmount
+        const arr = Array.from(activeWord.parentNode.childNodes)
           .filter((node) => node.offsetTop === firstLineOffsetTop.current)
           .map((e) => e.getAttribute("id"))
           .concat(wordsToUnmount);
-
+        // Then trigger rerender here for the actual 'unmounting' process
         setWordsToUnmount(arr);
       }
     }
