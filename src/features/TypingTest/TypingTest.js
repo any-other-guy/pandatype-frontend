@@ -4,6 +4,7 @@ import {
   fetchTestContent,
   selectWordsIds,
   keyAction,
+  resetTestAction,
   // scrollPositionAction,
 } from "./typingtestSlice";
 import Word from "./Word";
@@ -27,11 +28,16 @@ const TypingTest = () => {
     // Dispatch all keypress for now
     // TODO: filter out some unnecessary ones
     dispatch(keyAction({ key: key }));
+    if (key === "Enter") {
+      dispatch(
+        resetTestAction({ testLanguage: testLanguage, testMode: testMode })
+      );
+    }
     //TODO: might have better check on when to unmount first row
-    // Only check
+    // Only check 
     if (/\s/.test(key)) {
-      // Fetch for more, only do this after the initial render
-      if (wordWrapper.current.childNodes.length < 50) {
+      // Fetch for more, only do this after the initial render for time mode
+      if (testMode === "time" && wordWrapper.current.childNodes.length < 50) {
         console.log("fetching more tests");
         dispatch(fetchTestContent({ language: testLanguage, type: testMode }));
       }
@@ -57,7 +63,7 @@ const TypingTest = () => {
           .filter((node) => node.offsetTop === firstLineOffsetTop.current)
           .map((e) => e.getAttribute("id"))
           .concat(wordsToUnmount);
-        // Then trigger rerender here for the actual 'unmounting' process
+        // Then trigger re-render here for the actual 'unmounting' process
         setWordsToUnmount(arr);
       }
     }

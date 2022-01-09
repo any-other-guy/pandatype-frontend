@@ -11,6 +11,25 @@ const typingtestAdapter = createEntityAdapter({
   sortComparer: (a, b) => a.wordIndex < b.wordIndex,
 });
 
+const initialStatistics = {
+  perSecondWpm: [{ wpm: -1, rawWpm: -1, mistakesHere: 0 }],
+  wpm: null,
+  accuracy: null,
+  startTime: null,
+  endTime: null,
+  elapsedTime: null,
+  rawWpm: null,
+  wordsPerfected: 0,
+  wordsCompleted: 0,
+  mistakeCount: 0,
+  correctCount: 0,
+  extraCount: 0,
+  missedCount: 0,
+  rawCharacterCount: 0,
+  backspaceCount: 0,
+  rawTypingHistory: "",
+};
+
 const initialState = typingtestAdapter.getInitialState({
   // Test load up related
   loadingStatus: "idle",
@@ -29,34 +48,17 @@ const initialState = typingtestAdapter.getInitialState({
   // // Test UI related
   // scrollCount: 0,
   // Test result related
-  statistics: {
-    perSecondWpm: [{ wpm: -1, rawWpm: -1, mistakesHere: 0 }],
-    wpm: null,
-    accuracy: null,
-    startTime: null,
-    endTime: null,
-    elapsedTime: null,
-    rawWpm: null,
-    wordsPerfected: 0,
-    wordsCompleted: 0,
-    mistakeCount: 0,
-    correctCount: 0,
-    extraCount: 0,
-    missedCount: 0,
-    rawCharacterCount: 0,
-    backspaceCount: 0,
-    rawTypingHistory: "",
-  },
+  statistics: initialStatistics,
 });
 
 export const fetchTestContent = createAsyncThunk(
   "typingtest/getTest",
   async (query, ...payload) => {
-    let url = "http://localhost:5000/getTest"
-    if(Object.keys(query).length >0){
+    let url = "http://localhost:5000/getTest";
+    if (Object.keys(query).length > 0) {
       url += "?";
-      for(const q in query){
-        if(query[q] === 'time') query[q] = 'words';
+      for (const q in query) {
+        if (query[q] === "time") query[q] = "words";
         url += `${q}=${query[q]}&`;
       }
       url = url.slice(0, -1);
@@ -246,13 +248,6 @@ export const typingtestSlice = createSlice({
         console.log("something else pressed: " + key);
       }
     },
-    // scrollPositionAction: (state, action) => {
-    //   const { wordId } = action.payload;
-    //   state.entities[wordId] = {
-    //     ...state.entities[wordId],
-    //     scrollHere: true,
-    //   };
-    // },
     perSecondWpmAction: (state, action) => {
       // const { atSecond } = action.payload;
       //FIXME: atSecond很不准, 下面这个object的key暂时用array index代替秒数感觉有点准也
@@ -279,6 +274,30 @@ export const typingtestSlice = createSlice({
       ) {
         state.statistics.perSecondWpm.pop();
       }
+    },
+    resetTestAction: (state, action) => {
+      const {
+        testLanguage = state.testLanguage,
+        testMode = state.testMode,
+        testTimeOption = state.testTimeOption,
+        testWordOption = state.testWordOption,
+        testQuoteOption = state.testQuoteOption,
+      } = action.payload;
+      //FIXME: typingtestAdapter.removeAll() doesnt work, why?
+      // state.ids = [],
+      state.entities = {};
+      state.testLanguage = testLanguage;
+      state.testMode = testMode;
+      state.testTimeOption = parseInt(testTimeOption);
+      state.testWordOption = parseInt(testWordOption);
+      state.testQuoteOption = testQuoteOption;
+      state.loadingStatus = "idle";
+      state.loadingError = null;
+      state.wordsLoadedCount = 0;
+      state.testStatus = "unstarted";
+      state.isTestCompleted = false;
+      state.typedWordsArray = [""];
+      state.statistics = initialStatistics;
     },
     setLanguageAction: (state, action) => {
       const { mode = "english" } = action.payload;
@@ -312,14 +331,17 @@ export const typingtestSlice = createSlice({
         state.testLanguage = language;
         let words;
         switch (type) {
-          case 'words':
-            words = shuffle(testStuff[type]).slice(0, 50);
+          case "words":
+            words = shuffle(testStuff[type]).slice(0, 100);
             break;
-        
+
           default:
             break;
         }
-        if(words === undefined) return;
+        if (state.testMode === "words" && state.testWordOption < 50) {
+          words = words.slice(0, state.testWordOption);
+        }
+        if (words === undefined) return;
         // Populate test objects into store
         const wordsObj = words.map((word, index) => {
           const wordIndex = state.wordsLoadedCount + index;
@@ -357,6 +379,8 @@ const completeTest = (state) => {
   state.isTestCompleted = true; //prevent rerender on testStatus started
   state.testStatus = "completed";
   state.statistics.endTime = Date.now();
+  const elapsedTime = state.statistics.endTime - state.statistics.startTime;
+  state.statistics.elapsedTime = elapsedTime;
   // Prepare test result related states in store
   const total =
     state.statistics.correctCount +
@@ -369,7 +393,6 @@ const completeTest = (state) => {
     state.statistics.missedCount;
   state.statistics.accuracy = ((total - bad) / total) * 100;
 
-  const elapsedTime = state.statistics.endTime - state.statistics.startTime;
   const wpm = (60000 / elapsedTime) * state.statistics.wordsPerfected;
   const rawWpm = (60000 / elapsedTime) * state.statistics.wordsCompleted;
   state.statistics.wpm = wpm;
@@ -379,6 +402,11 @@ const completeTest = (state) => {
     state.statistics.perSecondWpm[1].missedCount++;
     state.statistics.perSecondWpm[0].missedCount = 0;
   }
+  console.log(
+    state.statistics.perSecondWpm
+      .map((e) => e.wpm)
+      .slice(1, state.statistics.perSecondWpm.length)
+  );
 };
 
 export const {
@@ -390,7 +418,7 @@ export const {
   setTestWordOptionAction,
   setTestQuoteOptionAction,
   perSecondWpmAction,
-  // scrollPositionAction,
+  resetTestAction,
 } = typingtestSlice.actions;
 
 export default typingtestSlice.reducer;

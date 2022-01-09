@@ -7,6 +7,7 @@ import {
   setTestTimeOptionAction,
   setTestWordOptionAction,
   setTestQuoteOptionAction,
+  resetTestAction,
 } from "../features/TypingTest/typingtestSlice";
 
 const Header = () => {
@@ -21,37 +22,44 @@ const Header = () => {
   };
 
   const selectLanguage = ({ target }) => {
+    //TODO: change here after adding multi language support
     dispatch(setLanguageAction({ mode: target.getAttribute("mode") }));
     markAllSiblingNotActive(target);
     target.classList.add("active");
   };
+
   const setTestMode = ({ target }) => {
     let mode = target.getAttribute("mode");
-    dispatch(setTestModeAction({ mode: mode }));
+    // dispatch(setTestModeAction({ mode: mode }));
+    dispatch(resetTestAction({ testMode: mode }));
     markAllSiblingNotActive(target);
     target.classList.add("active");
     target.parentNode.parentNode.childNodes.forEach((node, index) => {
-      if(node.classList.contains(`${mode}Options`)){
+      if (node.classList.contains(`${mode}Options`)) {
         node.classList.remove("hidden");
-      }
-      else if(!node.classList.contains('modeOptions')){
+      } else if (!node.classList.contains("modeOptions")) {
         node.classList.add("hidden");
       }
-    })
-
+    });
   };
   const setTestTimeOption = ({ target }) => {
-    dispatch(setTestTimeOptionAction({ mode: target.getAttribute("mode") }));
+    let testTimeOption = target.getAttribute("mode");
+    // dispatch(setTestTimeOptionAction({ mode: target.getAttribute("mode") }));
+    dispatch(resetTestAction({ testTimeOption: testTimeOption }));
     markAllSiblingNotActive(target);
     target.classList.add("active");
   };
   const setTestWordOption = ({ target }) => {
-    dispatch(setTestWordOptionAction({ mode: target.getAttribute("mode") }));
+    let testWordOption = target.getAttribute("mode");
+    // dispatch(setTestWordOptionAction({ mode: target.getAttribute("mode") }));
+    dispatch(resetTestAction({ testWordOption: testWordOption }));
     markAllSiblingNotActive(target);
     target.classList.add("active");
   };
   const setTestQuoteOption = ({ target }) => {
-    dispatch(setTestQuoteOptionAction({ mode: target.getAttribute("mode") }));
+    let testQuoteOption = target.getAttribute("mode");
+    // dispatch(setTestQuoteOptionAction({ mode: target.getAttribute("mode") }));
+    dispatch(resetTestAction({ testQuoteOption: testQuoteOption }));
     markAllSiblingNotActive(target);
     target.classList.add("active");
   };

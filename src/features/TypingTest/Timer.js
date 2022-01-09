@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useInterval } from "./useIntervalHook";
 import { testTimerDepletedAction } from "./typingtestSlice";
@@ -12,6 +12,11 @@ const Timer = () => {
     (state) => state.typingtest.testTimeOption
   );
   const [timeRemaining, setTimeRemaining] = useState(totalTime);
+
+  // Set new totalTime on rerender caused by tate.typingtest.testTimeOption change
+  useEffect(() => {
+    setTimeRemaining(totalTime);
+  }, [totalTime]);
 
   // Timer
   useInterval(() => {
