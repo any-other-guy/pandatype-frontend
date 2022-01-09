@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchTestContent,
@@ -11,19 +11,48 @@ import { useKeyPress } from "./keypressHook";
 import { Spinner } from "./Spinner";
 import Timer from "./Timer";
 import WordCounter from "./WordCounter";
+import { unmountComponentAtNode } from "react-dom";
 
 const TypingTest = () => {
   const dispatch = useDispatch();
   const wordIds = useSelector(selectWordsIds);
+  const testLanguage = useSelector((state) => state.typingtest.testLanguage);
   const testMode = useSelector((state) => state.typingtest.testMode);
   const wordWrapper = useRef(null);
-  // const remount = useRef(0);
-  // const scrollCount = useSelector((state) => state.typingtest.scrollCount);
   const firstLineOffsetTop = useRef(null);
+  const [wordsToUnmount, setWordsToUnmount] = useState([]);
 
   // Handling input letters
   useKeyPress((key) => {
     dispatch(keyAction({ key: key }));
+    if (wordWrapper.current.childNodes.length < 50) {
+      console.log("fetching more tests");
+      dispatch(fetchTestContent({ language: testLanguage, type: testMode }));
+    }
+    //TODO: might have better check on when to unmount first row
+    if (/\s/.test(key)) {
+      const activeWord = Array.from(wordWrapper.current.childNodes).find(
+        (node) => {
+          return node.getAttribute("active") === "true";
+        }
+      );
+      if (activeWord === undefined) return;
+      firstLineOffsetTop.current =
+        activeWord.parentNode.childNodes[0].offsetTop;
+      if (
+        activeWord.previousElementSibling !== null &&
+        activeWord.previousElementSibling.offsetTop >
+          firstLineOffsetTop.current &&
+        activeWord.previousElementSibling.offsetTop < activeWord.offsetTop
+      ) {
+        let arr = Array.from(activeWord.parentNode.childNodes)
+          .filter((node) => node.offsetTop === firstLineOffsetTop.current)
+          .map((e) => e.getAttribute("id"))
+          .concat(wordsToUnmount);
+
+        setWordsToUnmount(arr);
+      }
+    }
   });
 
   // Select loading status from store
@@ -37,81 +66,23 @@ const TypingTest = () => {
   // Fetch test content only after first load
   useEffect(() => {
     if (testContentLoadingStatus === "idle") {
-      dispatch(fetchTestContent());
+      console.log("initial fetch");
+      dispatch(fetchTestContent({ language: testLanguage, type: testMode }));
     }
   }, [testContentLoadingStatus, dispatch]);
 
   // Populate test content UI
   let content;
-
   if (testContentLoadingStatus === "loading") {
     content = <Spinner />;
-    content = null;
   } else if (testContentLoadingStatus === "succeeded") {
     content = wordIds.map((wordId) => {
+      if (wordsToUnmount.includes(wordId)) return;
       return <Word key={wordId} wordId={wordId}></Word>;
     });
   } else if (testContentLoadingStatus === "failed") {
     content = <div>{testContentLoadingError}</div>;
   }
-
-  // useLayoutEffect(() => {
-  //   const wordNodeArray = Array.from(wordWrapper.current.childNodes);
-  //   //TODO: I AM INSANE!!
-  //   if (wordNodeArray.length == 0) {
-  //     remount.current++;
-  //   }
-  //   if (wordNodeArray.length === 0) return;
-  //   firstLineOffsetTop.current = wordNodeArray[0].offsetTop;
-
-  //   // // FIXME: hardcoding 80px here;
-  //   // const thirdLineOffsetTop = firstLineOffsetTop.current + 80;
-  //   // const scrollTriggerNode = wordNodeArray.find((obj) => {
-  //   //   if (obj.offsetTop == thirdLineOffsetTop) return obj.getAttribute("id");
-  //   // });
-  //   // console.log(scrollTriggerNode.getAttribute("id"));
-  //   // dispatch(
-  //   //   scrollPositionAction({ wordId: scrollTriggerNode.getAttribute("id") })
-  //   // );
-  // }, [remount.current]);
-
-  // useLayoutEffect(
-  //   (params) => {
-  //     if (scrollCount != 0) {
-  //       // wordWrapper.current.setAttribute('style', 'margin-top: -2.5rem;');
-
-  //       let removeCount = 0;
-  //       while (
-  //         wordWrapper.current.childNodes[removeCount].offsetTop ===
-  //         firstLineOffsetTop.current
-  //       ) {
-  //         removeCount++;
-  //       }
-
-  //       while (removeCount > 0) {
-  //         wordWrapper.current.removeChild(wordWrapper.current.childNodes[0]);
-  //         removeCount--;
-  //       }
-
-  //       const wordNodeArray = Array.from(wordWrapper.current.childNodes);
-  //       const thirdLineOffsetTop = firstLineOffsetTop.current + 80;
-  //       const scrollTriggerNode = wordNodeArray.find((obj) => {
-  //         if (obj.offsetTop == thirdLineOffsetTop)
-  //           return obj.getAttribute("id");
-  //       });
-
-  //       if (scrollTriggerNode !== undefined) {
-  //         dispatch(
-  //           scrollPositionAction({
-  //             wordId: scrollTriggerNode.getAttribute("id"),
-  //           })
-  //         );
-  //         console.log(scrollTriggerNode.getAttribute("id"));
-  //       }
-  //     }
-  //   },
-  //   [scrollCount]
-  // );
 
   return (
     <div className="typingTestWrapper">
@@ -119,14 +90,9 @@ const TypingTest = () => {
       {testMode === "time" ? <Timer /> : null}
       {testMode === "words" || testMode === "quote" ? <WordCounter /> : null}
       {/* The words area */}
-      <div
-        className="typingTest"
-        ref={wordWrapper}
-        pos1={firstLineOffsetTop.current}
-      >
+      <div className="typingTest" ref={wordWrapper}>
         {content}
       </div>
-
       {/* TODO: Restart button group */}
     </div>
   );

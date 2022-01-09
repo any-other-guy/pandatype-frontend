@@ -4,6 +4,7 @@ import {
   createSlice,
 } from "@reduxjs/toolkit";
 import { client } from "../../utils/client";
+import { shuffle } from "../../utils/utils";
 
 const typingtestAdapter = createEntityAdapter({
   selectId: (word) => word.wordId,
@@ -14,6 +15,7 @@ const initialState = typingtestAdapter.getInitialState({
   // Test load up related
   loadingStatus: "idle",
   loadingError: null,
+  wordsLoadedCount: 0,
   // Test options related
   testLanguage: "english",
   testMode: "time",
@@ -49,8 +51,17 @@ const initialState = typingtestAdapter.getInitialState({
 
 export const fetchTestContent = createAsyncThunk(
   "typingtest/getTest",
-  async () => {
-    const response = await client.get("http://localhost:5000/getTest");
+  async (query, ...payload) => {
+    let url = "http://localhost:5000/getTest"
+    if(Object.keys(query).length >0){
+      url += "?";
+      for(const q in query){
+        if(query[q] === 'time') query[q] = 'words';
+        url += `${q}=${query[q]}&`;
+      }
+      url = url.slice(0, -1);
+    }
+    const response = await client.get(url, payload);
     return response.data;
   }
 );
@@ -297,9 +308,21 @@ export const typingtestSlice = createSlice({
       })
       .addCase(fetchTestContent.fulfilled, (state, action) => {
         state.loadingStatus = "succeeded";
-        const { words } = action.payload;
+        const { language, type, ...testStuff } = action.payload;
+        state.testLanguage = language;
+        let words;
+        switch (type) {
+          case 'words':
+            words = shuffle(testStuff[type]).slice(0, 50);
+            break;
+        
+          default:
+            break;
+        }
+        if(words === undefined) return;
         // Populate test objects into store
-        const wordsObj = words.map((word, wordIndex) => {
+        const wordsObj = words.map((word, index) => {
+          const wordIndex = state.wordsLoadedCount + index;
           return {
             word: word,
             wordIndex: wordIndex,
@@ -320,7 +343,8 @@ export const typingtestSlice = createSlice({
             isPerfected: false,
           };
         });
-        typingtestAdapter.setAll(state, wordsObj);
+        typingtestAdapter.upsertMany(state, wordsObj);
+        state.wordsLoadedCount += Object.keys(wordsObj).length;
       })
       .addCase(fetchTestContent.rejected, (state, action) => {
         state.loadingStatus = "failed";
