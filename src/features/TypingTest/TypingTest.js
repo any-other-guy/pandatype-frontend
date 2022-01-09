@@ -34,7 +34,7 @@ const TypingTest = () => {
       );
     }
     //TODO: might have better check on when to unmount first row
-    // Only check 
+    // Only check
     if (/\s/.test(key)) {
       // Fetch for more, only do this after the initial render for time mode
       if (testMode === "time" && wordWrapper.current.childNodes.length < 50) {
@@ -59,10 +59,20 @@ const TypingTest = () => {
         activeWord.previousElementSibling.offsetTop < activeWord.offsetTop
       ) {
         // Add first row to wordsToUnmount
-        const arr = Array.from(activeWord.parentNode.childNodes)
-          .filter((node) => node.offsetTop === firstLineOffsetTop.current)
-          .map((e) => e.getAttribute("id"))
-          .concat(wordsToUnmount);
+        // const arr = Array.from(activeWord.parentNode.childNodes)
+        //   .filter((node) => node.offsetTop === firstLineOffsetTop.current)
+        //   .map((e) => e.getAttribute("id"))
+        //   .concat(wordsToUnmount);
+        // Maybe a better way to write the line above
+        const arr = Array.from(activeWord.parentNode.childNodes).reduce(
+          (list, node) => {
+            if (node.offsetTop === firstLineOffsetTop.current) {
+              list.push(node.getAttribute("id"));
+            }
+            return list;
+          },
+          [...wordsToUnmount]
+        );
         // Then trigger re-render here for the actual 'unmounting' process
         setWordsToUnmount(arr);
       }

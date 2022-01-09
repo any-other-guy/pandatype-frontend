@@ -159,7 +159,7 @@ export const typingtestSlice = createSlice({
                 // End test if the last letter word of the last letter is typed correctly
                 if (state.testMode === "words") {
                   if (
-                    wordObj.wordIndex + 1 === state.ids.length &&
+                    wordObj.wordIndex + 1 === state.testWordOption &&
                     letterIndex + 1 === wordObj.letters.length
                   ) {
                     completeTest(state);
@@ -340,7 +340,7 @@ export const typingtestSlice = createSlice({
           default:
             break;
         }
-        if (state.testMode === "words" && state.testWordOption < 50) {
+        if (state.testMode === "words") {
           words = words.slice(0, state.testWordOption);
         }
         if (words === undefined) return;
@@ -404,6 +404,8 @@ const completeTest = (state) => {
     state.statistics.perSecondWpm[1].missedCount++;
     state.statistics.perSecondWpm[0].missedCount = 0;
   }
+
+  //TODO: calculate consistency
   console.log(
     state.statistics.perSecondWpm
       .map((e) => e.wpm)
