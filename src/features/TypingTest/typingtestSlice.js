@@ -334,7 +334,9 @@ export const typingtestSlice = createSlice({
           case "words":
             words = shuffle(testStuff[type]).slice(0, 100);
             break;
-
+          case "quote":
+            // FIXME: same as words for now, too lazy
+            words = shuffle(testStuff[type]).slice(0, 100);
           default:
             break;
         }
