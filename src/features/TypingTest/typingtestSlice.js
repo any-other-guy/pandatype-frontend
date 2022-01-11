@@ -15,6 +15,7 @@ const initialStatistics = {
   perSecondWpm: [{ wpm: -1, rawWpm: -1, mistakesHere: 0 }],
   wpm: null,
   accuracy: null,
+  consistency: null,
   startTime: null,
   endTime: null,
   elapsedTime: null,
@@ -266,7 +267,7 @@ export const typingtestSlice = createSlice({
     testTimerDepletedAction: (state, action) => {
       completeTest(state);
       // Cleanup the last overtimed entry in perSecondWpm, if any
-      //TODO: find out why this happens, for now just purge them away
+      //FIXME: find out why this happens, for now just purge them away
       while (
         state.testMode === "time" &&
         state.statistics.perSecondWpm[state.statistics.perSecondWpm.length - 1]
@@ -399,18 +400,28 @@ const completeTest = (state) => {
   const rawWpm = (60000 / elapsedTime) * state.statistics.wordsCompleted;
   state.statistics.wpm = wpm;
   state.statistics.rawWpm = rawWpm;
-  // Cleanup the initial 0th-second object in perSecondWpm
-  if (state.statistics.perSecondWpm[0].missedCount > 0) {
-    state.statistics.perSecondWpm[1].missedCount++;
-    state.statistics.perSecondWpm[0].missedCount = 0;
+  
+  // Correctly count the mistake before the first perSecondWpmAction dispatched
+  if (state.statistics.perSecondWpm[0].mistakesHere > 0) {
+    state.statistics.perSecondWpm[1].mistakesHere =
+      state.statistics.perSecondWpm[0].mistakesHere;
   }
+  // Cleaning up the initial 0th-second object in perSecondWpm
+  state.statistics.perSecondWpm.shift();
 
   //TODO: calculate consistency
-  console.log(
+  state.statistics.consistency =
     state.statistics.perSecondWpm
-      .map((e) => e.wpm)
-      .slice(1, state.statistics.perSecondWpm.length)
-  );
+      .reduce((list, obj) => {
+        console.log(obj.wpm);
+        list.push(
+          100 -
+            Math.abs((obj.wpm - state.statistics.wpm) / state.statistics.wpm) *
+              100
+        );
+        return list;
+      }, [])
+      .reduce((sum, e) => sum + e, 0) / state.statistics.perSecondWpm.length;
 };
 
 export const {

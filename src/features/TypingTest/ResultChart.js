@@ -102,7 +102,6 @@ export const options = {
 const ResultChart = ({ perSecondWpm, elapsedTime }) => {
   // Remove the first dummy object in perSecondWpm array. For now
   let stats = JSON.parse(JSON.stringify(perSecondWpm));
-  stats.shift();
   // Display the endTime as the last x-axis data point on graph
   stats[stats.length - 1].index = elapsedTime / 1000;
 

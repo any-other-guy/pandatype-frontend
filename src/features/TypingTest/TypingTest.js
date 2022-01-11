@@ -93,17 +93,27 @@ const TypingTest = () => {
       console.log("initial fetch");
       dispatch(fetchTestContent({ language: testLanguage, type: testMode }));
     }
-  }, [testContentLoadingStatus, dispatch]);
+  }, [testContentLoadingStatus, testLanguage, testMode, dispatch]);
 
   // Populate test content UI
   let content;
   if (testContentLoadingStatus === "loading") {
     // content = <Spinner />;
   } else if (testContentLoadingStatus === "succeeded") {
-    content = wordIds.map((wordId) => {
-      if (wordsToUnmount.includes(wordId)) return;
-      return <Word key={wordId} wordId={wordId}></Word>;
-    });
+    content = wordIds.reduce((list, wordId) => {
+      if (wordsToUnmount.includes(wordId)) return list;
+      list.push(<Word key={wordId} wordId={wordId}></Word>);
+      return list;
+    }, []);
+
+    // fancier way but should be slower since [...list] copies the whole thing every time
+    // content = wordIds.reduce(
+    //   (list, wordId) =>
+    //     wordsToUnmount.includes(wordId)
+    //       ? list
+    //       : [...list, <Word key={wordId} wordId={wordId}></Word>],
+    //   []
+    // );
   } else if (testContentLoadingStatus === "failed") {
     content = <div>{testContentLoadingError}</div>;
   }
@@ -118,7 +128,7 @@ const TypingTest = () => {
         {content}
       </div>
       {/* Restart button group */}
-      <RestartButton testLanguage={testLanguage} testMode={testMode}/>
+      <RestartButton testLanguage={testLanguage} testMode={testMode} />
     </div>
   );
 };

@@ -8,6 +8,7 @@ const TestResult = () => {
     perSecondWpm,
     wpm,
     accuracy,
+    consistency,
     elapsedTime,
     rawWpm,
     correctCount,
@@ -63,7 +64,7 @@ const TestResult = () => {
         </div>
         <div className="resultGroup consistency">
           <div className="top">consistency</div>
-          <div className="bottom">{`${"100"}%`}</div>
+          <div className="bottom">{`${consistency.toFixed(0)}%`}</div>
         </div>
         <div className="resultGroup time">
           <div className="top">time</div>
