@@ -4,11 +4,13 @@ export const useKeyPress = (callback) => {
   let keyPressed = useRef("");
 
   useEffect(() => {
-    const downHandler = ({ key }) => {
-      keyPressed.current = key;
-      callback && callback(key);
+    const downHandler = (e) => {
+      e.preventDefault();
+      keyPressed.current = e.key;
+      callback && callback(e.key);
     };
-    const upHandler = () => {
+    const upHandler = (e) => {
+      e.preventDefault();
       keyPressed.current = null;
     };
     window.addEventListener("keydown", downHandler);

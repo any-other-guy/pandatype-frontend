@@ -12,7 +12,7 @@ import { useKeyPress } from "./keypressHook";
 import { Spinner } from "./Spinner";
 import Timer from "./Timer";
 import WordCounter from "./WordCounter";
-import { unmountComponentAtNode } from "react-dom";
+import RestartButton from "./RestartButton";
 
 const TypingTest = () => {
   const dispatch = useDispatch();
@@ -28,11 +28,11 @@ const TypingTest = () => {
     // Dispatch all keypress for now
     // TODO: filter out some unnecessary ones
     dispatch(keyAction({ key: key }));
-    if (key === "Enter") {
-      dispatch(
-        resetTestAction({ testLanguage: testLanguage, testMode: testMode })
-      );
-    }
+    // if (key === "Enter") {
+    //   dispatch(
+    //     resetTestAction({ testLanguage: testLanguage, testMode: testMode })
+    //   );
+    // }
     //TODO: might have better check on when to unmount first row
     // Only check
     if (/\s/.test(key)) {
@@ -98,7 +98,7 @@ const TypingTest = () => {
   // Populate test content UI
   let content;
   if (testContentLoadingStatus === "loading") {
-    content = <Spinner />;
+    // content = <Spinner />;
   } else if (testContentLoadingStatus === "succeeded") {
     content = wordIds.map((wordId) => {
       if (wordsToUnmount.includes(wordId)) return;
@@ -117,7 +117,8 @@ const TypingTest = () => {
       <div className="typingTest" ref={wordWrapper}>
         {content}
       </div>
-      {/* TODO: Restart button group */}
+      {/* Restart button group */}
+      <RestartButton testLanguage={testLanguage} testMode={testMode}/>
     </div>
   );
 };
