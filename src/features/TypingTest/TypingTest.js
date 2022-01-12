@@ -4,8 +4,6 @@ import {
   fetchTestContent,
   selectWordsIds,
   keyAction,
-  resetTestAction,
-  // scrollPositionAction,
 } from "./typingtestSlice";
 import Word from "./Word";
 import { useKeyPress } from "./keypressHook";
@@ -19,7 +17,9 @@ const TypingTest = () => {
   const wordIds = useSelector(selectWordsIds);
   const testLanguage = useSelector((state) => state.typingtest.testLanguage);
   const testMode = useSelector((state) => state.typingtest.testMode);
-  const testQuoteOption = useSelector((state) => state.typingtest.testQuoteOption);
+  const testQuoteOption = useSelector(
+    (state) => state.typingtest.testQuoteOption
+  );
   const wordWrapper = useRef(null);
   const firstLineOffsetTop = useRef(null);
   const [wordsToUnmount, setWordsToUnmount] = useState([]);
@@ -91,12 +91,18 @@ const TypingTest = () => {
   // Fetch test content only after first load
   useEffect(() => {
     if (testContentLoadingStatus === "idle") {
-      console.log("initial fetch");
       let queryObj = { language: testLanguage, type: testMode };
-      if(testMode==="quote") queryObj = {...queryObj, quoteLength: testQuoteOption};
+      if (testMode === "quote")
+        queryObj = { ...queryObj, quoteLength: testQuoteOption };
       dispatch(fetchTestContent(queryObj));
     }
-  }, [testContentLoadingStatus, testLanguage, testMode, dispatch]);
+  }, [
+    testContentLoadingStatus,
+    testLanguage,
+    testMode,
+    testQuoteOption,
+    dispatch,
+  ]);
 
   // Populate test content UI
   let content;

@@ -172,9 +172,10 @@ body {
 .testResult {
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-template-rows: minmax(0, 200px) minmax(0, 100px) minmax(0, 54px);
+  grid-template-rows: minmax(0, 13rem) minmax(0, 4rem) minmax(0, 54px);
   gap: 1rem;
   align-items: center;
+  margin-bottom: 2rem;/*temp value, adjust here vertical pos here*/
 }
 
 .testResult > .stats {
@@ -186,7 +187,6 @@ body {
   grid-template-areas:
     "wpm"
     "acc";
-  margin-bottom: 1rem;
 }
 
 .testResult .stats .wpm {
@@ -200,7 +200,7 @@ body {
   grid-area: 2 / 1 / 2 / 3;
   display: grid;
   grid-auto-flow: column;
-  align-items: flex-start;
+  align-items: start;
   justify-content: space-between;
   column-gap: 2rem;
   width: 100%;
@@ -209,7 +209,7 @@ body {
 .testResult > .chart {
   grid-area: 1 / 2 / 2 / 2;
   background-color: transparent;
-  min-height: 200px;
+  max-height: 12rem;
 }
 
 .testResult > .bottom {
@@ -227,6 +227,7 @@ body {
   font-size: 2rem;
   line-height: 1.5rem;
   color: var(--sub-color);
+  margin-bottom: 0.25rem;
 }
 .stats .resultGroup .bottom {
   font-size: 4rem;

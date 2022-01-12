@@ -66,6 +66,7 @@ export const fetchTestContent = createAsyncThunk(
       }
       url = url.slice(0, -1);
     }
+    console.log("Fetching from: " + url);
     const response = await client.get(url, payload);
     return response.data;
   }

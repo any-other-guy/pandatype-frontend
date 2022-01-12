@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { formatMilliseconds } from "../../utils/utils";
+import RestartButton from "./RestartButton";
 import ResultChart from "./ResultChart";
 
 const TestResult = () => {
@@ -71,7 +72,9 @@ const TestResult = () => {
           <div className="bottom">{`${formatMilliseconds(elapsedTime)}s`}</div>
         </div>
       </div>
-      <div className="bottom"></div>
+      <div className="bottom">
+        <RestartButton testLanguage={testLanguage} />
+      </div>
     </div>
   );
 };
