@@ -19,6 +19,7 @@ const TypingTest = () => {
   const wordIds = useSelector(selectWordsIds);
   const testLanguage = useSelector((state) => state.typingtest.testLanguage);
   const testMode = useSelector((state) => state.typingtest.testMode);
+  const testQuoteOption = useSelector((state) => state.typingtest.testQuoteOption);
   const wordWrapper = useRef(null);
   const firstLineOffsetTop = useRef(null);
   const [wordsToUnmount, setWordsToUnmount] = useState([]);
@@ -91,7 +92,9 @@ const TypingTest = () => {
   useEffect(() => {
     if (testContentLoadingStatus === "idle") {
       console.log("initial fetch");
-      dispatch(fetchTestContent({ language: testLanguage, type: testMode }));
+      let queryObj = { language: testLanguage, type: testMode };
+      if(testMode==="quote") queryObj = {...queryObj, quoteLength: testQuoteOption};
+      dispatch(fetchTestContent(queryObj));
     }
   }, [testContentLoadingStatus, testLanguage, testMode, dispatch]);
 

@@ -5,6 +5,7 @@ export const useKeyPress = (callback) => {
 
   useEffect(() => {
     const downHandler = (e) => {
+      if(e.key === "Shift") return;
       e.preventDefault();
       keyPressed.current = e.key;
       callback && callback(e.key);

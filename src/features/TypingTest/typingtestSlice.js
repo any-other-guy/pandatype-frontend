@@ -28,6 +28,7 @@ const initialStatistics = {
   missedCount: 0,
   rawCharacterCount: 0,
   backspaceCount: 0,
+  quoteSource: null,
   rawTypingHistory: "",
 };
 
@@ -42,6 +43,7 @@ const initialState = typingtestAdapter.getInitialState({
   testTimeOption: 30,
   testWordOption: 50,
   testQuoteOption: "medium",
+  quoteWordCount: null,
   // Test itself related
   testStatus: "unstarted",
   isTestCompleted: false,
@@ -82,7 +84,7 @@ export const typingtestSlice = createSlice({
 
       const { key } = action.payload;
       // Handle each type of key pressing
-      if (/\w|\s/.test(key)) {
+      if (/\w|\s|[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/.test(key)) {
         let wordId = state.ids[currentWordIndex];
         let letterIndex = typedWordsArray[currentWordIndex].length - 1;
         let wordObj = state.entities[wordId];
@@ -132,7 +134,7 @@ export const typingtestSlice = createSlice({
             break;
 
           // Alphabet character get pushed into current typing word
-          case /^[a-zA-Z]{1,1}$/.test(key):
+          case /^[a-zA-Z!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]{1,1}$/.test(key):
             // Start the test if unstarted
             state.testStatus =
               state.testStatus === "unstarted" ? "started" : state.testStatus;
@@ -158,14 +160,16 @@ export const typingtestSlice = createSlice({
                 letterObj.status = "typed";
                 state.statistics.correctCount++;
                 // End test if the last letter word of the last letter is typed correctly
-                if (state.testMode === "words") {
-                  if (
+                if (
+                  (state.testMode === "words" &&
                     wordObj.wordIndex + 1 === state.testWordOption &&
-                    letterIndex + 1 === wordObj.letters.length
-                  ) {
-                    completeTest(state);
-                    return;
-                  }
+                    letterIndex + 1 === wordObj.letters.length) ||
+                  (state.testMode === "quote" &&
+                    wordObj.wordIndex + 1 === state.quoteWordCount &&
+                    letterIndex + 1 === wordObj.letters.length)
+                ) {
+                  completeTest(state);
+                  return;
                 }
               } else {
                 letterObj.status = "mistake";
@@ -336,8 +340,10 @@ export const typingtestSlice = createSlice({
             words = shuffle(testStuff[type]).slice(0, 100);
             break;
           case "quote":
-            // FIXME: same as words for now, too lazy
-            words = shuffle(testStuff[type]).slice(0, 100);
+            words = testStuff["words"];
+            state.statistics.quoteSource = testStuff["source"];
+            state.quoteWordCount = testStuff["quoteWordCount"];
+            break;
           default:
             break;
         }
@@ -400,7 +406,7 @@ const completeTest = (state) => {
   const rawWpm = (60000 / elapsedTime) * state.statistics.wordsCompleted;
   state.statistics.wpm = wpm;
   state.statistics.rawWpm = rawWpm;
-  
+
   // Correctly count the mistake before the first perSecondWpmAction dispatched
   if (state.statistics.perSecondWpm[0].mistakesHere > 0) {
     state.statistics.perSecondWpm[1].mistakesHere =
@@ -409,11 +415,10 @@ const completeTest = (state) => {
   // Cleaning up the initial 0th-second object in perSecondWpm
   state.statistics.perSecondWpm.shift();
 
-  //TODO: calculate consistency
+  // Calculate typing speed consistency
   state.statistics.consistency =
     state.statistics.perSecondWpm
       .reduce((list, obj) => {
-        console.log(obj.wpm);
         list.push(
           100 -
             Math.abs((obj.wpm - state.statistics.wpm) / state.statistics.wpm) *

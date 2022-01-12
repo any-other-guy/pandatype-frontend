@@ -182,28 +182,28 @@ const Header = () => {
           <div
             className="text-button"
             mode="all"
-            onClick={(e) => setTestQuoteOptionAction(e)}
+            onClick={(e) => setTestQuoteOption(e)}
           >
             all
           </div>
           <div
             className="text-button"
             mode="short"
-            onClick={(e) => setTestQuoteOptionAction(e)}
+            onClick={(e) => setTestQuoteOption(e)}
           >
             short
           </div>
           <div
             className="text-button active"
             mode="medium"
-            onClick={(e) => setTestQuoteOptionAction(e)}
+            onClick={(e) => setTestQuoteOption(e)}
           >
             medium
           </div>
           <div
             className="text-button"
             mode="long"
-            onClick={(e) => setTestQuoteOptionAction(e)}
+            onClick={(e) => setTestQuoteOption(e)}
           >
             long
           </div>
