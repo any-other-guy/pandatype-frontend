@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useInterval } from "./useIntervalHook";
 import { testTimerDepletedAction } from "./typingtestSlice";
-import { formatMilliseconds } from "../../utils/utils";
 
 const Timer = () => {
   const dispatch = useDispatch();
 
-  const testStatus = useSelector((state) => state.typingtest.testStatus);
+  const testStatus = useSelector((state) => state.typingtest.status);
   const totalTime = useSelector(
-    (state) => state.typingtest.testTimeOption
+    (state) => state.typingtest.options.time
   );
   const [timeRemaining, setTimeRemaining] = useState(totalTime);
 
@@ -34,7 +33,7 @@ const Timer = () => {
   return (
     <div className="timer">
       {testStatus === "started"
-        ? formatMilliseconds(timeRemaining*1000)
+        ? timeRemaining
         : null}
     </div>
   );

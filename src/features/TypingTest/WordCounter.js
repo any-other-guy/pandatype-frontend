@@ -2,13 +2,13 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 const WordCounter = () => {
-  const testStatus = useSelector((state) => state.typingtest.testStatus);
+  const testStatus = useSelector((state) => state.typingtest.status);
   const wordsCompleted = useSelector(
     (state) => state.typingtest.statistics.wordsCompleted
   );
-  const testMode = useSelector((state) => state.typingtest.testMode);
-  const testWordOption = useSelector((state) => state.typingtest.testWordOption);
-  const quoteWordCount = useSelector((state) => state.typingtest.quoteWordCount);
+  const testMode = useSelector((state) => state.typingtest.options.mode);
+  const testWordOption = useSelector((state) => state.typingtest.options.words);
+  const quoteWordCount = useSelector((state) => state.typingtest.loading.quoteWordCount);
   let totalNumber = null;
   if(testMode === "words") totalNumber = testWordOption;
   if(testMode === "quote") totalNumber = quoteWordCount;

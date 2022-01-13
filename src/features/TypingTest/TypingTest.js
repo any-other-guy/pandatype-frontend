@@ -15,10 +15,10 @@ import RestartButton from "./RestartButton";
 const TypingTest = () => {
   const dispatch = useDispatch();
   const wordIds = useSelector(selectWordsIds);
-  const testLanguage = useSelector((state) => state.typingtest.testLanguage);
-  const testMode = useSelector((state) => state.typingtest.testMode);
-  const testQuoteOption = useSelector(
-    (state) => state.typingtest.testQuoteOption
+  const language = useSelector((state) => state.typingtest.options.language);
+  const mode = useSelector((state) => state.typingtest.options.mode);
+  const quoteOption = useSelector(
+    (state) => state.typingtest.options.quote
   );
   const wordWrapper = useRef(null);
   const firstLineOffsetTop = useRef(null);
@@ -27,20 +27,20 @@ const TypingTest = () => {
   // Handling key input
   useKeyPress((key) => {
     // Dispatch all keypress for now
-    // TODO: filter out some unnecessary ones
     dispatch(keyAction({ key: key }));
-    // if (key === "Enter") {
-    //   dispatch(
-    //     resetTestAction({ testLanguage: testLanguage, testMode: testMode })
-    //   );
-    // }
-    //TODO: might have better check on when to unmount first row
-    // Only check
+
+    // FOR TESTING PURPOSE
+    //FIXME: discover how to fix the blinking issue when refetched and rerendered
+    if(key === "=") {
+      dispatch(fetchTestContent({ language: language, type: mode }));
+    }
+
+    // Fetch action only triggered by pressing space, for less checking done
     if (/\s/.test(key)) {
       // Fetch for more, only do this after the initial render for time mode
-      if (testMode === "time" && wordWrapper.current.childNodes.length < 50) {
+      if (mode === "time" && wordWrapper.current.childNodes.length < 50) {
         console.log("fetching more tests");
-        dispatch(fetchTestContent({ language: testLanguage, type: testMode }));
+        dispatch(fetchTestContent({ language: language, type: mode }));
       }
       // Remove first row when cursor is at a specific position (buttom left)
       const activeWord = Array.from(wordWrapper.current.childNodes).find(
@@ -82,25 +82,25 @@ const TypingTest = () => {
 
   // Select loading status from store
   const testContentLoadingStatus = useSelector(
-    (state) => state.typingtest.loadingStatus
+    (state) => state.typingtest.loading.status
   );
   const testContentLoadingError = useSelector(
-    (state) => state.typingtest.loadingError
+    (state) => state.typingtest.loading.error
   );
 
   // Fetch test content only after first load
   useEffect(() => {
     if (testContentLoadingStatus === "idle") {
-      let queryObj = { language: testLanguage, type: testMode };
-      if (testMode === "quote")
-        queryObj = { ...queryObj, quoteLength: testQuoteOption };
+      let queryObj = { language: language, type: mode };
+      if (mode === "quote")
+        queryObj = { ...queryObj, quoteLength: quoteOption };
       dispatch(fetchTestContent(queryObj));
     }
   }, [
     testContentLoadingStatus,
-    testLanguage,
-    testMode,
-    testQuoteOption,
+    language,
+    mode,
+    quoteOption,
     dispatch,
   ]);
 
@@ -130,14 +130,14 @@ const TypingTest = () => {
   return (
     <div className="typingTestWrapper">
       {/* Timer/word count display area */}
-      {testMode === "time" ? <Timer /> : null}
-      {testMode === "words" || testMode === "quote" ? <WordCounter /> : null}
+      {mode === "time" ? <Timer /> : null}
+      {mode === "words" || mode === "quote" ? <WordCounter /> : null}
       {/* The words area */}
       <div className="typingTest" ref={wordWrapper}>
         {content}
       </div>
       {/* Restart button group */}
-      <RestartButton testLanguage={testLanguage} testMode={testMode} />
+      <RestartButton language={language} />
     </div>
   );
 };

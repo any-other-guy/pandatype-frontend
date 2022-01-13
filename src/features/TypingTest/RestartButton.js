@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useKeyPress } from "./keypressHook";
 import { resetTestAction } from "./typingtestSlice";
 
-const RestartButton = ({ testLanguage }) => {
+const RestartButton = ({ language }) => {
   const dispatch = useDispatch();
 
   useKeyPress((key) => {
@@ -12,7 +12,7 @@ const RestartButton = ({ testLanguage }) => {
     if (!isHighlighted && key === "Tab") setIsHighlighted(!isHighlighted);
     if (isHighlighted && key === "Enter") {
       dispatch(
-        resetTestAction({ testLanguage: testLanguage })
+        resetTestAction({options: { language: language }})
       );
       setIsHighlighted(false);
     }
@@ -29,7 +29,7 @@ const RestartButton = ({ testLanguage }) => {
         onMouseLeave={() => setIsHighlighted(false)}
         onClick={() =>
           dispatch(
-            resetTestAction({ testLanguage: testLanguage })
+            resetTestAction({options: { language: language }})
           )
         }
       >

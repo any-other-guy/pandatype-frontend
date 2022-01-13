@@ -6,7 +6,7 @@ import { useInterval } from "./useIntervalHook";
 const StatsTracker = () => {
   const dispatch = useDispatch();
 
-  const testStatus = useSelector((state) => state.typingtest.testStatus);
+  const testStatus = useSelector((state) => state.typingtest.status);
 
   const atSecond = useRef(0);
   const startTimestamp = useRef(0);

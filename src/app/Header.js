@@ -23,7 +23,7 @@ const Header = () => {
 
   const selectLanguage = ({ target }) => {
     //TODO: change here after adding multi language support
-    dispatch(setLanguageAction({ mode: target.getAttribute("mode") }));
+    // dispatch(setLanguageAction({ language: target.getAttribute("mode") }));
     markAllSiblingNotActive(target);
     target.classList.add("active");
   };
@@ -31,7 +31,7 @@ const Header = () => {
   const setTestMode = ({ target }) => {
     let mode = target.getAttribute("mode");
     // dispatch(setTestModeAction({ mode: mode }));
-    dispatch(resetTestAction({ testMode: mode }));
+    dispatch(resetTestAction({options: { mode: mode }}));
     markAllSiblingNotActive(target);
     target.classList.add("active");
     target.parentNode.parentNode.childNodes.forEach((node, index) => {
@@ -45,21 +45,21 @@ const Header = () => {
   const setTestTimeOption = ({ target }) => {
     let testTimeOption = target.getAttribute("mode");
     // dispatch(setTestTimeOptionAction({ mode: target.getAttribute("mode") }));
-    dispatch(resetTestAction({ testTimeOption: testTimeOption }));
+    dispatch(resetTestAction({options: { time: testTimeOption }}));
     markAllSiblingNotActive(target);
     target.classList.add("active");
   };
-  const setTestWordOption = ({ target }) => {
-    let testWordOption = target.getAttribute("mode");
+  const setTestWordsOption = ({ target }) => {
+    let testWordsOption = target.getAttribute("mode");
     // dispatch(setTestWordOptionAction({ mode: target.getAttribute("mode") }));
-    dispatch(resetTestAction({ testWordOption: testWordOption }));
+    dispatch(resetTestAction({options: { words: testWordsOption }}));
     markAllSiblingNotActive(target);
     target.classList.add("active");
   };
   const setTestQuoteOption = ({ target }) => {
     let testQuoteOption = target.getAttribute("mode");
     // dispatch(setTestQuoteOptionAction({ mode: target.getAttribute("mode") }));
-    dispatch(resetTestAction({ testQuoteOption: testQuoteOption }));
+    dispatch(resetTestAction({options: { quote: testQuoteOption }}));
     markAllSiblingNotActive(target);
     target.classList.add("active");
   };
@@ -152,28 +152,28 @@ const Header = () => {
           <div
             className="text-button"
             mode="10"
-            onClick={(e) => setTestWordOption(e)}
+            onClick={(e) => setTestWordsOption(e)}
           >
             10
           </div>
           <div
             className="text-button"
             mode="25"
-            onClick={(e) => setTestWordOption(e)}
+            onClick={(e) => setTestWordsOption(e)}
           >
             25
           </div>
           <div
             className="text-button active"
             mode="50"
-            onClick={(e) => setTestWordOption(e)}
+            onClick={(e) => setTestWordsOption(e)}
           >
             50
           </div>
           <div
             className="text-button"
             mode="100"
-            onClick={(e) => setTestWordOption(e)}
+            onClick={(e) => setTestWordsOption(e)}
           >
             100
           </div>
