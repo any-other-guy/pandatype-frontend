@@ -1,14 +1,7 @@
 import React from "react";
 import { AiFillAlipayCircle } from "react-icons/ai";
 import { useDispatch } from "react-redux";
-import {
-  setLanguageAction,
-  setTestModeAction,
-  setTestTimeOptionAction,
-  setTestWordOptionAction,
-  setTestQuoteOptionAction,
-  resetTestAction,
-} from "../features/TypingTest/typingtestSlice";
+import { resetTestAction } from "../features/TypingTest/typingtestSlice";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -31,7 +24,7 @@ const Header = () => {
   const setTestMode = ({ target }) => {
     let mode = target.getAttribute("mode");
     // dispatch(setTestModeAction({ mode: mode }));
-    dispatch(resetTestAction({options: { mode: mode }}));
+    dispatch(resetTestAction({ options: { mode: mode } }));
     markAllSiblingNotActive(target);
     target.classList.add("active");
     target.parentNode.parentNode.childNodes.forEach((node, index) => {
@@ -45,21 +38,21 @@ const Header = () => {
   const setTestTimeOption = ({ target }) => {
     let testTimeOption = target.getAttribute("mode");
     // dispatch(setTestTimeOptionAction({ mode: target.getAttribute("mode") }));
-    dispatch(resetTestAction({options: { time: testTimeOption }}));
+    dispatch(resetTestAction({ options: { time: testTimeOption } }));
     markAllSiblingNotActive(target);
     target.classList.add("active");
   };
   const setTestWordsOption = ({ target }) => {
     let testWordsOption = target.getAttribute("mode");
     // dispatch(setTestWordOptionAction({ mode: target.getAttribute("mode") }));
-    dispatch(resetTestAction({options: { words: testWordsOption }}));
+    dispatch(resetTestAction({ options: { words: testWordsOption } }));
     markAllSiblingNotActive(target);
     target.classList.add("active");
   };
   const setTestQuoteOption = ({ target }) => {
     let testQuoteOption = target.getAttribute("mode");
     // dispatch(setTestQuoteOptionAction({ mode: target.getAttribute("mode") }));
-    dispatch(resetTestAction({options: { quote: testQuoteOption }}));
+    dispatch(resetTestAction({ options: { quote: testQuoteOption } }));
     markAllSiblingNotActive(target);
     target.classList.add("active");
   };

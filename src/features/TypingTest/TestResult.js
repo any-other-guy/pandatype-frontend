@@ -40,16 +40,16 @@ const TestResult = () => {
   const accuracyString =
     !isNaN(accuracy) !== null ? `${accuracy.toFixed(0)}%` : "N/A";
   const testTypeString =
-    language !== null && mode !== null && modeOption !== null ? `${language} ${mode}` : "N/A";
+    language !== null && mode !== null && modeOption !== null
+      ? `${language} ${mode}`
+      : "N/A";
   const rawWpmString = !isNaN(rawWpm) !== null ? rawWpm.toFixed(0) : "N/A";
   const consistencyString =
     !isNaN(consistency) && consistency >= 0
       ? `${consistency.toFixed(0)}%`
       : "N/A";
   const timeString =
-    !isNaN(elapsedTime) !== null
-      ? `${Math.floor(elapsedTime/1000)}s`
-      : "N/A";
+    !isNaN(elapsedTime) !== null ? `${Math.floor(elapsedTime / 1000)}s` : "N/A";
 
   return (
     <div className="testResult">
@@ -69,7 +69,11 @@ const TestResult = () => {
       <div className="moreStats">
         <div className="resultGroup testType">
           <div className="top">test type</div>
-          <div className="bottom">{testTypeString}<br/>{modeOption}</div>
+          <div className="bottom">
+            {testTypeString}
+            <br />
+            {modeOption}
+          </div>
         </div>
         {/* <div className="resultGroup info">
           <div className="top">other</div>

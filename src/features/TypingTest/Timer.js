@@ -7,9 +7,7 @@ const Timer = () => {
   const dispatch = useDispatch();
 
   const testStatus = useSelector((state) => state.typingtest.status);
-  const totalTime = useSelector(
-    (state) => state.typingtest.options.time
-  );
+  const totalTime = useSelector((state) => state.typingtest.options.time);
   const [timeRemaining, setTimeRemaining] = useState(totalTime);
 
   // Set new totalTime on rerender caused by tate.typingtest.testTimeOption change
@@ -32,9 +30,7 @@ const Timer = () => {
 
   return (
     <div className="timer">
-      {testStatus === "started"
-        ? timeRemaining
-        : null}
+      {testStatus === "started" ? timeRemaining : null}
     </div>
   );
 };

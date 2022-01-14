@@ -8,10 +8,12 @@ const WordCounter = () => {
   );
   const testMode = useSelector((state) => state.typingtest.options.mode);
   const testWordOption = useSelector((state) => state.typingtest.options.words);
-  const quoteWordCount = useSelector((state) => state.typingtest.loading.quoteWordCount);
+  const quoteWordCount = useSelector(
+    (state) => state.typingtest.loading.quoteWordCount
+  );
   let totalNumber = null;
-  if(testMode === "words") totalNumber = testWordOption;
-  if(testMode === "quote") totalNumber = quoteWordCount;
+  if (testMode === "words") totalNumber = testWordOption;
+  if (testMode === "quote") totalNumber = quoteWordCount;
 
   return (
     <div className="wordCounter">

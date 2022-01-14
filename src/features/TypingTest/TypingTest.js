@@ -1,13 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  fetchTestContent,
-  selectWordsIds,
-  keyAction,
-} from "./typingtestSlice";
+import { fetchTestContent, selectWordsIds, keyAction } from "./typingtestSlice";
 import Word from "./Word";
 import { useKeyPress } from "./keypressHook";
-import { Spinner } from "./Spinner";
 import Timer from "./Timer";
 import WordCounter from "./WordCounter";
 import RestartButton from "./RestartButton";
@@ -17,9 +12,7 @@ const TypingTest = () => {
   const wordIds = useSelector(selectWordsIds);
   const language = useSelector((state) => state.typingtest.options.language);
   const mode = useSelector((state) => state.typingtest.options.mode);
-  const quoteOption = useSelector(
-    (state) => state.typingtest.options.quote
-  );
+  const quoteOption = useSelector((state) => state.typingtest.options.quote);
   const wordWrapper = useRef(null);
   const firstLineOffsetTop = useRef(null);
   const [wordsToUnmount, setWordsToUnmount] = useState([]);
@@ -31,7 +24,7 @@ const TypingTest = () => {
 
     // FOR TESTING PURPOSE
     //FIXME: discover how to fix the blinking issue when refetched and rerendered
-    if(key === "=") {
+    if (key === "=") {
       dispatch(fetchTestContent({ language: language, type: mode }));
     }
 
@@ -96,13 +89,7 @@ const TypingTest = () => {
         queryObj = { ...queryObj, quoteLength: quoteOption };
       dispatch(fetchTestContent(queryObj));
     }
-  }, [
-    testContentLoadingStatus,
-    language,
-    mode,
-    quoteOption,
-    dispatch,
-  ]);
+  }, [testContentLoadingStatus, language, mode, quoteOption, dispatch]);
 
   // Populate test content UI
   let content;

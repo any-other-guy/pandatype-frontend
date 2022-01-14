@@ -11,7 +11,6 @@ import {
   Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { perSecondWpmAction } from "./typingtestSlice";
 
 ChartJS.register(
   CategoryScale,

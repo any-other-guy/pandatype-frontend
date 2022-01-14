@@ -11,9 +11,7 @@ const RestartButton = ({ language }) => {
     if (key !== "Tab" && key !== "Enter") return;
     if (!isHighlighted && key === "Tab") setIsHighlighted(!isHighlighted);
     if (isHighlighted && key === "Enter") {
-      dispatch(
-        resetTestAction({options: { language: language }})
-      );
+      dispatch(resetTestAction({ options: { language: language } }));
       setIsHighlighted(false);
     }
   });
@@ -28,9 +26,7 @@ const RestartButton = ({ language }) => {
         onMouseOver={() => setIsHighlighted(true)}
         onMouseLeave={() => setIsHighlighted(false)}
         onClick={() =>
-          dispatch(
-            resetTestAction({options: { language: language }})
-          )
+          dispatch(resetTestAction({ options: { language: language } }))
         }
       >
         <VscDebugRestart size={"1.25rem"} color={color} />
