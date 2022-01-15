@@ -47,8 +47,9 @@ const initialStatistics = {
   rawCharacterCount: 0,
   backspaceCount: 0,
   quoteSource: null,
-  zhCorrectCount: 0,
-  zhMistakeCount: 0,
+  zhPerfected: 0,
+  zhCompleted: 0,
+  zhMistake: 0,
   rawTypingHistory: "",
 };
 
@@ -137,7 +138,7 @@ export const typingtestSlice = createSlice({
 
             // Making current word inactive and next word active
             // FIXME: 决定一下到底空格后算complete还是打完，暂时决定是空格吧
-            if (!wordObj.isCompleted) state.statistics.wordsCompleted++;
+            state.statistics.wordsCompleted++;
             wordObj.isCompleted = true;
             wordObj.active = false;
 
@@ -242,13 +243,12 @@ export const typingtestSlice = createSlice({
 
                 if (typedZi === ziPinyin) {
                   wordObj.ziArray[letterObj.ziIndex].status = "typed";
-                  // wordObj.ziArray[letterObj.ziIndex].mistake = false;
-                  state.statistics.zhCorrectCount++;
+                  state.statistics.zhPerfected++;
                 } else {
                   wordObj.ziArray[letterObj.ziIndex].status = "mistake";
-                  // wordObj.ziArray[letterObj.ziIndex].mistake = true;
-                  state.statistics.zhMistakeCount++;
+                  state.statistics.zhMistake++;
                 }
+                state.statistics.zhCompleted++;
               }
             }
             // If extra letter typed, beyond wordObj.letters[letterIndex]
@@ -262,6 +262,10 @@ export const typingtestSlice = createSlice({
               currentPerSecondWpmObject.mistakesHere++;
               //FIXME: extraCount may be over counted since user may delete those before pressing space to go to the next word
               state.statistics.extraCount++;
+
+              //Zhcn
+              wordObj.ziArray[wordObj.ziArray.length - 1].status = "mistake";
+              state.statistics.zhMistake++;
             }
             state.statistics.rawCharacterCount++;
 
@@ -292,6 +296,35 @@ export const typingtestSlice = createSlice({
             // 还是有点奇怪的。。
             typedWordsArray[currentWordIndex] = currentWord.slice(0, -1);
 
+            // Zhcn mark Zi to its status
+            if (language === "zh") {
+              if (letterObj === undefined) {
+                letterObj = wordObj.letters[wordObj.letters.length - 1];
+              }
+              if (letterObj.isLastLetterInZi) {
+                let sliceFromLast = -letterObj.letterIndexInZi;
+                if (letterIndex >= wordObj.word.length) {
+                  sliceFromLast--;
+                } else {
+                  sliceFromLast++;
+                }
+                const ziPinyin = wordObj.ziArray[letterObj.ziIndex].ziPinyin;
+                const typedZi = typedWordsArray[currentWordIndex]
+                  .split("")
+                  .slice(sliceFromLast)
+                  .join("");
+
+                if (typedZi === ziPinyin) {
+                  wordObj.ziArray[letterObj.ziIndex].status = "typed";
+                  state.statistics.zhPerfected++;
+                } else {
+                  wordObj.ziArray[letterObj.ziIndex].status = "mistake";
+                  state.statistics.zhMistake++;
+                }
+                state.statistics.zhCompleted++;
+              }
+            }
+
             state.statistics.rawTypingHistory += "⌫";
             break;
 
@@ -306,8 +339,14 @@ export const typingtestSlice = createSlice({
       //FIXME: atSecond很不准, 下面这个object的key暂时用array index代替秒数感觉有点准也
       const atSecond = state.statistics.perSecondWpm.length;
       // console.log(atSecond);
-      const wpm = (60 / atSecond) * state.statistics.wordsPerfected;
-      const rawWpm = (60 / atSecond) * state.statistics.wordsCompleted;
+      let wpm, rawWpm;
+      if (state.options.language === "zh") {
+        wpm = (60 / atSecond) * state.statistics.zhPerfected;
+        rawWpm = (60 / atSecond) * state.statistics.zhCompleted;
+      } else {
+        wpm = (60 / atSecond) * state.statistics.wordsPerfected;
+        rawWpm = (60 / atSecond) * state.statistics.wordsCompleted;
+      }
       state.statistics.perSecondWpm.push({
         index: state.statistics.perSecondWpm.length,
         wpm: wpm,
@@ -510,19 +549,28 @@ const completeTest = (state) => {
   const elapsedTime = state.statistics.endTime - state.statistics.startTime;
   state.statistics.elapsedTime = elapsedTime;
   // Prepare test result related states in store
-  const total =
-    state.statistics.correctCount +
-    state.statistics.mistakeCount +
-    state.statistics.extraCount +
-    state.statistics.missedCount;
-  const bad =
-    state.statistics.mistakeCount +
-    state.statistics.extraCount +
-    state.statistics.missedCount;
-  state.statistics.accuracy = ((total - bad) / total) * 100;
+  let total, bad, wpm, rawWpm;
+  if (state.options.language === "zh") {
+    // Zhcn : all or nothing
+    total = state.statistics.zhPerfected + state.statistics.zhMistake;
+    bad = state.statistics.zhMistake;
+    wpm = (60000 / elapsedTime) * state.statistics.zhPerfected;
+    rawWpm = (60000 / elapsedTime) * state.statistics.zhCompleted;
+  } else {
+    total =
+      state.statistics.correctCount +
+      state.statistics.mistakeCount +
+      state.statistics.extraCount +
+      state.statistics.missedCount;
+    bad =
+      state.statistics.mistakeCount +
+      state.statistics.extraCount +
+      state.statistics.missedCount;
+    wpm = (60000 / elapsedTime) * state.statistics.wordsPerfected;
+    rawWpm = (60000 / elapsedTime) * state.statistics.wordsCompleted;
+  }
 
-  const wpm = (60000 / elapsedTime) * state.statistics.wordsPerfected;
-  const rawWpm = (60000 / elapsedTime) * state.statistics.wordsCompleted;
+  state.statistics.accuracy = ((total - bad) / total) * 100;
   state.statistics.wpm = wpm;
   state.statistics.rawWpm = rawWpm;
 
