@@ -4,15 +4,25 @@ import {
   createSlice,
 } from "@reduxjs/toolkit";
 import { client } from "../../utils/client";
-import { shuffle } from "../../utils/utils";
+import { findZiIndex, shuffle } from "../../utils/utils";
 
-const typingtestAdapter = createEntityAdapter({
+// const typingtestAdapter = createEntityAdapter({
+//   selectId: (word) => word.wordId,
+//   sortComparer: (a, b) => a.wordIndex < b.wordIndex,
+// });
+
+const enAdapter = createEntityAdapter({
+  selectId: (word) => word.wordId,
+  sortComparer: (a, b) => a.wordIndex < b.wordIndex,
+});
+
+const zhAdapter = createEntityAdapter({
   selectId: (word) => word.wordId,
   sortComparer: (a, b) => a.wordIndex < b.wordIndex,
 });
 
 const initialOptions = {
-  language: "english",
+  language: "zh",
   mode: "time",
   time: 30,
   words: 50,
@@ -37,10 +47,15 @@ const initialStatistics = {
   rawCharacterCount: 0,
   backspaceCount: 0,
   quoteSource: null,
+  zhCorrectCount: 0,
+  zhMistakeCount: 0,
   rawTypingHistory: "",
 };
 
-const initialState = typingtestAdapter.getInitialState({
+const initialState = {
+  // Entity Adapter for different languages
+  en: enAdapter.getInitialState(),
+  zh: zhAdapter.getInitialState(),
   // Test itself related
   status: "unstarted",
   isTestCompleted: false,
@@ -60,7 +75,7 @@ const initialState = typingtestAdapter.getInitialState({
 
   // Test result related
   statistics: initialStatistics,
-});
+};
 
 export const fetchTestContent = createAsyncThunk(
   "typingtest/getTest",
@@ -85,6 +100,7 @@ export const typingtestSlice = createSlice({
   initialState,
   reducers: {
     keyAction: (state, action) => {
+      const language = state.options.language;
       const typedWordsArray = state.typedWordsArray;
 
       // states for notifying changes to the frontend
@@ -94,9 +110,9 @@ export const typingtestSlice = createSlice({
       const { key } = action.payload;
       // Handle each type of key pressing
       if (/\w|\s|[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/.test(key)) {
-        let wordId = state.ids[currentWordIndex];
+        let wordId = state[language].ids[currentWordIndex];
         let letterIndex = typedWordsArray[currentWordIndex].length - 1;
-        let wordObj = state.entities[wordId];
+        let wordObj = state[language].entities[wordId];
         let letterObj = wordObj.letters[letterIndex];
         wordObj.active = true;
 
@@ -105,25 +121,32 @@ export const typingtestSlice = createSlice({
           case /\s/.test(key):
             if (currentWord === "") return;
             // Check if current word has untyped letters, mark them mistake
-            wordObj.letters.forEach((letter) => {
-              if (letter.status === "untyped") {
-                letter.status = "missed";
-                letter.mistake = true;
+            wordObj.letters.forEach((letterObj) => {
+              if (letterObj.status === "untyped") {
+                letterObj.status = "missed";
+                // letterObj.mistake = true;
                 state.statistics.missedCount++;
+                // Zhcn
+                if (language === "zh") {
+                  wordObj.ziArray[letterObj.ziIndex].status = "missed";
+                  // wordObj.ziArray[letterObj.ziIndex].mistake = true;
+                  state.statistics.zhMistakeCount++;
+                }
               }
             });
+
             // Making current word inactive and next word active
             // FIXME: 决定一下到底空格后算complete还是打完，暂时决定是空格吧
             if (!wordObj.isCompleted) state.statistics.wordsCompleted++;
             wordObj.isCompleted = true;
             wordObj.active = false;
 
-            const newWordId = state.ids[currentWordIndex + 1];
+            const newWordId = state[language].ids[currentWordIndex + 1];
             if (
               newWordId !== undefined &&
-              state.entities[newWordId] !== undefined
+              state[language].entities[newWordId] !== undefined
             ) {
-              state.entities[newWordId].active = true;
+              state[language].entities[newWordId].active = true;
             }
             // Ending test in a skipped way
             else {
@@ -151,9 +174,9 @@ export const typingtestSlice = createSlice({
             // Pushing letter into store
             typedWordsArray[currentWordIndex] = currentWord + key;
 
-            wordId = state.ids[currentWordIndex];
+            wordId = state[language].ids[currentWordIndex];
             letterIndex = typedWordsArray[currentWordIndex].length - 1;
-            wordObj = state.entities[wordId];
+            wordObj = state[language].entities[wordId];
             letterObj = wordObj.letters[letterIndex];
 
             if (wordId === null && wordObj === null) return;
@@ -164,6 +187,7 @@ export const typingtestSlice = createSlice({
               if (key === letterObj.letter) {
                 letterObj.status = "typed";
                 state.statistics.correctCount++;
+
                 // End test if the last letter word of the last letter is typed correctly
                 if (
                   (state.options.mode === "words" &&
@@ -191,10 +215,11 @@ export const typingtestSlice = createSlice({
                 // if all no mistake found in the whole word, mark wordsPerfected++;
                 if (
                   wordObj.letters.every((letterObj) => {
-                    return (
-                      letterObj.status === "typed" &&
-                      letterObj.mistake === false
-                    );
+                    // return (
+                    //   letterObj.status === "typed" &&
+                    //   letterObj.mistake === false
+                    // );
+                    return letterObj.status === "typed";
                   })
                 ) {
                   // To prevent counting error when correcting the last letter
@@ -205,6 +230,25 @@ export const typingtestSlice = createSlice({
                 // FIXME: 决定一下到底空格后算complete还是打完，暂时决定是空格吧
                 // if (!wordObj.isCompleted) state.statistics.wordsCompleted++;
                 // wordObj.isCompleted = true;
+              }
+
+              // Zhcn mark Zi to its status
+              if (language === "zh" && letterObj.isLastLetterInZi) {
+                const ziPinyin = wordObj.ziArray[letterObj.ziIndex].ziPinyin;
+                const typedZi = typedWordsArray[currentWordIndex]
+                  .split("")
+                  .slice(-letterObj.letterIndexInZi - 1)
+                  .join("");
+
+                if (typedZi === ziPinyin) {
+                  wordObj.ziArray[letterObj.ziIndex].status = "typed";
+                  // wordObj.ziArray[letterObj.ziIndex].mistake = false;
+                  state.statistics.zhCorrectCount++;
+                } else {
+                  wordObj.ziArray[letterObj.ziIndex].status = "mistake";
+                  // wordObj.ziArray[letterObj.ziIndex].mistake = true;
+                  state.statistics.zhMistakeCount++;
+                }
               }
             }
             // If extra letter typed, beyond wordObj.letters[letterIndex]
@@ -226,9 +270,9 @@ export const typingtestSlice = createSlice({
 
           // Backspace slices from current typing word
           case /^Backspace$/.test(key):
-            wordId = state.ids[currentWordIndex];
+            wordId = state[language].ids[currentWordIndex];
             letterIndex = typedWordsArray[currentWordIndex].length - 1;
-            wordObj = state.entities[wordId];
+            wordObj = state[language].entities[wordId];
             letterObj = wordObj.letters[letterIndex];
 
             if (wordId === null && wordObj === null) return;
@@ -236,7 +280,7 @@ export const typingtestSlice = createSlice({
             if (letterObj != null) {
               letterObj.status = "untyped";
               letterObj.actuallyTyped = null;
-              letterObj.mistake = false;
+              // letterObj.mistake = false;
             }
             // If extra letter exists, delete the last one since backspace was pressed
             else if (letterIndex >= wordObj.word.length) {
@@ -293,9 +337,9 @@ export const typingtestSlice = createSlice({
         quote = state.options.quote,
       } = action.payload.options;
 
-      //FIXME: typingtestAdapter.removeAll() doesnt work, why?
-      // state.ids = [],
-      state.entities = {};
+      //FIXME: <Adapter>.removeAll() doesnt work, why?
+      // state[language].ids = [],
+      state[language].entities = {};
 
       state.status = "unstarted";
       state.isTestCompleted = false;
@@ -314,26 +358,6 @@ export const typingtestSlice = createSlice({
 
       state.statistics = initialStatistics;
     },
-    setLanguageAction: (state, action) => {
-      const { language = "english" } = action.payload;
-      state.options.language = language;
-    },
-    setTestModeAction: (state, action) => {
-      const { mode = "time" } = action.payload;
-      state.options.mode = mode;
-    },
-    setTestTimeOptionAction: (state, action) => {
-      const { time = "30" } = action.payload;
-      state.options.time = time;
-    },
-    setTestWordsOptionAction: (state, action) => {
-      const { words = "50" } = action.payload;
-      state.options.words = words;
-    },
-    setTestQuoteOptionAction: (state, action) => {
-      const { quote = "medium" } = action.payload;
-      state.options.quote = quote;
-    },
   },
   extraReducers(builder) {
     builder
@@ -343,50 +367,19 @@ export const typingtestSlice = createSlice({
       })
       .addCase(fetchTestContent.fulfilled, (state, action) => {
         state.loading.status = "succeeded";
-        const { language, type, ...testContent } = action.payload;
+        const { language } = action.payload;
         state.options.language = language;
-        let words;
-        switch (type) {
-          case "words":
-            words = shuffle(testContent[type]).slice(0, 100);
+
+        switch (language) {
+          case "en":
+            handleEnTestContent(state, action);
             break;
-          case "quote":
-            words = testContent["words"];
-            state.statistics.quoteSource = testContent["source"];
-            state.loading.quoteWordCount = testContent["quoteWordCount"];
+          case "zh":
+            handleZhTestContent(state, action);
             break;
           default:
             break;
         }
-        if (state.options.mode === "words") {
-          words = words.slice(0, state.options.words);
-        }
-        if (words === undefined) return;
-        // Populate test objects into store
-        const wordsObj = words.map((word, index) => {
-          const wordIndex = state.loading.wordsLoadedCount + index;
-          return {
-            word: word,
-            wordIndex: wordIndex,
-            wordId: word + wordIndex,
-            active: wordIndex === 0 ? true : false,
-            cursorPosition: 0,
-            letters: word.split("").map((letter, letterIndex) => {
-              return {
-                letter: letter,
-                letterIndex: letterIndex,
-                status: "untyped",
-                mistake: false,
-                actuallyTyped: null,
-              };
-            }),
-            extraLetters: [],
-            isCompleted: false,
-            isPerfected: false,
-          };
-        });
-        typingtestAdapter.upsertMany(state, wordsObj);
-        state.loading.wordsLoadedCount += Object.keys(wordsObj).length;
       })
       .addCase(fetchTestContent.rejected, (state, action) => {
         state.loading.status = "failed";
@@ -394,6 +387,121 @@ export const typingtestSlice = createSlice({
       });
   },
 });
+
+const handleEnTestContent = (state, action) => {
+  const { language, type, ...testContent } = action.payload;
+
+  let words;
+  switch (type) {
+    case "words":
+      words = shuffle(testContent[type]).slice(0, 100);
+      break;
+    case "quote":
+      words = testContent["words"];
+      state.statistics.quoteSource = testContent["source"];
+      state.loading.quoteWordCount = testContent["quoteWordCount"];
+      break;
+    default:
+      break;
+  }
+  if (state.options.mode === "words") {
+    words = words.slice(0, state.options.words);
+  }
+  if (words === undefined) return;
+  // Populate test objects into store
+  const wordsObj = words.map((word, index) => {
+    const wordIndex = state.loading.wordsLoadedCount + index;
+    return {
+      word: word,
+      wordIndex: wordIndex,
+      wordId: word + wordIndex,
+      active: wordIndex === 0 ? true : false,
+      cursorPosition: 0,
+      letters: word.split("").map((letter, letterIndex) => {
+        return {
+          letter: letter,
+          letterIndex: letterIndex,
+          status: "untyped",
+          // mistake: false,
+          actuallyTyped: null,
+        };
+      }),
+      extraLetters: [],
+      isCompleted: false,
+      isPerfected: false,
+    };
+  });
+  typingtestAdapters[language].upsertMany(state[language], wordsObj);
+  state.loading.wordsLoadedCount += Object.keys(wordsObj).length;
+};
+
+const handleZhTestContent = (state, action) => {
+  const { language, type, ...testContent } = action.payload;
+
+  let words;
+  switch (type) {
+    case "words":
+      words = shuffle(testContent[type]).slice(0, 100);
+      break;
+    case "quote":
+      break;
+    default:
+      break;
+  }
+  if (state.options.mode === "words") {
+    words = words.slice(0, state.options.words);
+  }
+  if (words === undefined) return;
+  // Populate test objects into store
+  const wordsObj = words.map((word, index) => {
+    const wordIndex = state.loading.wordsLoadedCount + index;
+    const ci = word.zi.reduce((str, e) => str.concat(e), "");
+    const pinyin = word.pinyin.reduce((str, e) => str.concat(e), "");
+    return {
+      word: ci,
+      pinyin: pinyin,
+      ciLength: ci.length,
+      wordIndex: wordIndex,
+      wordId: pinyin + wordIndex,
+      active: wordIndex === 0 ? true : false,
+      cursorPosition: 0,
+      ziArray: ci.split("").map((zi, ziIndex) => {
+        return {
+          zi: zi,
+          ziIndex: ziIndex,
+          ziPinyin: word.pinyin[ziIndex],
+          status: "untyped",
+          // mistake: false,
+        };
+      }),
+      letters: word.pinyin.reduce(
+        (returnObject, zi) => {
+          returnObject.letters = returnObject.letters.concat(
+            zi.split("").map((letter, letterIndexInZi) => {
+              returnObject.count++;
+              return {
+                letter: letter,
+                letterIndex: returnObject.count,
+                letterIndexInZi: letterIndexInZi,
+                ziIndex: findZiIndex(word.pinyin, letter, returnObject.count),
+                isLastLetterInZi: letterIndexInZi === zi.length - 1,
+                status: "untyped",
+                // mistake: false,
+              };
+            })
+          );
+          return returnObject;
+        },
+        { letters: [], count: -1 }
+      ).letters,
+      extraLetters: [],
+      isCompleted: false,
+      isPerfected: false,
+    };
+  });
+  typingtestAdapters[language].upsertMany(state[language], wordsObj);
+  state.loading.wordsLoadedCount += Object.keys(wordsObj).length;
+};
 
 const completeTest = (state) => {
   state.isTestCompleted = true; //prevent rerender on status started
@@ -443,19 +551,24 @@ const completeTest = (state) => {
 export const {
   keyAction,
   testTimerDepletedAction,
-  setLanguageAction,
-  setTestModeAction,
-  setTestTimeOptionAction,
-  setTestWordsOptionAction,
-  setTestQuoteOptionAction,
   perSecondWpmAction,
   resetTestAction,
 } = typingtestSlice.actions;
 
 export default typingtestSlice.reducer;
 
-export const {
-  selectAll: selectAllWords,
-  selectById: selectWordsById,
-  selectIds: selectWordsIds,
-} = typingtestAdapter.getSelectors((state) => state.typingtest);
+// export const {
+//   selectAll: selectAllWords,
+//   selectById: selectWordsById,
+//   selectIds: selectWordsIds,
+// } = typingtestAdapter.getSelectors((state) => state.typingtest);
+
+export const typingtestAdapters = {
+  en: enAdapter,
+  zh: zhAdapter,
+};
+
+export const typingtestSelectors = {
+  en: enAdapter.getSelectors((state) => state.typingtest.en),
+  zh: zhAdapter.getSelectors((state) => state.typingtest.zh),
+};

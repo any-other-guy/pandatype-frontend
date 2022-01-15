@@ -1,10 +1,13 @@
 import React, { useRef } from "react";
 import { useSelector } from "react-redux";
-import { selectWordsById } from "./typingtestSlice";
+import { typingtestSelectors } from "./typingtestSlice";
 
 const Word = ({ wordId }) => {
   // By only passing in the wordId itself instead of the wordObj, unnecessary rerender is prevented
-  const wordObj = useSelector((state) => selectWordsById(state, wordId));
+  const language = useSelector((state) => state.typingtest.options.language);
+  const wordObj = useSelector((state) =>
+    typingtestSelectors[language].selectById(state, wordId)
+  );
   const thisWord = useRef(null);
 
   return (

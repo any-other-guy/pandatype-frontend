@@ -6,6 +6,7 @@ import Footer from "./app/Footer";
 import TestResult from "./features/TypingTest/TestResult";
 import TypingTest from "./features/TypingTest/TypingTest";
 import StatsTracker from "./features/TypingTest/StatsTracker";
+import ZhTypingTest from "./features/TypingTest/ZhTypingTest";
 
 const App = () => {
   // Not using testStatus as a flag to prevent rerender when the test started
@@ -13,11 +14,18 @@ const App = () => {
     (state) => state.typingtest.isTestCompleted
   );
 
+  const language = useSelector((state) => state.typingtest.options.language);
   return (
     <div className="mainWrapper">
       <Header />
       {/* The test */}
-      {isTestCompleted ? <TestResult /> : <TypingTest />}
+      {isTestCompleted ? (
+        <TestResult />
+      ) : language === "zh" ? (
+        <ZhTypingTest />
+      ) : (
+        <TypingTest />
+      )}
       {/* Hidden stat tracker */}
       <StatsTracker />
       <Footer />

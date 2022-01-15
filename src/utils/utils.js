@@ -23,3 +23,16 @@ export const shuffle = (array) => {
 
   return array;
 };
+
+export const findZiIndex = (arr, letter, letterIndex) => {
+  let ziIndex = 0;
+  const exists = arr.some((zi) => {
+    if (zi.charAt(letterIndex) !== null && zi.charAt(letterIndex) === letter) {
+      return true;
+    } else {
+      letterIndex -= zi.length;
+      ziIndex++;
+    }
+  });
+  return exists ? ziIndex : null;
+};
