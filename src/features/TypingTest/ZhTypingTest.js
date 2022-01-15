@@ -54,11 +54,6 @@ const ZhTypingTest = () => {
         activeWord.previousElementSibling.offsetTop < activeWord.offsetTop
       ) {
         // Add first row to wordsToUnmount
-        // const arr = Array.from(activeWord.parentNode.childNodes)
-        //   .filter((node) => node.offsetTop === firstLineOffsetTop.current)
-        //   .map((e) => e.getAttribute("id"))
-        //   .concat(wordsToUnmount);
-        // Maybe a better way to write the line above
         const arr = Array.from(activeWord.parentNode.childNodes).reduce(
           (list, node) => {
             if (node.offsetTop === firstLineOffsetTop.current) {

@@ -6,11 +6,6 @@ import {
 import { client } from "../../utils/client";
 import { findZiIndex, shuffle } from "../../utils/utils";
 
-// const typingtestAdapter = createEntityAdapter({
-//   selectId: (word) => word.wordId,
-//   sortComparer: (a, b) => a.wordIndex < b.wordIndex,
-// });
-
 const enAdapter = createEntityAdapter({
   selectId: (word) => word.wordId,
   sortComparer: (a, b) => a.wordIndex < b.wordIndex,
@@ -125,12 +120,10 @@ export const typingtestSlice = createSlice({
             wordObj.letters.forEach((letterObj) => {
               if (letterObj.status === "untyped") {
                 letterObj.status = "missed";
-                // letterObj.mistake = true;
                 state.statistics.missedCount++;
                 // Zhcn
                 if (language === "zh") {
                   wordObj.ziArray[letterObj.ziIndex].status = "missed";
-                  // wordObj.ziArray[letterObj.ziIndex].mistake = true;
                   state.statistics.zhMistakeCount++;
                 }
               }
@@ -215,13 +208,9 @@ export const typingtestSlice = createSlice({
               if (letterIndex === wordObj.word.length - 1) {
                 // if all no mistake found in the whole word, mark wordsPerfected++;
                 if (
-                  wordObj.letters.every((letterObj) => {
-                    // return (
-                    //   letterObj.status === "typed" &&
-                    //   letterObj.mistake === false
-                    // );
-                    return letterObj.status === "typed";
-                  })
+                  wordObj.letters.every(
+                    (letterObj) => letterObj.status === "typed"
+                  )
                 ) {
                   // To prevent counting error when correcting the last letter
                   if (!wordObj.isPerfected) state.statistics.wordsPerfected++;
@@ -264,8 +253,10 @@ export const typingtestSlice = createSlice({
               state.statistics.extraCount++;
 
               //Zhcn
-              wordObj.ziArray[wordObj.ziArray.length - 1].status = "mistake";
-              state.statistics.zhMistake++;
+              if (language === "zh") {
+                wordObj.ziArray[wordObj.ziArray.length - 1].status = "mistake";
+                state.statistics.zhMistake++;
+              }
             }
             state.statistics.rawCharacterCount++;
 
@@ -284,7 +275,6 @@ export const typingtestSlice = createSlice({
             if (letterObj != null) {
               letterObj.status = "untyped";
               letterObj.actuallyTyped = null;
-              // letterObj.mistake = false;
             }
             // If extra letter exists, delete the last one since backspace was pressed
             else if (letterIndex >= wordObj.word.length) {
@@ -293,7 +283,6 @@ export const typingtestSlice = createSlice({
             state.statistics.backspaceCount++;
 
             // Edit typedWordsArray after changing entities because indexing is more intuitive/easier
-            // 还是有点奇怪的。。
             typedWordsArray[currentWordIndex] = currentWord.slice(0, -1);
 
             // Zhcn mark Zi to its status
@@ -338,7 +327,6 @@ export const typingtestSlice = createSlice({
       // const { atSecond } = action.payload;
       //FIXME: atSecond很不准, 下面这个object的key暂时用array index代替秒数感觉有点准也
       const atSecond = state.statistics.perSecondWpm.length;
-      // console.log(atSecond);
       let wpm, rawWpm;
       if (state.options.language === "zh") {
         wpm = (60 / atSecond) * state.statistics.zhPerfected;
@@ -461,7 +449,6 @@ const handleEnTestContent = (state, action) => {
           letter: letter,
           letterIndex: letterIndex,
           status: "untyped",
-          // mistake: false,
           actuallyTyped: null,
         };
       }),
@@ -510,7 +497,6 @@ const handleZhTestContent = (state, action) => {
           ziIndex: ziIndex,
           ziPinyin: word.pinyin[ziIndex],
           status: "untyped",
-          // mistake: false,
         };
       }),
       letters: word.pinyin.reduce(
@@ -525,7 +511,6 @@ const handleZhTestContent = (state, action) => {
                 ziIndex: findZiIndex(word.pinyin, letter, returnObject.count),
                 isLastLetterInZi: letterIndexInZi === zi.length - 1,
                 status: "untyped",
-                // mistake: false,
               };
             })
           );
@@ -543,7 +528,7 @@ const handleZhTestContent = (state, action) => {
 };
 
 const completeTest = (state) => {
-  state.isTestCompleted = true; //prevent rerender on status started
+  state.isTestCompleted = true; // Preventing rerender on status started
   state.status = "completed";
   state.statistics.endTime = Date.now();
   const elapsedTime = state.statistics.endTime - state.statistics.startTime;
@@ -604,12 +589,6 @@ export const {
 } = typingtestSlice.actions;
 
 export default typingtestSlice.reducer;
-
-// export const {
-//   selectAll: selectAllWords,
-//   selectById: selectWordsById,
-//   selectIds: selectWordsIds,
-// } = typingtestAdapter.getSelectors((state) => state.typingtest);
 
 export const typingtestAdapters = {
   en: enAdapter,
