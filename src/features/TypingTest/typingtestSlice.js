@@ -465,64 +465,78 @@ const handleZhTestContent = (state, action) => {
   const { language, type, ...testContent } = action.payload;
 
   let words;
+  let wordsObj;
   switch (type) {
     case "words":
-      words = shuffle(testContent[type]).slice(0, 100);
+      if (state.options.mode === "words") {
+        words = shuffle(testContent[type]).slice(0, state.options.words);
+      } else if (state.options.mode === "time") {
+        words = shuffle(testContent[type]).slice(0, 100);
+      }
+      if (words === undefined) return;
+      // Populate test objects into store
+      wordsObj = words.map((word, index) => {
+        const wordIndex = state.loading.wordsLoadedCount + index;
+        const ci = word.zi.reduce((str, e) => str.concat(e), "");
+        const pinyin = word.pinyin.reduce((str, e) => str.concat(e), "");
+        return {
+          word: ci,
+          pinyin: pinyin,
+          ciLength: ci.length,
+          wordIndex: wordIndex,
+          wordId: pinyin + wordIndex,
+          active: wordIndex === 0 ? true : false,
+          cursorPosition: 0,
+          ziArray: ci.split("").map((zi, ziIndex) => {
+            return {
+              zi: zi,
+              ziIndex: ziIndex,
+              ziPinyin: word.pinyin[ziIndex],
+              status: "untyped",
+            };
+          }),
+          letters: word.pinyin.reduce(
+            (returnObject, zi) => {
+              returnObject.letters = returnObject.letters.concat(
+                zi.split("").map((letter, letterIndexInZi) => {
+                  returnObject.count++;
+                  return {
+                    letter: letter,
+                    letterIndex: returnObject.count,
+                    letterIndexInZi: letterIndexInZi,
+                    ziIndex: findZiIndex(
+                      word.pinyin,
+                      letter,
+                      returnObject.count
+                    ),
+                    isLastLetterInZi: letterIndexInZi === zi.length - 1,
+                    status: "untyped",
+                  };
+                })
+              );
+              return returnObject;
+            },
+            { letters: [], count: -1 }
+          ).letters,
+          extraLetters: [],
+          isCompleted: false,
+          isPerfected: false,
+        };
+      });
       break;
     case "quote":
+      const quote = shuffle(testContent[type]);
+      wordsObj = quote.split("").map((word, index) => {
+        return {
+          word: word,
+          wordId: index,
+        };
+      });
       break;
     default:
       break;
   }
-  if (state.options.mode === "words") {
-    words = words.slice(0, state.options.words);
-  }
-  if (words === undefined) return;
-  // Populate test objects into store
-  const wordsObj = words.map((word, index) => {
-    const wordIndex = state.loading.wordsLoadedCount + index;
-    const ci = word.zi.reduce((str, e) => str.concat(e), "");
-    const pinyin = word.pinyin.reduce((str, e) => str.concat(e), "");
-    return {
-      word: ci,
-      pinyin: pinyin,
-      ciLength: ci.length,
-      wordIndex: wordIndex,
-      wordId: pinyin + wordIndex,
-      active: wordIndex === 0 ? true : false,
-      cursorPosition: 0,
-      ziArray: ci.split("").map((zi, ziIndex) => {
-        return {
-          zi: zi,
-          ziIndex: ziIndex,
-          ziPinyin: word.pinyin[ziIndex],
-          status: "untyped",
-        };
-      }),
-      letters: word.pinyin.reduce(
-        (returnObject, zi) => {
-          returnObject.letters = returnObject.letters.concat(
-            zi.split("").map((letter, letterIndexInZi) => {
-              returnObject.count++;
-              return {
-                letter: letter,
-                letterIndex: returnObject.count,
-                letterIndexInZi: letterIndexInZi,
-                ziIndex: findZiIndex(word.pinyin, letter, returnObject.count),
-                isLastLetterInZi: letterIndexInZi === zi.length - 1,
-                status: "untyped",
-              };
-            })
-          );
-          return returnObject;
-        },
-        { letters: [], count: -1 }
-      ).letters,
-      extraLetters: [],
-      isCompleted: false,
-      isPerfected: false,
-    };
-  });
+
   typingtestAdapters[language].upsertMany(state[language], wordsObj);
   state.loading.wordsLoadedCount += Object.keys(wordsObj).length;
 };

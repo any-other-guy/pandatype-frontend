@@ -101,7 +101,10 @@ const ZhTypingTest = () => {
   } else if (testContentLoadingStatus === "succeeded") {
     content = wordIds.reduce((list, wordId) => {
       if (wordsToUnmount.includes(wordId)) return list;
-      list.push(<ZhcnWord key={wordId} wordId={wordId}></ZhcnWord>);
+      if (mode === "quote") {
+      } else {
+        list.push(<ZhcnWord key={wordId} wordId={wordId}></ZhcnWord>);
+      }
       return list;
     }, []);
   } else if (testContentLoadingStatus === "failed") {
