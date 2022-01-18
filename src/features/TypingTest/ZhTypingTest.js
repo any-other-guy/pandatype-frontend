@@ -10,6 +10,7 @@ import { useKeyPress } from "./keypressHook";
 import Timer from "./Timer";
 import WordCounter from "./WordCounter";
 import RestartButton from "./RestartButton";
+import ZhQuote from "./ZhQuote";
 
 const ZhTypingTest = () => {
   const dispatch = useDispatch();
@@ -25,6 +26,7 @@ const ZhTypingTest = () => {
 
   // Handling key input
   useKeyPress((key) => {
+    if (mode === "quote") return;
     // Dispatch all keypress for now
     dispatch(keyAction({ key: key }));
 
@@ -99,14 +101,15 @@ const ZhTypingTest = () => {
   if (testContentLoadingStatus === "loading") {
     // content = <Spinner />;
   } else if (testContentLoadingStatus === "succeeded") {
-    content = wordIds.reduce((list, wordId) => {
-      if (wordsToUnmount.includes(wordId)) return list;
-      if (mode === "quote") {
-      } else {
+    if (mode === "quote") {
+      content = <ZhQuote ziIds={wordIds} />;
+    } else {
+      content = wordIds.reduce((list, wordId) => {
+        if (wordsToUnmount.includes(wordId)) return list;
         list.push(<ZhcnWord key={wordId} wordId={wordId}></ZhcnWord>);
-      }
-      return list;
-    }, []);
+        return list;
+      }, []);
+    }
   } else if (testContentLoadingStatus === "failed") {
     content = <div>{testContentLoadingError}</div>;
   }

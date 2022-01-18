@@ -525,11 +525,14 @@ const handleZhTestContent = (state, action) => {
       });
       break;
     case "quote":
-      const quote = shuffle(testContent[type]);
-      wordsObj = quote.split("").map((word, index) => {
+      const quote = testContent[type].split("");
+      wordsObj = quote.map((zi, index) => {
         return {
-          word: word,
-          wordId: index,
+          zi: zi,
+          ziIndex: index,
+          wordId: zi + index,
+          ziPinyin: null,
+          status: "untyped",
         };
       });
       break;

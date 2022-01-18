@@ -179,6 +179,43 @@ body {
   font-size: 1.2rem;
 }
 
+.zhQuote {
+  display: flex;
+  flex-flow: row wrap;
+  font-size: 1.5rem;
+}
+
+.zhQuote > input{
+  margin-top: 0.75rem;
+  margin-bottom: 1.2rem;
+  background-color: transparent;
+  border-top-style: hidden;
+  border-right-style: hidden;
+  border-left-style: hidden;
+  border-bottom-style: solid;
+  border-color: var(--sub-color);
+  outline: none;
+  color: var(--text-color);
+  caret-color: var(--main-color);
+  width: 98%;
+  pointer-events: visible;
+  user-select: all;
+  font-size: 1.5rem;
+}
+
+.zhQuote > input:focus{
+  border-top-style: hidden;
+  border-right-style: hidden;
+  border-left-style: hidden;
+  border-bottom-style: solid;
+  border-color: var(--main-color);
+}
+
+.zhQuote > span {
+  margin-left: -12px;
+}
+
+
 .restartButton {
   display: flex;
   align-items: center;
