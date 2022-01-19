@@ -5,13 +5,14 @@ import {
   keyAction,
   typingtestSelectors,
 } from "./typingtestSlice";
-import Word from "./Word";
+import ZhcnWord from "./ZhcnWord";
 import { useKeyPress } from "./keypressHook";
 import Timer from "./Timer";
 import WordCounter from "./WordCounter";
 import RestartButton from "./RestartButton";
+import ZhQuote from "./ZhQuote";
 
-const TypingTest = () => {
+const ZhTypingTest = () => {
   const dispatch = useDispatch();
   const language = useSelector((state) => state.typingtest.options.language);
   const wordIds = useSelector((state) =>
@@ -25,6 +26,7 @@ const TypingTest = () => {
 
   // Handling key input
   useKeyPress((key) => {
+    if (mode === "quote") return;
     // Dispatch all keypress for now
     dispatch(keyAction({ key: key }));
 
@@ -39,7 +41,7 @@ const TypingTest = () => {
       // Remove first row when cursor is at a specific position (buttom left)
       const activeWord = Array.from(wordWrapper.current.childNodes).find(
         (node) => {
-          return node.getAttribute("active") === "true";
+          return node.childNodes[1].getAttribute("active") === "true";
         }
       );
       // Remember the relative position of the first row element
@@ -54,15 +56,10 @@ const TypingTest = () => {
         activeWord.previousElementSibling.offsetTop < activeWord.offsetTop
       ) {
         // Add first row to wordsToUnmount
-        // const arr = Array.from(activeWord.parentNode.childNodes)
-        //   .filter((node) => node.offsetTop === firstLineOffsetTop.current)
-        //   .map((e) => e.getAttribute("id"))
-        //   .concat(wordsToUnmount);
-        // Maybe a better way to write the line above
         const arr = Array.from(activeWord.parentNode.childNodes).reduce(
           (list, node) => {
             if (node.offsetTop === firstLineOffsetTop.current) {
-              list.push(node.getAttribute("id"));
+              list.push(node.childNodes[1].getAttribute("id"));
             }
             return list;
           },
@@ -72,7 +69,8 @@ const TypingTest = () => {
         setWordsToUnmount(arr);
 
         // Fetch for more, only do this after the initial render for time mode
-        if (mode === "time" && wordWrapper.current.childNodes.length < 50) {
+        console.log(wordWrapper.current.childNodes.length);
+        if (mode === "time" && wordWrapper.current.childNodes.length < 30) {
           console.log("fetching more tests");
           dispatch(fetchTestContent({ language: language, type: mode }));
         }
@@ -103,20 +101,15 @@ const TypingTest = () => {
   if (testContentLoadingStatus === "loading") {
     // content = <Spinner />;
   } else if (testContentLoadingStatus === "succeeded") {
-    content = wordIds.reduce((list, wordId) => {
-      if (wordsToUnmount.includes(wordId)) return list;
-      list.push(<Word key={wordId} wordId={wordId}></Word>);
-      return list;
-    }, []);
-
-    // fancier way but should be slower since [...list] copies the whole thing every time
-    // content = wordIds.reduce(
-    //   (list, wordId) =>
-    //     wordsToUnmount.includes(wordId)
-    //       ? list
-    //       : [...list, <Word key={wordId} wordId={wordId}></Word>],
-    //   []
-    // );
+    if (mode === "quote") {
+      content = <ZhQuote ziIds={wordIds} />;
+    } else {
+      content = wordIds.reduce((list, wordId) => {
+        if (wordsToUnmount.includes(wordId)) return list;
+        list.push(<ZhcnWord key={wordId} wordId={wordId}></ZhcnWord>);
+        return list;
+      }, []);
+    }
   } else if (testContentLoadingStatus === "failed") {
     content = <div>{testContentLoadingError}</div>;
   }
@@ -127,7 +120,7 @@ const TypingTest = () => {
       {mode === "time" ? <Timer /> : null}
       {mode === "words" || mode === "quote" ? <WordCounter /> : null}
       {/* The words area */}
-      <div className="typingTest" ref={wordWrapper}>
+      <div className="zhTypingTest" ref={wordWrapper}>
         {content}
       </div>
       {/* Restart button group */}
@@ -136,4 +129,4 @@ const TypingTest = () => {
   );
 };
 
-export default TypingTest;
+export default ZhTypingTest;
