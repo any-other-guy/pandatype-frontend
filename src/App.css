@@ -2,7 +2,7 @@
   box-sizing: border-box;
 }
 
-body {
+:root {
   background-color: var(--bg-color);
   font-family: "Roboto Mono";
   overflow: hidden;

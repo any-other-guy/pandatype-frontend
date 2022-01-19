@@ -12,17 +12,17 @@ const Footer = () => {
       </div>
       <div className="footer">
         <div className="linksGroup">
-          <a href="">
+          <a href="https://github.com/any-other-guy/pandatype-frontend">
             <AiFillGithub />
             <span>Github</span>
           </a>
         </div>
         <div className="themeVersion">
-          <a href="">
+          <a href="https://github.com/any-other-guy/pandatype-frontend">
             <AiFillGithub />
             <span>Github</span>
           </a>
-          <a href="">
+          <a href="https://github.com/any-other-guy/pandatype-frontend">
             <AiFillGithub />
             <span>Github</span>
           </a>

@@ -55,7 +55,7 @@ const Header = () => {
     Array.from(configGroupWrapper.current.childNodes)
       .find((node) => node.id === `${mode}Options`)
       .classList.remove("hidden");
-  }, []);
+  }, [language, mode, quote, time, words]);
 
   const markAllSiblingNotActive = ({ parentNode }) => {
     parentNode.childNodes.forEach((child) => {

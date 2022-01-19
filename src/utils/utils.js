@@ -1,5 +1,3 @@
-import { useEffect, useRef } from "react";
-
 export const formatMillisecondsToDate = (milliseconds) => {
   const formattedTime = new Date(0);
   formattedTime.setMilliseconds(milliseconds);
@@ -39,17 +37,17 @@ export const containsNonChinese = (str) => {
   });
 };
 
-export const useComponentDidUpdate = (effect, dependencies) => {
-  const hasMounted = useRef(false);
+// export const useComponentDidUpdate = (effect, dependencies) => {
+//   const hasMounted = useRef(false);
 
-  useEffect(() => {
-    if (!hasMounted.current) {
-      hasMounted.current = true;
-      return;
-    }
-    effect();
-  }, dependencies);
-};
+//   useEffect(() => {
+//     if (!hasMounted.current) {
+//       hasMounted.current = true;
+//       return;
+//     }
+//     effect();
+//   }, dependencies);
+// };
 
 export const findZiIndex = (arr, letter, letterIndex) => {
   let ziIndex = 0;
@@ -60,6 +58,7 @@ export const findZiIndex = (arr, letter, letterIndex) => {
       letterIndex -= zi.length;
       ziIndex++;
     }
+    return false;
   });
   return exists ? ziIndex : null;
 };

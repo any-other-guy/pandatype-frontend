@@ -3,13 +3,9 @@ import {
   createEntityAdapter,
   createSlice,
 } from "@reduxjs/toolkit";
+import { loadState, saveState } from "../../app/localStorage";
 import { client } from "../../utils/client";
-import {
-  containsNonChinese,
-  findZiIndex,
-  getZhStrLength,
-  shuffle,
-} from "../../utils/utils";
+import { containsNonChinese, findZiIndex, shuffle } from "../../utils/utils";
 
 const enAdapter = createEntityAdapter({
   selectId: (word) => word.wordId,
@@ -21,13 +17,17 @@ const zhAdapter = createEntityAdapter({
   sortComparer: (a, b) => a.wordIndex < b.wordIndex,
 });
 
-const initialOptions = {
-  language: "zh",
-  mode: "time",
-  time: 30,
-  words: 50,
-  quote: "medium",
-};
+const localOptions = loadState("testOptions");
+const initialOptions =
+  localOptions === undefined
+    ? {
+        language: "zh",
+        mode: "time",
+        time: 30,
+        words: 50,
+        quote: "medium",
+      }
+    : localOptions;
 
 const initialStatistics = {
   perSecondWpm: [{ wpm: -1, rawWpm: -1, mistakesHere: 0 }],
@@ -394,6 +394,9 @@ export const typingtestSlice = createSlice({
       state.loading.quoteWordCount = null;
 
       state.statistics = initialStatistics;
+
+      // save to localStorage
+      saveState(state.options, "testOptions");
     },
     zhQuoteInputAction: (state, action) => {
       const { inputString } = action.payload;

@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { findDiff, getZhStrLength } from "../../utils/utils";
-import { useKeyPress } from "./keypressHook";
+import { getZhStrLength } from "../../utils/utils";
 import { zhQuoteInputAction } from "./typingtestSlice";
 import ZhZi from "./ZhZi";
 
@@ -41,9 +40,9 @@ const ZhQuote = ({ ziIds }) => {
       }
 
       // and remove extra from current line
-      // inputFields.current[currentField.current].value = inputFields.current[
-      //   currentField.current
-      // ].value.slice(0, -appendToNextLine.length);
+      inputFields.current[currentField.current].value = inputFields.current[
+        currentField.current
+      ].value.slice(0, -appendToNextLine.length);
 
       // Move cursor to the next line
       currentField.current++;
