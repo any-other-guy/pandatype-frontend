@@ -33,6 +33,12 @@ export const getZhStrLength = (str) => {
   }, 0);
 };
 
+export const containsNonChinese = (str) => {
+  return str.split("").some((zi) => {
+    return escape(zi).length <= 4;
+  });
+};
+
 export const useComponentDidUpdate = (effect, dependencies) => {
   const hasMounted = useRef(false);
 

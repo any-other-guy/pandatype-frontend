@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { useSelector } from "react-redux";
 import { typingtestSelectors } from "./typingtestSlice";
+import ZhZi from "./ZhZi";
 
 const ZhcnWord = ({ wordId }) => {
   // By only passing in the wordId itself instead of the wordObj, unnecessary rerender is prevented
@@ -15,13 +16,14 @@ const ZhcnWord = ({ wordId }) => {
       <div className="ci">
         {wordObj.ziArray.map((zi) => {
           return (
-            <div
-              className="zi"
-              key={`${zi.zi}${zi.ziIndex}`}
-              status={zi.status}
-            >
-              {zi.zi}
-            </div>
+            // <div
+            //   className="zi"
+            //   key={`${zi.zi}${zi.ziIndex}`}
+            //   status={zi.status}
+            // >
+            //   {zi.zi}
+            // </div>
+            <ZhZi key={`${zi.zi}${zi.ziIndex}`} zi={zi.zi} status={zi.status} />
           );
         })}
       </div>

@@ -1,5 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
-import { getZhStrLength, useComponentDidUpdate } from "../../utils/utils";
+import { useDispatch } from "react-redux";
+import { findDiff, getZhStrLength } from "../../utils/utils";
+import { useKeyPress } from "./keypressHook";
+import { zhQuoteInputAction } from "./typingtestSlice";
 import ZhZi from "./ZhZi";
 
 const ZhQuote = ({ ziIds }) => {
@@ -8,17 +11,25 @@ const ZhQuote = ({ ziIds }) => {
   const ziPerLine = 38;
   const linesToRemove = useRef(3);
   const [rerender, setRerender] = useState(0);
+  const typedString = useRef("");
   let content;
+  const dispatch = useDispatch();
+
   useEffect(() => {
     inputFields.current[0].focus();
   }, []);
 
-  useComponentDidUpdate(() => {});
-
   const onInputChange = (e) => {
-    let zhStrLength = getZhStrLength(
-      inputFields.current[currentField.current].value
-    );
+    const currentTypedValue = inputFields.current[currentField.current].value;
+    typedString.current = inputFields.current.reduce((str, field, index) => {
+      if (index !== currentField.current && field != null) {
+        str += field.value;
+      }
+      return str;
+    }, currentTypedValue);
+    dispatch(zhQuoteInputAction({ inputString: typedString.current }));
+
+    let zhStrLength = getZhStrLength(currentTypedValue);
     if (zhStrLength >= ziPerLine) {
       // Append extra Zi into the next line as well
       let appendToNextLine = "";

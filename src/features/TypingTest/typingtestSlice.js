@@ -4,7 +4,12 @@ import {
   createSlice,
 } from "@reduxjs/toolkit";
 import { client } from "../../utils/client";
-import { findZiIndex, shuffle } from "../../utils/utils";
+import {
+  containsNonChinese,
+  findZiIndex,
+  getZhStrLength,
+  shuffle,
+} from "../../utils/utils";
 
 const enAdapter = createEntityAdapter({
   selectId: (word) => word.wordId,
@@ -124,7 +129,7 @@ export const typingtestSlice = createSlice({
                 // Zhcn
                 if (language === "zh") {
                   wordObj.ziArray[letterObj.ziIndex].status = "missed";
-                  state.statistics.zhMistakeCount++;
+                  state.statistics.zhMistake++;
                 }
               }
             });
@@ -288,6 +293,11 @@ export const typingtestSlice = createSlice({
             // Zhcn mark Zi to its status
             if (language === "zh") {
               if (letterObj === undefined) {
+                if (
+                  wordObj.letters[wordObj.letters.length - 1].status ===
+                  "untyped"
+                )
+                  return;
                 letterObj = wordObj.letters[wordObj.letters.length - 1];
               }
               if (letterObj.isLastLetterInZi) {
@@ -384,6 +394,40 @@ export const typingtestSlice = createSlice({
       state.loading.quoteWordCount = null;
 
       state.statistics = initialStatistics;
+    },
+    zhQuoteInputAction: (state, action) => {
+      const { inputString } = action.payload;
+      // Start the test if unstarted
+      state.status = state.status === "unstarted" ? "started" : state.status;
+      if (state.statistics.startTime === null) {
+        state.statistics.startTime = Date.now();
+      }
+
+      if (containsNonChinese(inputString)) return;
+
+      state.statistics.zhCompleted = 0;
+      state.statistics.zhPerfected = 0;
+      state.statistics.zhMistake = 0;
+      state.statistics.mistakeCount = 0;
+      state.statistics.correctCount = 0;
+      inputString.split("").forEach((zi, index) => {
+        const ziId = state.zh.ids[index];
+        const ziObj = state.zh.entities[ziId];
+        if (ziObj === undefined) return;
+        if (zi === ziObj.zi) {
+          ziObj.status = "typed";
+          state.statistics.zhPerfected++;
+          state.statistics.correctCount++;
+          if (index === state.zh.ids.length - 1) {
+            completeTest(state);
+          }
+        } else {
+          ziObj.status = "mistake";
+          state.statistics.zhMistake++;
+          state.statistics.mistakeCount++;
+        }
+        state.statistics.zhCompleted++;
+      });
     },
   },
   extraReducers(builder) {
@@ -535,6 +579,7 @@ const handleZhTestContent = (state, action) => {
           status: "untyped",
         };
       });
+      state.loading.quoteWordCount = quote.length;
       break;
     default:
       break;
@@ -603,6 +648,7 @@ export const {
   testTimerDepletedAction,
   perSecondWpmAction,
   resetTestAction,
+  zhQuoteInputAction,
 } = typingtestSlice.actions;
 
 export default typingtestSlice.reducer;

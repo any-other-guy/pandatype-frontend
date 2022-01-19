@@ -147,19 +147,19 @@ body {
   margin-left: 1px;
 }
 
-.letter[status="typed"], .zi[status="typed"] {
+.letter[status="typed"], .zhzi[status="typed"] {
   color: var(--text-color);
 }
 
-.letter[status="mistake"], .zi[status="mistake"] {
+.letter[status="mistake"], .zhzi[status="mistake"] {
   color: var(--error-color);
 }
 
-.letter[status="missed"], .zi[status="missed"] {
+.letter[status="missed"], .zhzi[status="missed"] {
   color: var(--error-color);
 }
 
-.letter[status="extra"], .zi[status="extra"] {
+.letter[status="extra"], .zhzi[status="extra"] {
   color: var(--error-color);
 }
 
