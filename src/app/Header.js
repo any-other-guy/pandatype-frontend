@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { AiFillAlipayCircle } from "react-icons/ai";
+import { FaKeyboard, FaCrown, FaInfo, FaCog, FaUserAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { resetTestAction } from "../features/TypingTest/typingtestSlice";
 
@@ -108,20 +108,23 @@ const Header = () => {
     <div className="headerWrapper">
       <div className="logo">pandatype</div>
       <div className="navbar">
-        <div className="icon">
-          <AiFillAlipayCircle size={"1.5rem"} />
+        <div
+          className="icon"
+          onClick={() => dispatch(resetTestAction({ options: {} }))}
+        >
+          <FaKeyboard size={"1.2rem"} />
         </div>
         <div className="icon">
-          <AiFillAlipayCircle size={"1.5rem"} />
+          <FaCrown size={"1.2rem"} />
         </div>
         <div className="icon">
-          <AiFillAlipayCircle size={"1.5rem"} />
+          <FaInfo size={"1.2rem"} />
         </div>
         <div className="icon">
-          <AiFillAlipayCircle size={"1.5rem"} />
+          <FaCog size={"1.2rem"} />
         </div>
         <div className="icon">
-          <AiFillAlipayCircle size={"1.5rem"} />
+          <FaUserAlt size={"1.2rem"} />
         </div>
       </div>
 

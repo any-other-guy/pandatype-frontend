@@ -372,7 +372,7 @@ export const typingtestSlice = createSlice({
         time = state.options.time,
         words = state.options.words,
         quote = state.options.quote,
-      } = action.payload.options;
+      } = action.payload.options || {};
 
       //FIXME: <Adapter>.removeAll() doesnt work, why?
       // state[language].ids = [],

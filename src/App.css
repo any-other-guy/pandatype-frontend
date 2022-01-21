@@ -47,7 +47,7 @@
   gap: 0.5rem;
   white-space: nowrap;
   color: var(--main-color);
-  font-size: 2.5rem;
+  font-size: 2.2rem;
 }
 
 .navbar {
@@ -55,10 +55,18 @@
   color: var(--sub-color);
   display: grid;
   grid-auto-flow: column;
-  gap: 1rem;
+  gap: 2rem;
   width: fit-content;
-  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
 }
+
+.navbar > .icon :hover {
+  color: var(--text-color);
+  transition: 0.25s;
+}
+
 .configGroupWrapper {
   display: grid;
   justify-self: right;
@@ -147,19 +155,23 @@
   margin-left: 1px;
 }
 
-.letter[status="typed"], .zhzi[status="typed"] {
+.letter[status="typed"],
+.zhzi[status="typed"] {
   color: var(--text-color);
 }
 
-.letter[status="mistake"], .zhzi[status="mistake"] {
+.letter[status="mistake"],
+.zhzi[status="mistake"] {
   color: var(--error-color);
 }
 
-.letter[status="missed"], .zhzi[status="missed"] {
+.letter[status="missed"],
+.zhzi[status="missed"] {
   color: var(--error-color);
 }
 
-.letter[status="extra"], .zhzi[status="extra"] {
+.letter[status="extra"],
+.zhzi[status="extra"] {
   color: var(--error-color);
 }
 
@@ -185,7 +197,7 @@
   font-size: 1.5rem;
 }
 
-.zhQuote > input{
+.zhQuote > input {
   margin-top: 0.75rem;
   margin-bottom: 1.2rem;
   background-color: transparent;
@@ -203,7 +215,7 @@
   font-size: 1.5rem;
 }
 
-.zhQuote > input:focus{
+.zhQuote > input:focus {
   border-top-style: hidden;
   border-right-style: hidden;
   border-left-style: hidden;
@@ -214,7 +226,6 @@
 .zhQuote > span {
   margin-left: -12px;
 }
-
 
 .restartButton {
   display: flex;
@@ -239,7 +250,7 @@
   grid-template-rows: minmax(0, 13rem) minmax(0, 4rem) minmax(0, 54px);
   gap: 1rem;
   align-items: center;
-  margin-bottom: 2rem;/*temp value, adjust here vertical pos here*/
+  margin-bottom: 2rem; /*temp value, adjust here vertical pos here*/
 }
 
 .testResult > .stats {
@@ -430,11 +441,19 @@
 
 /* Safari */
 @-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

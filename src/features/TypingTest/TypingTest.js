@@ -131,7 +131,7 @@ const TypingTest = () => {
         {content}
       </div>
       {/* Restart button group */}
-      <RestartButton language={language} />
+      <RestartButton />
     </div>
   );
 };
