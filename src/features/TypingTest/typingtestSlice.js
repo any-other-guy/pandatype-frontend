@@ -54,6 +54,7 @@ const initialStatistics = {
 };
 
 const initialState = {
+  showTypingtest: true,
   // Entity Adapter for different languages
   en: enAdapter.getInitialState(),
   zh: zhAdapter.getInitialState(),
@@ -432,6 +433,10 @@ export const typingtestSlice = createSlice({
         state.statistics.zhCompleted++;
       });
     },
+    showTypingtestAction: (state, action) => {
+      const { show } = action.payload;
+      state.showTypingtest = show;
+    },
   },
   extraReducers(builder) {
     builder
@@ -652,6 +657,7 @@ export const {
   perSecondWpmAction,
   resetTestAction,
   zhQuoteInputAction,
+  showTypingtestAction,
 } = typingtestSlice.actions;
 
 export default typingtestSlice.reducer;

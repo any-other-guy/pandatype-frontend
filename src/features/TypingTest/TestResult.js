@@ -36,12 +36,16 @@ const TestResult = () => {
     default:
       break;
   }
+  const langDict = {
+    en: "English",
+    zh: "中文",
+  };
   const wpmString = !isNaN(wpm) !== null ? wpm.toFixed(0) : "N/A";
   const accuracyString =
     !isNaN(accuracy) !== null ? `${accuracy.toFixed(0)}%` : "N/A";
   const testTypeString =
     language !== null && mode !== null && modeOption !== null
-      ? `${language} ${mode}`
+      ? `${langDict[language]} ${mode}`
       : "N/A";
   const rawWpmString = !isNaN(rawWpm) !== null ? rawWpm.toFixed(0) : "N/A";
   const consistencyString =

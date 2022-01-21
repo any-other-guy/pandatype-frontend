@@ -18,7 +18,7 @@ const StatsTracker = () => {
     }
   }, 1000);
 
-  return <div className="hidden"></div>;
+  return <div className="statsTracker display-none"></div>;
 };
 
 export default StatsTracker;

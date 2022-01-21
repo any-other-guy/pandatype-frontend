@@ -1,7 +1,13 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaKeyboard, FaCrown, FaInfo, FaCog, FaUserAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { resetTestAction } from "../features/TypingTest/typingtestSlice";
+import { showLeaderboardAction } from "../features/Leaderboard/leaderboardSlice";
+import {
+  resetTestAction,
+  showTypingtestAction,
+} from "../features/TypingTest/typingtestSlice";
+import { showSettingsAction } from "../features/Settings/settingsSlice";
+import { showLoginFormAction } from "../features/Auth/authSlice";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -10,6 +16,43 @@ const Header = () => {
   const { language, mode, time, words, quote } = useSelector(
     (state) => state.typingtest.options
   );
+
+  const showTypingtest = useSelector(
+    (state) => state.typingtest.showTypingtest
+  );
+  const showSettings = useSelector((state) => state.settings.showSettings);
+  const showLoginForm = useSelector((state) => state.auth.showLoginForm);
+
+  const handleShowHide = (nextTabName) => {
+    const showHide = [
+      {
+        name: "typingtest",
+        show: showTypingtest,
+        dispatch: showTypingtestAction,
+      },
+      { name: "settings", show: showSettings, dispatch: showSettingsAction },
+      {
+        name: "loginform",
+        show: showLoginForm,
+        dispatch: showLoginFormAction,
+      },
+    ];
+
+    // hide/show components
+    const current = showHide.find((tab) => tab.show);
+    if (nextTabName !== current.name) {
+      // hide current
+      dispatch(showHide.find((tab) => tab.show).dispatch({ show: false }));
+      // show next
+      dispatch(
+        showHide
+          .find((tab) => tab.name === nextTabName)
+          .dispatch({ show: true })
+      );
+    } else if (nextTabName === "typingtest" && nextTabName === current.name) {
+      dispatch(resetTestAction({ options: {} }));
+    }
+  };
 
   const configGroupWrapper = useRef(null);
 
@@ -54,7 +97,7 @@ const Header = () => {
 
     Array.from(configGroupWrapper.current.childNodes)
       .find((node) => node.id === `${mode}Options`)
-      .classList.remove("hidden");
+      .classList.remove("display-none");
   }, [language, mode, quote, time, words]);
 
   const markAllSiblingNotActive = ({ parentNode }) => {
@@ -79,9 +122,9 @@ const Header = () => {
     target.classList.add("active");
     target.parentNode.parentNode.childNodes.forEach((node, index) => {
       if (node.classList.contains(`${mode}Options`)) {
-        node.classList.remove("hidden");
+        node.classList.remove("display-none");
       } else if (!node.classList.contains("modeOptions")) {
-        node.classList.add("hidden");
+        node.classList.add("display-none");
       }
     });
   };
@@ -108,23 +151,26 @@ const Header = () => {
     <div className="headerWrapper">
       <div className="logo">pandatype</div>
       <div className="navbar">
-        <div
-          className="icon"
-          onClick={() => dispatch(resetTestAction({ options: {} }))}
-        >
+        <div className="icon" onClick={() => handleShowHide("typingtest")}>
           <FaKeyboard size={"1.2rem"} />
         </div>
         <div className="icon">
-          <FaCrown size={"1.2rem"} />
+          <FaCrown
+            size={"1.2rem"}
+            onClick={() => dispatch(showLeaderboardAction({ show: true }))}
+          />
         </div>
-        <div className="icon">
+        {/* <div className="icon">
           <FaInfo size={"1.2rem"} />
-        </div>
-        <div className="icon">
+        </div> */}
+        <div className="icon" onClick={() => handleShowHide("settings")}>
           <FaCog size={"1.2rem"} />
         </div>
         <div className="icon">
-          <FaUserAlt size={"1.2rem"} />
+          <FaUserAlt
+            size={"1.2rem"}
+            onClick={() => handleShowHide("loginform")}
+          />
         </div>
       </div>
 
@@ -168,7 +214,7 @@ const Header = () => {
             quote
           </div>
         </div>
-        <div className="configGroup timeOptions hidden" id="timeOptions">
+        <div className="configGroup timeOptions display-none" id="timeOptions">
           <div
             className="text-button"
             mode="15"
@@ -191,7 +237,10 @@ const Header = () => {
             60
           </div>
         </div>
-        <div className="configGroup wordsOptions hidden" id="wordsOptions">
+        <div
+          className="configGroup wordsOptions display-none"
+          id="wordsOptions"
+        >
           <div
             className="text-button"
             mode="10"
@@ -221,7 +270,10 @@ const Header = () => {
             100
           </div>
         </div>
-        <div className="configGroup quoteOptions hidden" id="quoteOptions">
+        <div
+          className="configGroup quoteOptions display-none"
+          id="quoteOptions"
+        >
           <div
             className="text-button"
             mode="all"
