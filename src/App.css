@@ -19,7 +19,7 @@
   display: grid;
   grid-auto-flow: row;
   min-height: 100vh; /* why does 100vh creates scrollbar?? */
-  padding: 1rem 2rem 2rem 2rem;
+  padding: 1.1rem 2.2rem 2.4rem 2.2rem;
   margin-left: auto;
   margin-right: auto;
   gap: 2rem;
@@ -392,9 +392,13 @@
   color: var(--sub-color);
 }
 
-.footer span {
-  padding-left: 0.3rem;
+.footer .link {
+  display: inline-block;
+  position: relative;
+  bottom: 0.12rem;
+  left: 0.3rem;
 }
+
 .linksGroup {
   display: grid;
   grid-template-rows: 1fr;

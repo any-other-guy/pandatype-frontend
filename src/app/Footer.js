@@ -1,6 +1,6 @@
 import React from "react";
-import { AiFillGithub } from "react-icons/ai";
-
+import { FaGithub, FaPalette } from "react-icons/fa";
+import { loadState } from "./localStorage";
 const Footer = () => {
   return (
     <div className="footerWrapper">
@@ -13,18 +13,14 @@ const Footer = () => {
       <div className="footer">
         <div className="linksGroup">
           <a href="https://github.com/any-other-guy/pandatype-frontend">
-            <AiFillGithub />
-            <span>Github</span>
+            <FaGithub size={"12px"} />
+            <span className="link">Github</span>
           </a>
         </div>
         <div className="themeVersion">
           <a href="https://github.com/any-other-guy/pandatype-frontend">
-            <AiFillGithub />
-            <span>Github</span>
-          </a>
-          <a href="https://github.com/any-other-guy/pandatype-frontend">
-            <AiFillGithub />
-            <span>Github</span>
+            <FaPalette size={"12px"} />
+            <span className="link">{loadState("theme").name}</span>
           </a>
         </div>
       </div>

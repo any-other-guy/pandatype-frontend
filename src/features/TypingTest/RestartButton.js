@@ -16,18 +16,16 @@ const RestartButton = () => {
     }
   });
   const [isHighlighted, setIsHighlighted] = useState(false);
-  const highlighted = isHighlighted ? "highlighted" : "";
-  const color = isHighlighted ? "MediumSpringGreen" : "#646669";
-  const classes = `restartButton ${highlighted}`;
+  const classname = `restartButton ${isHighlighted ? "highlighted" : ""}`;
   return (
     <div className="restartButtonWrapper">
       <div
-        className={classes}
+        className={classname}
         onMouseOver={() => setIsHighlighted(true)}
         onMouseLeave={() => setIsHighlighted(false)}
         onClick={() => dispatch(resetTestAction({ options: {} }))}
       >
-        <VscDebugRestart size={"1.25rem"} color={color} />
+        <VscDebugRestart size={"1.25rem"} />
       </div>
     </div>
   );
