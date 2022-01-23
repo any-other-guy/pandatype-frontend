@@ -1,0 +1,218 @@
+[
+  {
+    "name": "milkshake",
+    "bg-color": "#ffffff",
+    "main-color": "#212b43",
+    "caret-color": "#212b43",
+    "sub-color": "#62cfe6",
+    "text-color": "#212b43",
+    "error-color": "#f19dac"
+  },
+  {
+    "name": "modo light",
+    "bg-color": "#ffffff",
+    "main-color": "#AFF2E0",
+    "caret-color": "#AFF2E0",
+    "sub-color": "#BABABA",
+    "text-color": "#FFFFFF",
+    "error-color": "#F48DA0"
+  },
+  {
+    "name": "lil dragon",
+    "bg-color": "#ebe1ef",
+    "main-color": "#8a5bd6",
+    "caret-color": "#212b43",
+    "sub-color": "#ac76e5",
+    "text-color": "#212b43",
+    "error-color": "#f794ca"
+  },
+  {
+    "name": "bingsu",
+    "bg-color": "#b8a7aa",
+    "main-color": "#83616e",
+    "caret-color": "#ebe6ea",
+    "sub-color": "#48373d",
+    "text-color": "#ebe6ea",
+    "error-color": "#921341"
+  },
+  {
+    "name": "taro",
+    "bg-color": "#b3baff",
+    "main-color": "#130f1a",
+    "caret-color": "#00e9e5",
+    "sub-color": "#6f6c91",
+    "text-color": "#130f1a",
+    "error-color": "#ffe23e"
+  },
+  {
+    "name": "shoko",
+    "bg-color": "#ced7e0",
+    "main-color": "#81c4dd",
+    "caret-color": "#81c4dd",
+    "sub-color": "#7599b1",
+    "text-color": "#3b4c58",
+    "error-color": "#bf616a"
+  },
+  {
+    "name": "vaporwave",
+    "bg-color": "#a4a7ea",
+    "main-color": "#e368da",
+    "caret-color": "#28cafe",
+    "sub-color": "#7c7faf",
+    "text-color": "#f1ebf1",
+    "error-color": "#573ca9"
+  },
+  {
+    "name": "mizu",
+    "bg-color": "#afcbdd",
+    "main-color": "#fcfbf6",
+    "caret-color": "#fcfbf6",
+    "sub-color": "#85a5bb",
+    "text-color": "#1a2633",
+    "error-color": "#bf616a"
+  },
+  {
+    "name": "strawberry",
+    "bg-color": "#f37f83",
+    "main-color": "#fcfcf8",
+    "caret-color": "#fcfcf8",
+    "sub-color": "#e53c58",
+    "text-color": "#fcfcf8",
+    "error-color": "#fcd23f"
+  },
+  {
+    "name": "menthol",
+    "bg-color": "#00c18c",
+    "main-color": "#ffffff",
+    "caret-color": "#99fdd8",
+    "sub-color": "#186544",
+    "text-color": "#ffffff",
+    "error-color": "#e03c3c"
+  },
+  {
+    "name": "striker",
+    "bg-color": "#124883",
+    "main-color": "#d7dcda",
+    "caret-color": "#d7dcda",
+    "sub-color": "#0f2d4e",
+    "text-color": "#d6dbd9",
+    "error-color": "#fb4934"
+  },
+  {
+    "name": "sewing tin",
+    "bg-color": "#241963",
+    "main-color": "#f2ce83",
+    "caret-color": "#fbdb8c",
+    "sub-color": "#446ad5",
+    "text-color": "#ffffff",
+    "error-color": "#c6915e"
+  },
+  {
+    "name": "future funk",
+    "bg-color": "#2e1a47",
+    "main-color": "#f7f2ea",
+    "caret-color": "#f7f2ea",
+    "sub-color": "#c18fff",
+    "text-color": "#f7f2ea",
+    "error-color": "#f04e98"
+  },
+  {
+    "name": "laser",
+    "bg-color": "#221b44",
+    "main-color": "#009eaf",
+    "caret-color": "#009eaf",
+    "sub-color": "#b82356",
+    "text-color": "#dbe7e8",
+    "error-color": "#a8d400"
+  },
+  {
+    "name": "dracula",
+    "bg-color": "#282a36",
+    "main-color": "#f2f2f2",
+    "caret-color": "#f2f2f2",
+    "sub-color": "#bd93f9",
+    "text-color": "#f2f2f2",
+    "error-color": "#f758a0"
+  },
+  {
+    "name": "panda",
+    "bg-color": "#323437",
+    "main-color": "MediumSpringGreen",
+    "caret-color": "MediumSpringGreen",
+    "sub-color": "#646669",
+    "text-color": "#d1d0c5",
+    "error-color": "#ca4754"
+  },
+  {
+    "name": "monokai",
+    "bg-color": "#272822",
+    "main-color": "#a6e22e",
+    "caret-color": "#66d9ef",
+    "sub-color": "#e6db74",
+    "text-color": "#e2e2dc",
+    "error-color": "#f92672"
+  },
+  {
+    "name": "nautilus",
+    "bg-color": "#132237",
+    "main-color": "#ebb723",
+    "caret-color": "#ebb723",
+    "sub-color": "#0b4c6c",
+    "text-color": "#1cbaac",
+    "error-color": "#da3333"
+  },
+  {
+    "name": "vscode",
+    "bg-color": "#1e1e1e",
+    "main-color": "#007acc",
+    "caret-color": "#569cd6",
+    "sub-color": "#4d4d4d",
+    "text-color": "#d4d4d4",
+    "error-color": "#f44747"
+  },
+  {
+    "name": "nebula",
+    "bg-color": "#212135",
+    "main-color": "#be3c88",
+    "caret-color": "#78c729",
+    "sub-color": "#19b3b8",
+    "text-color": "#838686",
+    "error-color": "#ca4754"
+  },
+  {
+    "name": "olivia",
+    "bg-color": "#1c1b1d",
+    "main-color": "#deaf9d",
+    "caret-color": "#deaf9d",
+    "sub-color": "#4e3e3e",
+    "text-color": "#f2efed",
+    "error-color": "#bf616a"
+  },
+  {
+    "name": "dark",
+    "bg-color": "#111",
+    "main-color": "#eee",
+    "caret-color": "#eee",
+    "sub-color": "#444",
+    "text-color": "#eee",
+    "error-color": "#da3333"
+  },
+  {
+    "name": "chaos theory",
+    "bg-color": "#141221",
+    "main-color": "#fd77d7",
+    "caret-color": "#dde5ed",
+    "sub-color": "#676e8a",
+    "text-color": "#dde5ed",
+    "error-color": "#FF5869"
+  },
+  {
+    "name": "hammerhead",
+    "bg-color": "#030613",
+    "main-color": "#4fcdb9",
+    "caret-color": "#4fcdb9",
+    "sub-color": "#1e283a",
+    "text-color": "#e2f1f5",
+    "error-color": "#e32b2b"
+  }
+]

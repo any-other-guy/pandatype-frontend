@@ -1,3 +1,5 @@
+import { loadState } from "../app/localStorage";
+
 export const formatMillisecondsToDate = (milliseconds) => {
   const formattedTime = new Date(0);
   formattedTime.setMilliseconds(milliseconds);
@@ -61,4 +63,27 @@ export const findZiIndex = (arr, letter, letterIndex) => {
     return false;
   });
   return exists ? ziIndex : null;
+};
+
+export const setTheme = (theme) => {
+  if (theme === undefined) return;
+  document.documentElement.style.setProperty("--bg-color", theme["bg-color"]);
+  document.documentElement.style.setProperty(
+    "--main-color",
+    theme["main-color"]
+  );
+  document.documentElement.style.setProperty(
+    "--caret-color",
+    theme["caret-color"]
+  );
+  document.documentElement.style.setProperty("--sub-color", theme["sub-color"]);
+  document.documentElement.style.setProperty(
+    "--text-color",
+    theme["text-color"]
+  );
+  document.documentElement.style.setProperty(
+    "--error-color",
+    theme["error-color"]
+  );
+  return theme;
 };

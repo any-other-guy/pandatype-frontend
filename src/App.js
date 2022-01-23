@@ -10,6 +10,8 @@ import ZhTypingTest from "./features/TypingTest/ZhTypingTest";
 import Leaderboard from "./features/Leaderboard/Leaderboard";
 import LoginForm from "./features/Auth/LoginForm";
 import Settings from "./features/Settings/Settings";
+import { loadState } from "./app/localStorage";
+import { setTheme } from "./utils/utils";
 
 const App = () => {
   // Not using testStatus as a flag to prevent rerender when the test started
@@ -23,6 +25,10 @@ const App = () => {
   );
   const showSettings = useSelector((state) => state.settings.showSettings);
   const showLoginForm = useSelector((state) => state.auth.showLoginForm);
+
+  // Load initial settings
+
+  setTheme(loadState("theme"));
 
   return (
     <div className="mainWrapper">

@@ -8,6 +8,7 @@
   overflow: hidden;
   --bg-color: #323437;
   --main-color: MediumSpringGreen;
+  --caret-color: MediumSpringGreen;
   --sub-color: #646669;
   --text-color: #d1d0c5;
   --error-color: #ca4754;
@@ -355,6 +356,20 @@
   transform: translate(-50%, -50%);
 }
 
+/* Settings */
+.settings {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.settings .themeSelection {
+  cursor: pointer;
+  border-radius: 0.5rem;
+  line-height: 2rem;
+}
+
 /* Footer */
 .footerWrapper {
   display: grid;
@@ -429,7 +444,7 @@
   /* transform-origin: top left; */
   margin-left: -0.75rem;
   border-radius: 1rem;
-  color: var(--main-color);
+  color: var(--caret-color);
   animation: blink 1s infinite;
   font-size: 2.2rem;
   top: -0.6rem;
