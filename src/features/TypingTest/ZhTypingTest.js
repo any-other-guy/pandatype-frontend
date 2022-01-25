@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchTestContent, keyAction, typingtestSelectors } from './typingtestSlice';
-import ZhcnWord from './ZhcnWord';
+import ZhWord from './ZhWord';
 import { useKeyPress } from './keypressHook';
 import Timer from './Timer';
 import WordCounter from './WordCounter';
@@ -91,7 +91,7 @@ const ZhTypingTest = () => {
     } else {
       content = wordIds.reduce((list, wordId) => {
         if (wordsToUnmount.includes(wordId)) return list;
-        list.push(<ZhcnWord key={wordId} wordId={wordId} />);
+        list.push(<ZhWord key={wordId} wordId={wordId} />);
         return list;
       }, []);
     }

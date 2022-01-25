@@ -4,14 +4,14 @@ import PropTypes from 'prop-types';
 import { typingtestSelectors } from './typingtestSlice';
 import ZhZi from './ZhZi';
 
-const ZhcnWord = ({ wordId }) => {
+const ZhWord = ({ wordId }) => {
   // By only passing in the wordId itself instead of the wordObj, unnecessary rerender is prevented
   const language = useSelector((state) => state.typingtest.options.language);
   const wordObj = useSelector((state) => typingtestSelectors[language].selectById(state, wordId));
   const thisWord = useRef(null);
 
   return (
-    <div className="ZhcnWord">
+    <div className="ZhWord">
       <div className="ci">
         {wordObj.ziArray.map((zi) => (
           <ZhZi key={`${zi.zi}${zi.ziIndex}`} zi={zi.zi} status={zi.status} />
@@ -55,8 +55,8 @@ const ZhcnWord = ({ wordId }) => {
   );
 };
 
-ZhcnWord.propTypes = {
+ZhWord.propTypes = {
   wordId: PropTypes.string.isRequired,
 };
 
-export default ZhcnWord;
+export default ZhWord;
