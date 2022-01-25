@@ -2,7 +2,7 @@
 // https://kentcdodds.com/blog/replace-axios-with-a-simple-custom-fetch-wrapper
 
 export async function client(endpoint, { body, ...customConfig } = {}) {
-  const headers = { 'Content-Type': 'application/json' }
+  const headers = { 'Content-Type': 'application/json' };
 
   const config = {
     method: body ? 'POST' : 'GET',
@@ -11,16 +11,16 @@ export async function client(endpoint, { body, ...customConfig } = {}) {
       ...headers,
       ...customConfig.headers,
     },
-  }
+  };
 
   if (body) {
-    config.body = JSON.stringify(body)
+    config.body = JSON.stringify(body);
   }
 
-  let data
+  let data;
   try {
-    const response = await window.fetch(endpoint, config)
-    data = await response.json()
+    const response = await window.fetch(endpoint, config);
+    data = await response.json();
     if (response.ok) {
       // Return a result object similar to Axios
       return {
@@ -28,18 +28,14 @@ export async function client(endpoint, { body, ...customConfig } = {}) {
         data,
         headers: response.headers,
         url: response.url,
-      }
+      };
     }
-    throw new Error(response.statusText)
+    throw new Error(response.statusText);
   } catch (err) {
-    return Promise.reject(err.message ? err.message : data)
+    return Promise.reject(err.message ? err.message : data);
   }
 }
 
-client.get = function (endpoint, customConfig = {}) {
-  return client(endpoint, { ...customConfig, method: 'GET' })
-}
+client.get = (endpoint, customConfig = {}) => client(endpoint, { ...customConfig, method: 'GET' });
 
-client.post = function (endpoint, body, customConfig = {}) {
-  return client(endpoint, { ...customConfig, body })
-}
+client.post = (endpoint, body, customConfig = {}) => client(endpoint, { ...customConfig, body });

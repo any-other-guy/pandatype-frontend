@@ -1,11 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   showLeaderboard: false,
 };
 
 const leaderboardSlice = createSlice({
-  name: "leaderboard",
+  name: 'leaderboard',
   initialState,
   reducers: {
     showLeaderboardAction(state, action) {

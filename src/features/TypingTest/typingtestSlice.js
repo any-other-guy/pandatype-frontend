@@ -1,11 +1,8 @@
-import {
-  createAsyncThunk,
-  createEntityAdapter,
-  createSlice,
-} from "@reduxjs/toolkit";
-import { loadState, saveState } from "../../app/localStorage";
-import { client } from "../../utils/client";
-import { containsNonChinese, findZiIndex, shuffle } from "../../utils/utils";
+/* eslint-disable no-use-before-define */
+import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { loadState, saveState } from '../../app/localStorage';
+import { client } from '../../utils/client';
+import { containsNonChinese, findZiIndex, shuffle } from '../../utils/utils';
 
 const enAdapter = createEntityAdapter({
   selectId: (word) => word.wordId,
@@ -17,15 +14,15 @@ const zhAdapter = createEntityAdapter({
   sortComparer: (a, b) => a.wordIndex < b.wordIndex,
 });
 
-const localOptions = loadState("testOptions");
+const localOptions = loadState('testOptions');
 const initialOptions =
   localOptions === undefined
     ? {
-        language: "zh",
-        mode: "time",
+        language: 'zh',
+        mode: 'time',
         time: 30,
         words: 50,
-        quote: "medium",
+        quote: 'medium',
       }
     : localOptions;
 
@@ -50,7 +47,7 @@ const initialStatistics = {
   zhPerfected: 0,
   zhCompleted: 0,
   zhMistake: 0,
-  rawTypingHistory: "",
+  rawTypingHistory: '',
 };
 
 const initialState = {
@@ -59,9 +56,9 @@ const initialState = {
   en: enAdapter.getInitialState(),
   zh: zhAdapter.getInitialState(),
   // Test itself related
-  status: "unstarted",
+  status: 'unstarted',
   isTestCompleted: false,
-  typedWordsArray: [""],
+  typedWordsArray: [''],
 
   // Test options related
   options: initialOptions,
@@ -69,7 +66,7 @@ const initialState = {
   // Test load up related
   loading: {
     fetchingCount: 0,
-    status: "idle",
+    status: 'idle',
     error: null,
     wordsLoadedCount: 0,
     quoteWordCount: null,
@@ -80,15 +77,15 @@ const initialState = {
 };
 
 export const fetchTestContent = createAsyncThunk(
-  "typingtest/getTest",
+  'typingtest/getTest',
   async (query, ...payload) => {
-    let url = "http://localhost:5000/getTest";
+    let url = 'http://localhost:5000/getTest';
     if (Object.keys(query).length > 0) {
-      url += "?";
-      for (const q in query) {
-        if (query[q] === "time") query[q] = "words";
+      url += '?';
+      Object.keys(query).forEach((q) => {
+        if (query[q] === 'time') query[q] = 'words';
         url += `${q}=${query[q]}&`;
-      }
+      });
       url = url.slice(0, -1);
     }
     // console.log("Fetching from: " + url);
@@ -98,12 +95,12 @@ export const fetchTestContent = createAsyncThunk(
 );
 
 export const typingtestSlice = createSlice({
-  name: "typingtest",
+  name: 'typingtest',
   initialState,
   reducers: {
     keyAction: (state, action) => {
-      const language = state.options.language;
-      const typedWordsArray = state.typedWordsArray;
+      const { language } = state.options;
+      const { typedWordsArray } = state;
 
       // states for notifying changes to the frontend
       const currentWordIndex = typedWordsArray.length - 1;
@@ -120,32 +117,29 @@ export const typingtestSlice = createSlice({
 
         switch (true) {
           // Space bar is the word splitter
-          case /\s/.test(key):
-            if (currentWord === "") return;
+          case /\s/.test(key): {
+            if (currentWord === '') return;
             // Check if current word has untyped letters, mark them mistake
-            wordObj.letters.forEach((letterObj) => {
-              if (letterObj.status === "untyped") {
-                letterObj.status = "missed";
-                state.statistics.missedCount++;
+            wordObj.letters.forEach((_letterObj) => {
+              if (_letterObj.status === 'untyped') {
+                _letterObj.status = 'missed';
+                state.statistics.missedCount += 1;
                 // Zhcn
-                if (language === "zh") {
-                  wordObj.ziArray[letterObj.ziIndex].status = "missed";
-                  state.statistics.zhMistake++;
+                if (language === 'zh') {
+                  wordObj.ziArray[_letterObj.ziIndex].status = 'missed';
+                  state.statistics.zhMistake += 1;
                 }
               }
             });
 
             // Making current word inactive and next word active
             // FIXME: 决定一下到底空格后算complete还是打完，暂时决定是空格吧
-            state.statistics.wordsCompleted++;
+            state.statistics.wordsCompleted += 1;
             wordObj.isCompleted = true;
             wordObj.active = false;
 
             const newWordId = state[language].ids[currentWordIndex + 1];
-            if (
-              newWordId !== undefined &&
-              state[language].entities[newWordId] !== undefined
-            ) {
+            if (newWordId !== undefined && state[language].entities[newWordId] !== undefined) {
               state[language].entities[newWordId].active = true;
             }
             // Ending test in a skipped way
@@ -154,19 +148,18 @@ export const typingtestSlice = createSlice({
               return;
             }
             // Add a new empty entry to typedWordsArray
-            typedWordsArray.push("");
+            typedWordsArray.push('');
 
             wordObj.cursorPosition = 0;
-            state.statistics.rawCharacterCount++;
+            state.statistics.rawCharacterCount += 1;
 
-            state.statistics.rawTypingHistory += " ";
+            state.statistics.rawTypingHistory += ' ';
             break;
-
+          }
           // Alphabet character get pushed into current typing word
-          case /^[a-zA-Z!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]{1,1}$/.test(key):
+          case /^[a-zA-Z!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]{1,1}$/.test(key): {
             // Start the test if unstarted
-            state.status =
-              state.status === "unstarted" ? "started" : state.status;
+            state.status = state.status === 'unstarted' ? 'started' : state.status;
             if (state.statistics.startTime === null) {
               state.statistics.startTime = Date.now();
             }
@@ -180,20 +173,20 @@ export const typingtestSlice = createSlice({
             letterObj = wordObj.letters[letterIndex];
 
             if (wordId === null && wordObj === null) return;
-            wordObj.cursorPosition++;
+            wordObj.cursorPosition += 1;
 
             if (letterObj != null) {
               // Update states when letter typed is correct
               if (key === letterObj.letter) {
-                letterObj.status = "typed";
-                state.statistics.correctCount++;
+                letterObj.status = 'typed';
+                state.statistics.correctCount += 1;
 
                 // End test if the last letter word of the last letter is typed correctly
                 if (
-                  (state.options.mode === "words" &&
+                  (state.options.mode === 'words' &&
                     wordObj.wordIndex + 1 === state.options.words &&
                     letterIndex + 1 === wordObj.letters.length) ||
-                  (state.options.mode === "quote" &&
+                  (state.options.mode === 'quote' &&
                     wordObj.wordIndex + 1 === state.loading.quoteWordCount &&
                     letterIndex + 1 === wordObj.letters.length)
                 ) {
@@ -201,25 +194,19 @@ export const typingtestSlice = createSlice({
                   return;
                 }
               } else {
-                letterObj.status = "mistake";
+                letterObj.status = 'mistake';
                 letterObj.whatActuallyTyped = key;
-                let currentPerSecondWpmObject =
-                  state.statistics.perSecondWpm[
-                    state.statistics.perSecondWpm.length - 1
-                  ];
-                currentPerSecondWpmObject.mistakesHere++;
-                state.statistics.mistakeCount++;
+                const currentPerSecondWpmObject =
+                  state.statistics.perSecondWpm[state.statistics.perSecondWpm.length - 1];
+                currentPerSecondWpmObject.mistakesHere += 1;
+                state.statistics.mistakeCount += 1;
               }
               // Mark current word as completed or perfected
               if (letterIndex === wordObj.word.length - 1) {
                 // if all no mistake found in the whole word, mark wordsPerfected++;
-                if (
-                  wordObj.letters.every(
-                    (letterObj) => letterObj.status === "typed"
-                  )
-                ) {
+                if (wordObj.letters.every((_letterObj) => _letterObj.status === 'typed')) {
                   // To prevent counting error when correcting the last letter
-                  if (!wordObj.isPerfected) state.statistics.wordsPerfected++;
+                  if (!wordObj.isPerfected) state.statistics.wordsPerfected += 1;
                   wordObj.isPerfected = true;
                 }
                 // otherwise only mark wordsCompleted++;
@@ -229,117 +216,112 @@ export const typingtestSlice = createSlice({
               }
 
               // Zhcn mark Zi to its status
-              if (language === "zh" && letterObj.isLastLetterInZi) {
-                const ziPinyin = wordObj.ziArray[letterObj.ziIndex].ziPinyin;
+              if (language === 'zh' && letterObj.isLastLetterInZi) {
+                const { ziPinyin } = wordObj.ziArray[letterObj.ziIndex];
                 const typedZi = typedWordsArray[currentWordIndex]
-                  .split("")
+                  .split('')
                   .slice(-letterObj.letterIndexInZi - 1)
-                  .join("");
+                  .join('');
 
                 if (typedZi === ziPinyin) {
-                  wordObj.ziArray[letterObj.ziIndex].status = "typed";
-                  state.statistics.zhPerfected++;
+                  wordObj.ziArray[letterObj.ziIndex].status = 'typed';
+                  state.statistics.zhPerfected += 1;
                 } else {
-                  wordObj.ziArray[letterObj.ziIndex].status = "mistake";
-                  state.statistics.zhMistake++;
+                  wordObj.ziArray[letterObj.ziIndex].status = 'mistake';
+                  state.statistics.zhMistake += 1;
                 }
-                state.statistics.zhCompleted++;
+                state.statistics.zhCompleted += 1;
               }
             }
             // If extra letter typed, beyond wordObj.letters[letterIndex]
             else if (letterIndex >= wordObj.word.length) {
               wordObj.extraLetters.push(key);
-              let currentPerSecondWpmObject =
-                state.statistics.perSecondWpm[
-                  state.statistics.perSecondWpm.length - 1
-                ];
+              const currentPerSecondWpmObject =
+                state.statistics.perSecondWpm[state.statistics.perSecondWpm.length - 1];
 
-              currentPerSecondWpmObject.mistakesHere++;
-              //FIXME: extraCount may be over counted since user may delete those before pressing space to go to the next word
-              state.statistics.extraCount++;
+              currentPerSecondWpmObject.mistakesHere += 1;
+              // FIXME: extraCount may be over counted since user may delete those before pressing space to go to the next word
+              state.statistics.extraCount += 1;
 
-              //Zhcn
-              if (language === "zh") {
-                wordObj.ziArray[wordObj.ziArray.length - 1].status = "mistake";
-                state.statistics.zhMistake++;
+              // Zhcn
+              if (language === 'zh') {
+                wordObj.ziArray[wordObj.ziArray.length - 1].status = 'mistake';
+                state.statistics.zhMistake += 1;
               }
             }
-            state.statistics.rawCharacterCount++;
+            state.statistics.rawCharacterCount += 1;
 
             state.statistics.rawTypingHistory += key;
             break;
-
+          }
           // Backspace slices from current typing word
-          case /^Backspace$/.test(key):
+          case /^Backspace$/.test(key): {
             wordId = state[language].ids[currentWordIndex];
             letterIndex = typedWordsArray[currentWordIndex].length - 1;
             wordObj = state[language].entities[wordId];
             letterObj = wordObj.letters[letterIndex];
 
             if (wordId === null && wordObj === null) return;
-            if (wordObj.cursorPosition !== 0) wordObj.cursorPosition--;
+            if (wordObj.cursorPosition !== 0) wordObj.cursorPosition -= 1;
             if (letterObj != null) {
-              letterObj.status = "untyped";
+              letterObj.status = 'untyped';
               letterObj.actuallyTyped = null;
             }
             // If extra letter exists, delete the last one since backspace was pressed
             else if (letterIndex >= wordObj.word.length) {
               wordObj.extraLetters = wordObj.extraLetters.slice(0, -1);
             }
-            state.statistics.backspaceCount++;
+            state.statistics.backspaceCount += 1;
 
             // Edit typedWordsArray after changing entities because indexing is more intuitive/easier
             typedWordsArray[currentWordIndex] = currentWord.slice(0, -1);
 
             // Zhcn mark Zi to its status
-            if (language === "zh") {
+            if (language === 'zh') {
               if (letterObj === undefined) {
-                if (
-                  wordObj.letters[wordObj.letters.length - 1].status ===
-                  "untyped"
-                )
-                  return;
+                if (wordObj.letters[wordObj.letters.length - 1].status === 'untyped') return;
                 letterObj = wordObj.letters[wordObj.letters.length - 1];
               }
               if (letterObj.isLastLetterInZi) {
                 let sliceFromLast = -letterObj.letterIndexInZi;
                 if (letterIndex >= wordObj.word.length) {
-                  sliceFromLast--;
+                  sliceFromLast -= 1;
                 } else {
-                  sliceFromLast++;
+                  sliceFromLast += 1;
                 }
-                const ziPinyin = wordObj.ziArray[letterObj.ziIndex].ziPinyin;
+                const { ziPinyin } = wordObj.ziArray[letterObj.ziIndex];
                 const typedZi = typedWordsArray[currentWordIndex]
-                  .split("")
+                  .split('')
                   .slice(sliceFromLast)
-                  .join("");
+                  .join('');
 
                 if (typedZi === ziPinyin) {
-                  wordObj.ziArray[letterObj.ziIndex].status = "typed";
-                  state.statistics.zhPerfected++;
+                  wordObj.ziArray[letterObj.ziIndex].status = 'typed';
+                  state.statistics.zhPerfected += 1;
                 } else {
-                  wordObj.ziArray[letterObj.ziIndex].status = "mistake";
-                  state.statistics.zhMistake++;
+                  wordObj.ziArray[letterObj.ziIndex].status = 'mistake';
+                  state.statistics.zhMistake += 1;
                 }
-                state.statistics.zhCompleted++;
+                state.statistics.zhCompleted += 1;
               }
             }
 
-            state.statistics.rawTypingHistory += "⌫";
+            state.statistics.rawTypingHistory += '⌫';
             break;
-
+          }
           default:
         }
       } else {
-        console.log("something else pressed: " + key);
+        // console.log(`something else pressed: ${key}`);
       }
     },
-    perSecondWpmAction: (state, action) => {
+    perSecondWpmAction: (state) => {
       // const { atSecond } = action.payload;
-      //FIXME: atSecond很不准, 下面这个object的key暂时用array index代替秒数感觉有点准也
+      // FIXME: atSecond很不准, 下面这个object的key暂时用array index代替秒数感觉有点准也
       const atSecond = state.statistics.perSecondWpm.length;
-      let wpm, rawWpm;
-      if (state.options.language === "zh") {
+      let wpm;
+      let rawWpm;
+      if (state.options.language === 'zh') {
         wpm = (60 / atSecond) * state.statistics.zhPerfected;
         rawWpm = (60 / atSecond) * state.statistics.zhCompleted;
       } else {
@@ -348,20 +330,20 @@ export const typingtestSlice = createSlice({
       }
       state.statistics.perSecondWpm.push({
         index: state.statistics.perSecondWpm.length,
-        wpm: wpm,
-        rawWpm: rawWpm,
-        atSecond: atSecond,
+        wpm,
+        rawWpm,
+        atSecond,
         mistakesHere: 0,
       });
     },
-    testTimerDepletedAction: (state, action) => {
+    testTimerDepletedAction: (state) => {
       completeTest(state);
       // Cleanup the last overtimed entry in perSecondWpm, if any
-      //FIXME: find out why this happens, for now just purge them away
+      // FIXME: find out why this happens, for now just purge them away
       while (
-        state.options.mode === "time" &&
-        state.statistics.perSecondWpm[state.statistics.perSecondWpm.length - 1]
-          .index > state.options.time
+        state.options.mode === 'time' &&
+        state.statistics.perSecondWpm[state.statistics.perSecondWpm.length - 1].index >
+          state.options.time
       ) {
         state.statistics.perSecondWpm.pop();
       }
@@ -375,21 +357,21 @@ export const typingtestSlice = createSlice({
         quote = state.options.quote,
       } = action.payload.options || {};
 
-      //FIXME: <Adapter>.removeAll() doesnt work, why?
+      // FIXME: <Adapter>.removeAll() doesnt work, why?
       // state[language].ids = [],
       state[language].entities = {};
 
-      state.status = "unstarted";
+      state.status = 'unstarted';
       state.isTestCompleted = false;
-      state.typedWordsArray = [""];
+      state.typedWordsArray = [''];
 
       state.options.language = language;
       state.options.mode = mode;
-      state.options.time = parseInt(time);
-      state.options.words = parseInt(words);
+      state.options.time = parseInt(time, 10);
+      state.options.words = parseInt(words, 10);
       state.options.quote = quote;
 
-      state.loading.status = "idle";
+      state.loading.status = 'idle';
       state.loading.error = null;
       state.loading.wordsLoadedCount = 0;
       state.loading.quoteWordCount = null;
@@ -397,12 +379,12 @@ export const typingtestSlice = createSlice({
       state.statistics = initialStatistics;
 
       // save to localStorage
-      saveState(state.options, "testOptions");
+      saveState(state.options, 'testOptions');
     },
     zhQuoteInputAction: (state, action) => {
       const { inputString } = action.payload;
       // Start the test if unstarted
-      state.status = state.status === "unstarted" ? "started" : state.status;
+      state.status = state.status === 'unstarted' ? 'started' : state.status;
       if (state.statistics.startTime === null) {
         state.statistics.startTime = Date.now();
       }
@@ -414,23 +396,23 @@ export const typingtestSlice = createSlice({
       state.statistics.zhMistake = 0;
       state.statistics.mistakeCount = 0;
       state.statistics.correctCount = 0;
-      inputString.split("").forEach((zi, index) => {
+      inputString.split('').forEach((zi, index) => {
         const ziId = state.zh.ids[index];
         const ziObj = state.zh.entities[ziId];
         if (ziObj === undefined) return;
         if (zi === ziObj.zi) {
-          ziObj.status = "typed";
-          state.statistics.zhPerfected++;
-          state.statistics.correctCount++;
+          ziObj.status = 'typed';
+          state.statistics.zhPerfected += 1;
+          state.statistics.correctCount += 1;
           if (index === state.zh.ids.length - 1) {
             completeTest(state);
           }
         } else {
-          ziObj.status = "mistake";
-          state.statistics.zhMistake++;
-          state.statistics.mistakeCount++;
+          ziObj.status = 'mistake';
+          state.statistics.zhMistake += 1;
+          state.statistics.mistakeCount += 1;
         }
-        state.statistics.zhCompleted++;
+        state.statistics.zhCompleted += 1;
       });
     },
     showTypingtestAction: (state, action) => {
@@ -440,28 +422,30 @@ export const typingtestSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(fetchTestContent.pending, (state, action) => {
-        state.loading.status = "loading";
-        state.loading.fetchingCount++;
+      .addCase(fetchTestContent.pending, (state) => {
+        state.loading.status = 'loading';
+        state.loading.fetchingCount += 1;
       })
       .addCase(fetchTestContent.fulfilled, (state, action) => {
-        state.loading.status = "succeeded";
+        state.loading.status = 'succeeded';
         const { language } = action.payload;
         state.options.language = language;
 
         switch (language) {
-          case "en":
+          case 'en': {
             handleEnTestContent(state, action);
             break;
-          case "zh":
+          }
+          case 'zh': {
             handleZhTestContent(state, action);
             break;
+          }
           default:
             break;
         }
       })
       .addCase(fetchTestContent.rejected, (state, action) => {
-        state.loading.status = "failed";
+        state.loading.status = 'failed';
         state.loading.error = action.error.message;
       });
   },
@@ -472,18 +456,20 @@ const handleEnTestContent = (state, action) => {
 
   let words;
   switch (type) {
-    case "words":
+    case 'words': {
       words = shuffle(testContent[type]).slice(0, 100);
       break;
-    case "quote":
-      words = testContent["words"];
-      state.statistics.quoteSource = testContent["source"];
-      state.loading.quoteWordCount = testContent["quoteWordCount"];
+    }
+    case 'quote': {
+      words = testContent.words;
+      state.statistics.quoteSource = testContent.source;
+      state.loading.quoteWordCount = testContent.quoteWordCount;
       break;
+    }
     default:
       break;
   }
-  if (state.options.mode === "words") {
+  if (state.options.mode === 'words') {
     words = words.slice(0, state.options.words);
   }
   if (words === undefined) return;
@@ -491,19 +477,17 @@ const handleEnTestContent = (state, action) => {
   const wordsObj = words.map((word, index) => {
     const wordIndex = state.loading.wordsLoadedCount + index;
     return {
-      word: word,
-      wordIndex: wordIndex,
+      word,
+      wordIndex,
       wordId: word + wordIndex,
-      active: wordIndex === 0 ? true : false,
+      active: wordIndex === 0,
       cursorPosition: 0,
-      letters: word.split("").map((letter, letterIndex) => {
-        return {
-          letter: letter,
-          letterIndex: letterIndex,
-          status: "untyped",
-          actuallyTyped: null,
-        };
-      }),
+      letters: word.split('').map((letter, letterIndex) => ({
+        letter,
+        letterIndex,
+        status: 'untyped',
+        actuallyTyped: null,
+      })),
       extraLetters: [],
       isCompleted: false,
       isPerfected: false,
@@ -519,50 +503,44 @@ const handleZhTestContent = (state, action) => {
   let words;
   let wordsObj;
   switch (type) {
-    case "words":
-      if (state.options.mode === "words") {
+    case 'words': {
+      if (state.options.mode === 'words') {
         words = shuffle(testContent[type]).slice(0, state.options.words);
-      } else if (state.options.mode === "time") {
+      } else if (state.options.mode === 'time') {
         words = shuffle(testContent[type]).slice(0, 100);
       }
       if (words === undefined) return;
       // Populate test objects into store
       wordsObj = words.map((word, index) => {
         const wordIndex = state.loading.wordsLoadedCount + index;
-        const ci = word.zi.reduce((str, e) => str.concat(e), "");
-        const pinyin = word.pinyin.reduce((str, e) => str.concat(e), "");
+        const ci = word.zi.reduce((str, e) => str.concat(e), '');
+        const pinyin = word.pinyin.reduce((str, e) => str.concat(e), '');
         return {
           word: ci,
-          pinyin: pinyin,
+          pinyin,
           ciLength: ci.length,
-          wordIndex: wordIndex,
+          wordIndex,
           wordId: pinyin + wordIndex,
-          active: wordIndex === 0 ? true : false,
+          active: wordIndex === 0,
           cursorPosition: 0,
-          ziArray: ci.split("").map((zi, ziIndex) => {
-            return {
-              zi: zi,
-              ziIndex: ziIndex,
-              ziPinyin: word.pinyin[ziIndex],
-              status: "untyped",
-            };
-          }),
+          ziArray: ci.split('').map((zi, ziIndex) => ({
+            zi,
+            ziIndex,
+            ziPinyin: word.pinyin[ziIndex],
+            status: 'untyped',
+          })),
           letters: word.pinyin.reduce(
             (returnObject, zi) => {
               returnObject.letters = returnObject.letters.concat(
-                zi.split("").map((letter, letterIndexInZi) => {
-                  returnObject.count++;
+                zi.split('').map((letter, letterIndexInZi) => {
+                  returnObject.count += 1;
                   return {
-                    letter: letter,
+                    letter,
                     letterIndex: returnObject.count,
-                    letterIndexInZi: letterIndexInZi,
-                    ziIndex: findZiIndex(
-                      word.pinyin,
-                      letter,
-                      returnObject.count
-                    ),
+                    letterIndexInZi,
+                    ziIndex: findZiIndex(word.pinyin, letter, returnObject.count),
                     isLastLetterInZi: letterIndexInZi === zi.length - 1,
-                    status: "untyped",
+                    status: 'untyped',
                   };
                 })
               );
@@ -576,19 +554,19 @@ const handleZhTestContent = (state, action) => {
         };
       });
       break;
-    case "quote":
-      const quote = testContent[type].split("");
-      wordsObj = quote.map((zi, index) => {
-        return {
-          zi: zi,
-          ziIndex: index,
-          wordId: zi + index,
-          ziPinyin: null,
-          status: "untyped",
-        };
-      });
+    }
+    case 'quote': {
+      const quote = testContent[type].split('');
+      wordsObj = quote.map((zi, index) => ({
+        zi,
+        ziIndex: index,
+        wordId: zi + index,
+        ziPinyin: null,
+        status: 'untyped',
+      }));
       state.loading.quoteWordCount = quote.length;
       break;
+    }
     default:
       break;
   }
@@ -599,13 +577,16 @@ const handleZhTestContent = (state, action) => {
 
 const completeTest = (state) => {
   state.isTestCompleted = true; // Preventing rerender on status started
-  state.status = "completed";
+  state.status = 'completed';
   state.statistics.endTime = Date.now();
   const elapsedTime = state.statistics.endTime - state.statistics.startTime;
   state.statistics.elapsedTime = elapsedTime;
   // Prepare test result related states in store
-  let total, bad, wpm, rawWpm;
-  if (state.options.language === "zh") {
+  let total;
+  let bad;
+  let wpm;
+  let rawWpm;
+  if (state.options.language === 'zh') {
     // Zhcn : all or nothing
     total = state.statistics.zhPerfected + state.statistics.zhMistake;
     bad = state.statistics.zhMistake;
@@ -618,9 +599,7 @@ const completeTest = (state) => {
       state.statistics.extraCount +
       state.statistics.missedCount;
     bad =
-      state.statistics.mistakeCount +
-      state.statistics.extraCount +
-      state.statistics.missedCount;
+      state.statistics.mistakeCount + state.statistics.extraCount + state.statistics.missedCount;
     wpm = (60000 / elapsedTime) * state.statistics.wordsPerfected;
     rawWpm = (60000 / elapsedTime) * state.statistics.wordsCompleted;
   }
@@ -631,8 +610,7 @@ const completeTest = (state) => {
 
   // Correctly count the mistake before the first perSecondWpmAction dispatched
   if (state.statistics.perSecondWpm[0].mistakesHere > 0) {
-    state.statistics.perSecondWpm[1].mistakesHere =
-      state.statistics.perSecondWpm[0].mistakesHere;
+    state.statistics.perSecondWpm[1].mistakesHere = state.statistics.perSecondWpm[0].mistakesHere;
   }
   // Cleaning up the initial 0th-second object in perSecondWpm
   state.statistics.perSecondWpm.shift();
@@ -641,11 +619,7 @@ const completeTest = (state) => {
   state.statistics.consistency =
     state.statistics.perSecondWpm
       .reduce((list, obj) => {
-        list.push(
-          100 -
-            Math.abs((obj.wpm - state.statistics.wpm) / state.statistics.wpm) *
-              100
-        );
+        list.push(100 - Math.abs((obj.wpm - state.statistics.wpm) / state.statistics.wpm) * 100);
         return list;
       }, [])
       .reduce((sum, e) => sum + e, 0) / state.statistics.perSecondWpm.length;

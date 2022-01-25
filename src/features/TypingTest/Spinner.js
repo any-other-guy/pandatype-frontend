@@ -1,9 +1,7 @@
-import React from "react";
+import React from 'react';
 
-export const Spinner = () => {
-  return (
-    <div className="spinner">
-      <div className="loader" />
-    </div>
-  );
-};
+export const Spinner = () => (
+  <div className="spinner">
+    <div className="loader" />
+  </div>
+);

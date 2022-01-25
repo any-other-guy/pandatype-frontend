@@ -4,7 +4,7 @@
 
 :root {
   background-color: var(--bg-color);
-  font-family: "Roboto Mono";
+  font-family: 'Roboto Mono';
   overflow: hidden;
   --bg-color: #323437;
   --main-color: MediumSpringGreen;
@@ -156,23 +156,23 @@
   margin-left: 1px;
 }
 
-.letter[status="typed"],
-.zhzi[status="typed"] {
+.letter[status='typed'],
+.zhzi[status='typed'] {
   color: var(--text-color);
 }
 
-.letter[status="mistake"],
-.zhzi[status="mistake"] {
+.letter[status='mistake'],
+.zhzi[status='mistake'] {
   color: var(--error-color);
 }
 
-.letter[status="missed"],
-.zhzi[status="missed"] {
+.letter[status='missed'],
+.zhzi[status='missed'] {
   color: var(--error-color);
 }
 
-.letter[status="extra"],
-.zhzi[status="extra"] {
+.letter[status='extra'],
+.zhzi[status='extra'] {
   color: var(--error-color);
 }
 
@@ -261,8 +261,8 @@
   justify-content: center;
   align-items: center;
   grid-template-areas:
-    "wpm"
-    "acc";
+    'wpm'
+    'acc';
 }
 
 .testResult .stats .wpm {

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useInterval } from "./useIntervalHook";
-import { testTimerDepletedAction } from "./typingtestSlice";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useInterval } from './useIntervalHook';
+import { testTimerDepletedAction } from './typingtestSlice';
 
 const Timer = () => {
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const Timer = () => {
 
   // Timer
   useInterval(() => {
-    if (testStatus === "started") {
+    if (testStatus === 'started') {
       if (timeRemaining > 0) {
         setTimeRemaining(timeRemaining - 1);
       } else {
@@ -28,11 +28,7 @@ const Timer = () => {
     }
   }, 1000);
 
-  return (
-    <div className="timer">
-      {testStatus === "started" ? timeRemaining : null}
-    </div>
-  );
+  return <div className="timer">{testStatus === 'started' ? timeRemaining : null}</div>;
 };
 
 export default Timer;
