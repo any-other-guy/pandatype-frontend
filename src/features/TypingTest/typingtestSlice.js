@@ -79,7 +79,7 @@ const initialState = {
 export const fetchTestContent = createAsyncThunk(
   'typingtest/getTest',
   async (query, ...payload) => {
-    let url = 'http://localhost:5000/getTest';
+    let url = `${process.env.REACT_APP_TYPINGTEST_API_URL}/getTest`;
     if (Object.keys(query).length > 0) {
       url += '?';
       Object.keys(query).forEach((q) => {
@@ -452,18 +452,19 @@ export const typingtestSlice = createSlice({
 });
 
 const handleEnTestContent = (state, action) => {
-  const { language, type, ...testContent } = action.payload;
+  const { language, type, testContent } = action.payload;
 
   let words;
   switch (type) {
     case 'words': {
-      words = shuffle(testContent[type]).slice(0, 100);
+      // words = shuffle(testContent[type]).slice(0, 100);
+      words = shuffle(testContent.map((obj) => obj.word)).slice(0, 100);
       break;
     }
     case 'quote': {
-      words = testContent.words;
-      state.statistics.quoteSource = testContent.source;
-      state.loading.quoteWordCount = testContent.quoteWordCount;
+      words = testContent[0].text.split(' ');
+      state.statistics.quoteSource = testContent[0].source;
+      state.loading.quoteWordCount = words.length;
       break;
     }
     default:
@@ -498,23 +499,23 @@ const handleEnTestContent = (state, action) => {
 };
 
 const handleZhTestContent = (state, action) => {
-  const { language, type, ...testContent } = action.payload;
+  const { language, type, testContent } = action.payload;
 
   let words;
   let wordsObj;
   switch (type) {
     case 'words': {
       if (state.options.mode === 'words') {
-        words = shuffle(testContent[type]).slice(0, state.options.words);
+        words = shuffle(testContent).slice(0, state.options.words);
       } else if (state.options.mode === 'time') {
-        words = shuffle(testContent[type]).slice(0, 100);
+        words = shuffle(testContent).slice(0, 100);
       }
       if (words === undefined) return;
       // Populate test objects into store
       wordsObj = words.map((word, index) => {
         const wordIndex = state.loading.wordsLoadedCount + index;
-        const ci = word.zi.reduce((str, e) => str.concat(e), '');
-        const pinyin = word.pinyin.reduce((str, e) => str.concat(e), '');
+        const ci = JSON.parse(word.zi).reduce((str, e) => str.concat(e), '');
+        const pinyin = JSON.parse(word.pinyin).reduce((str, e) => str.concat(e), '');
         return {
           word: ci,
           pinyin,
@@ -526,10 +527,10 @@ const handleZhTestContent = (state, action) => {
           ziArray: ci.split('').map((zi, ziIndex) => ({
             zi,
             ziIndex,
-            ziPinyin: word.pinyin[ziIndex],
+            ziPinyin: JSON.parse(word.pinyin)[ziIndex],
             status: 'untyped',
           })),
-          letters: word.pinyin.reduce(
+          letters: JSON.parse(word.pinyin).reduce(
             (returnObject, zi) => {
               returnObject.letters = returnObject.letters.concat(
                 zi.split('').map((letter, letterIndexInZi) => {
@@ -538,7 +539,7 @@ const handleZhTestContent = (state, action) => {
                     letter,
                     letterIndex: returnObject.count,
                     letterIndexInZi,
-                    ziIndex: findZiIndex(word.pinyin, letter, returnObject.count),
+                    ziIndex: findZiIndex(JSON.parse(word.pinyin), letter, returnObject.count),
                     isLastLetterInZi: letterIndexInZi === zi.length - 1,
                     status: 'untyped',
                   };
@@ -556,7 +557,7 @@ const handleZhTestContent = (state, action) => {
       break;
     }
     case 'quote': {
-      const quote = testContent[type].split('');
+      const quote = testContent[0].text.split('');
       wordsObj = quote.map((zi, index) => ({
         zi,
         ziIndex: index,
@@ -565,6 +566,7 @@ const handleZhTestContent = (state, action) => {
         status: 'untyped',
       }));
       state.loading.quoteWordCount = quote.length;
+      state.statistics.quoteSource = testContent[0].source;
       break;
     }
     default:
