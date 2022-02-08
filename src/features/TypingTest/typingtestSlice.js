@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createEntityAdapter, createSlice, current } from '@reduxjs/toolkit';
 import { loadState, saveState } from '../../app/localStorage';
 import { client } from '../../utils/client';
 import { containsNonChinese, findZiIndex, shuffle } from '../../utils/utils';
@@ -397,24 +397,6 @@ export const typingtestSlice = createSlice({
       state.statistics.mistakeCount = 0;
       state.statistics.correctCount = 0;
 
-      // inputString.split('').forEach((zi, index) => {
-      //   const ziId = state.zh.ids[index];
-      //   const ziObj = state.zh.entities[ziId];
-      //   if (ziObj === undefined) return;
-      //   if (zi === ziObj.zi) {
-      //     ziObj.status = 'typed';
-      //     state.statistics.zhPerfected += 1;
-      //     state.statistics.correctCount += 1;
-      //     if (index === state.zh.ids.length - 1) {
-      //       completeTest(state);
-      //     }
-      //   } else {
-      //     ziObj.status = 'mistake';
-      //     state.statistics.zhMistake += 1;
-      //     state.statistics.mistakeCount += 1;
-      //   }
-      //   state.statistics.zhCompleted += 1;
-      // });
       const inputStringArray = inputString.split('');
 
       state.zh.ids.forEach((id, index) => {
@@ -423,9 +405,6 @@ export const typingtestSlice = createSlice({
           ziObj.status = ziObj.status === 'typed' ? ziObj.status : 'typed';
           state.statistics.zhPerfected += 1;
           state.statistics.correctCount += 1;
-          if (inputStringArray === state.zh.ids.length - 1) {
-            completeTest(state);
-          }
           state.statistics.zhCompleted += 1;
         } else if (inputStringArray[index] !== undefined && ziObj.zi !== inputStringArray[index]) {
           ziObj.status = ziObj.status === 'mistake' ? ziObj.status : 'mistake';
@@ -436,6 +415,9 @@ export const typingtestSlice = createSlice({
           ziObj.status = ziObj.status === 'untyped' ? ziObj.status : 'untyped';
         }
       });
+      if (inputStringArray.length - 1 >= state.zh.ids.length - 1) {
+        completeTest(state);
+      }
     },
     showTypingtestAction: (state, action) => {
       const { show } = action.payload;

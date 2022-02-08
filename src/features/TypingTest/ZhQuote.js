@@ -25,9 +25,6 @@ const ZhQuote = ({ ziIds }) => {
   }, []);
 
   const onInputChange = () => {
-    inputFields.current.forEach((field, index) => {
-      if (field !== null) console.log(field.value, index, currentField.current);
-    });
     const currentTypedValue = inputFields.current[currentField.current].value;
     typedString.current = inputFields.current.reduce((str, field, index) => {
       if (index <= currentField.current && field != null) {
