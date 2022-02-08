@@ -16,19 +16,28 @@ const ZhQuote = ({ ziIds }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    inputFields.current[0].focus();
+    inputFields.current[currentField.current].focus();
+    inputFields.current[currentField.current].addEventListener('keydown', (e) => {
+      if (e.which === 9) {
+        e.preventDefault();
+      }
+    });
   }, []);
 
   const onInputChange = () => {
+    inputFields.current.forEach((field, index) => {
+      if (field !== null) console.log(field.value, index, currentField.current);
+    });
     const currentTypedValue = inputFields.current[currentField.current].value;
     typedString.current = inputFields.current.reduce((str, field, index) => {
-      if (index !== currentField.current && field != null) {
-        str += field.value;
+      if (index <= currentField.current && field != null) {
+        str = str.concat(field.value);
       }
       return str;
-    }, currentTypedValue);
+    }, '');
     dispatch(zhQuoteInputAction({ inputString: typedString.current }));
 
+    // "auto scrolling" visual effect
     const zhStrLength = getZhStrLength(currentTypedValue);
     if (zhStrLength >= ziPerLine) {
       // Append extra Zi into the next line as well

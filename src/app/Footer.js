@@ -12,13 +12,13 @@ const Footer = () => (
     </div>
     <div className="footer">
       <div className="linksGroup">
-        <a href="https://github.com/any-other-guy/pandatype-frontend">
+        <a href="https://github.com/any-other-guy/pandatype-frontend" tabIndex="-1">
           <FaGithub size="12px" />
           <span className="link">Github</span>
         </a>
       </div>
       <div className="themeVersion">
-        <a href="https://github.com/any-other-guy/pandatype-frontend">
+        <a href="https://github.com/any-other-guy/pandatype-frontend" tabIndex="-1">
           <FaPalette size="12px" />
           <span className="link">{loadState('theme').name}</span>
         </a>

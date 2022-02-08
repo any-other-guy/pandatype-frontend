@@ -396,23 +396,45 @@ export const typingtestSlice = createSlice({
       state.statistics.zhMistake = 0;
       state.statistics.mistakeCount = 0;
       state.statistics.correctCount = 0;
-      inputString.split('').forEach((zi, index) => {
-        const ziId = state.zh.ids[index];
-        const ziObj = state.zh.entities[ziId];
-        if (ziObj === undefined) return;
-        if (zi === ziObj.zi) {
-          ziObj.status = 'typed';
+
+      // inputString.split('').forEach((zi, index) => {
+      //   const ziId = state.zh.ids[index];
+      //   const ziObj = state.zh.entities[ziId];
+      //   if (ziObj === undefined) return;
+      //   if (zi === ziObj.zi) {
+      //     ziObj.status = 'typed';
+      //     state.statistics.zhPerfected += 1;
+      //     state.statistics.correctCount += 1;
+      //     if (index === state.zh.ids.length - 1) {
+      //       completeTest(state);
+      //     }
+      //   } else {
+      //     ziObj.status = 'mistake';
+      //     state.statistics.zhMistake += 1;
+      //     state.statistics.mistakeCount += 1;
+      //   }
+      //   state.statistics.zhCompleted += 1;
+      // });
+      const inputStringArray = inputString.split('');
+
+      state.zh.ids.forEach((id, index) => {
+        const ziObj = state.zh.entities[id];
+        if (inputStringArray[index] !== undefined && ziObj.zi === inputStringArray[index]) {
+          ziObj.status = ziObj.status === 'typed' ? ziObj.status : 'typed';
           state.statistics.zhPerfected += 1;
           state.statistics.correctCount += 1;
-          if (index === state.zh.ids.length - 1) {
+          if (inputStringArray === state.zh.ids.length - 1) {
             completeTest(state);
           }
-        } else {
-          ziObj.status = 'mistake';
+          state.statistics.zhCompleted += 1;
+        } else if (inputStringArray[index] !== undefined && ziObj.zi !== inputStringArray[index]) {
+          ziObj.status = ziObj.status === 'mistake' ? ziObj.status : 'mistake';
           state.statistics.zhMistake += 1;
           state.statistics.mistakeCount += 1;
+          state.statistics.zhCompleted += 1;
+        } else {
+          ziObj.status = ziObj.status === 'untyped' ? ziObj.status : 'untyped';
         }
-        state.statistics.zhCompleted += 1;
       });
     },
     showTypingtestAction: (state, action) => {
