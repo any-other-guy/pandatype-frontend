@@ -142,7 +142,8 @@
     "caret-color": "MediumSpringGreen",
     "sub-color": "#646669",
     "text-color": "#d1d0c5",
-    "error-color": "#ca4754"
+    "error-color": "#ca4754",
+    "darker-color": "#2D2F31"
   },
   {
     "name": "monokai",

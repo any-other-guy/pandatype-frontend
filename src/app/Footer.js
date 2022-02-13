@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import { FaGithub, FaPalette } from 'react-icons/fa';
 import { loadState } from './localStorage';
@@ -18,7 +19,7 @@ const Footer = () => (
         </a>
       </div>
       <div className="themeVersion">
-        <a href="https://github.com/any-other-guy/pandatype-frontend" tabIndex="-1">
+        <a href="#" tabIndex="-1">
           <FaPalette size="12px" />
           <span className="link">{loadState('theme')}</span>
         </a>

@@ -469,6 +469,72 @@
   line-height: 2rem;
 }
 
+/* Login/Registeration */
+.authForms {
+  display: flex;
+  grid-auto-flow: column;
+  gap: 1rem;
+  justify-content: space-around;
+  align-items: center;
+  color: var(--text-color);
+}
+
+.authForms .loginForm,
+.authForms .registerationForm {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: var(--sub-color);
+  opacity: 1; /* Firefox */
+  font-family: 'Roboto Mono';
+}
+
+.authForms .title {
+  width: 15rem;
+  margin: auto;
+}
+
+.authForms form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  width: 15rem;
+  margin: auto;
+}
+
+.authForms input {
+  outline: none;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: var(--darker-color);
+  color: var(--text-color);
+  font-family: 'Roboto Mono';
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.authForms .button {
+  background-color: var(--darker-color);
+  width: 100%;
+  padding: 0.3rem;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.authForms .link {
+  font-size: 0.75rem;
+  margin-left: auto;
+  cursor: pointer;
+  color: var(--sub-color);
+}
 /* Footer */
 .footerWrapper {
   display: grid;
@@ -520,6 +586,7 @@
   padding: 0.1rem 0.3rem;
   margin: 3px 0;
   border-radius: 0.1rem;
+  /* could also use flex here*/
   display: inline-block;
   font-size: 0.7rem;
   line-height: 0.7rem;

@@ -63,8 +63,6 @@ export const setTheme = (theme) => {
   document.documentElement.style.setProperty('--sub-color', theme['sub-color']);
   document.documentElement.style.setProperty('--text-color', theme['text-color']);
   document.documentElement.style.setProperty('--error-color', theme['error-color']);
-
-  console.log(theme);
   document.documentElement.style.setProperty(
     '--darker-color',
     theme['darker-color'] === undefined ? theme['bg-color'] : theme['darker-color']
