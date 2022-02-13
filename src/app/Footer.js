@@ -20,7 +20,7 @@ const Footer = () => (
       <div className="themeVersion">
         <a href="https://github.com/any-other-guy/pandatype-frontend" tabIndex="-1">
           <FaPalette size="12px" />
-          <span className="link">{loadState('theme').name}</span>
+          <span className="link">{loadState('theme')}</span>
         </a>
       </div>
     </div>

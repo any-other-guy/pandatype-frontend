@@ -7,7 +7,7 @@ import Themes from './themes.json';
 
 const Settings = () => {
   const _setTheme = (themeObj) => {
-    saveState(themeObj, 'theme');
+    saveState(themeObj.name, 'theme');
     setTheme(themeObj);
   };
 

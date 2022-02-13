@@ -13,6 +13,7 @@ import {
 import { Line } from 'react-chartjs-2';
 import PropTypes from 'prop-types';
 import { loadState } from '../../app/localStorage';
+import Themes from '../Settings/themes.json';
 
 ChartJS.register(
   CategoryScale,
@@ -101,7 +102,7 @@ export const options = {
 };
 
 const ResultChart = ({ perSecondWpm, elapsedTime }) => {
-  const theme = loadState('theme');
+  const themeObj = Themes.find((theme) => theme.name === loadState('theme'));
   // Remove the first dummy object in perSecondWpm array. For now
   const stats = JSON.parse(JSON.stringify(perSecondWpm));
   // Display the endTime as the last x-axis data point on graph
@@ -116,7 +117,7 @@ const ResultChart = ({ perSecondWpm, elapsedTime }) => {
         data: stats.map((obj) => obj.wpm),
         type: 'line',
         fill: true,
-        borderColor: theme['main-color'],
+        borderColor: themeObj['main-color'],
         pointRadius: 2,
         pointBorderWidth: 3,
         backgroundColor: 'rgba(100, 102, 105, 0.15)',
@@ -128,7 +129,7 @@ const ResultChart = ({ perSecondWpm, elapsedTime }) => {
         data: stats.map((obj) => obj.rawWpm),
         type: 'line',
         fill: true,
-        borderColor: theme['sub-color'],
+        borderColor: themeObj['sub-color'],
         pointRadius: 2,
         pointBorderWidth: 3,
         backgroundColor: 'rgba(100, 102, 105, 0.15)',
@@ -144,7 +145,7 @@ const ResultChart = ({ perSecondWpm, elapsedTime }) => {
         showLine: false,
         pointStyle: 'crossRot',
         pointBorderWidth: 2,
-        borderColor: theme['error-color'],
+        borderColor: themeObj['error-color'],
         yAxisID: 'errors',
       },
     ],

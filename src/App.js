@@ -10,8 +10,9 @@ import ZhTypingTest from './features/TypingTest/ZhTypingTest';
 import Leaderboard from './features/Leaderboard/Leaderboard';
 import LoginForm from './features/Auth/LoginForm';
 import Settings from './features/Settings/Settings';
-import { loadState } from './app/localStorage';
+import { loadState, saveState } from './app/localStorage';
 import { setTheme } from './utils/utils';
+import Themes from './features/Settings/themes.json';
 
 const App = () => {
   // Not using testStatus as a flag to prevent rerender when the test started
@@ -35,8 +36,11 @@ const App = () => {
       middleSection = <TypingTest />;
     }
   }
-
-  setTheme(loadState('theme'));
+  if (loadState('theme') === undefined) {
+    saveState('panda', 'theme');
+  } else {
+    setTheme(Themes.find((theme) => theme.name === loadState('theme')));
+  }
 
   return (
     <div className="mainWrapper">

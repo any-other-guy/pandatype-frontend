@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import { createAsyncThunk, createEntityAdapter, createSlice, current } from '@reduxjs/toolkit';
+import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { loadState, saveState } from '../../app/localStorage';
 import { client } from '../../utils/client';
 import { containsNonChinese, findZiIndex, shuffle } from '../../utils/utils';
@@ -18,7 +18,7 @@ const localOptions = loadState('testOptions');
 const initialOptions =
   localOptions === undefined
     ? {
-        language: 'zh',
+        language: 'en',
         mode: 'time',
         time: 30,
         words: 50,
@@ -88,7 +88,7 @@ export const fetchTestContent = createAsyncThunk(
       });
       url = url.slice(0, -1);
     }
-    // console.log("Fetching from: " + url);
+    // console.log(`Fetching from: ${url}`);
     const response = await client.get(url, payload);
     return response.data;
   }

@@ -348,14 +348,113 @@
   gap: 2rem 0;
   position: fixed;
   background: var(--bg-color);
+  color: var(--text-color);
   border-radius: 0.5rem;
   width: 85%;
-  height: 83%;
+  height: 80%;
   top: 50%;
   left: 50%;
+  padding: 2rem;
   transform: translate(-50%, -50%);
+  display: grid;
+  gap: 2rem 0;
+  grid-template-columns: 1fr;
+  grid-template-rows: 3rem auto;
 }
 
+.leaderboard .leaderboardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.leaderboard .leaderboardTop .title {
+  font-size: 3rem;
+  line-height: 3rem;
+}
+
+.leaderboard .leaderboardTop .subtitle {
+  color: var(--sub-color);
+}
+
+.leaderboard .tables {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  font-size: 0.8rem;
+}
+
+.leaderboardRecordList .title {
+  font-size: 2rem;
+  line-height: 2.5rem;
+}
+
+.leaderboardRecordList .table {
+  height: calc(100vh - 23rem);
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 0 0.75rem 0 0.75rem;
+}
+
+.leaderboardRecordList table {
+  border-spacing: 0px;
+}
+
+.leaderboardRecordList .table table thead {
+  color: var(--sub-color);
+  font-size: 0.75rem;
+}
+
+.leaderboardRecordList .table table .sub {
+  opacity: 0.5;
+}
+
+.leaderboardRecordList .table table tbody tr:nth-child(odd) {
+  background: var(--darker-color);
+}
+
+.leaderboardRecordList .table table td {
+  text-align: right;
+  height: 3rem;
+}
+
+.leaderboardRecordList .table table .rank {
+  width: 8%;
+  text-align: center;
+}
+
+.leaderboardRecordList .table table .username {
+  width: 22%;
+  text-align: left;
+}
+
+.leaderboardRecordList .table table .wpm,
+.leaderboardRecordList .table table .raw {
+  width: 10%;
+}
+
+.leaderboardRecordList .table table .testOption {
+  width: 10%;
+}
+
+.leaderboardRecordList .table table .testDate {
+  width: 18%;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-corner {
+  background: var(--sub-color);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--sub-color);
+  transition: 0.25s;
+  border-radius: 2px !important;
+}
+::-webkit-scrollbar-track {
+  background: 0 0;
+}
 /* Settings */
 .settings {
   display: grid;
