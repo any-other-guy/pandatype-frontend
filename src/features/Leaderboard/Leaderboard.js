@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import LeaderboardRecordList from './LeaderboardRecordList';
-import { Spinner } from '../TypingTest/Spinner';
+import { Spinner } from '../../app/Spinner';
 import { fetchLeaderboard, LeaderboardSelectors, showLeaderboardAction } from './leaderboardSlice';
 
 const Leaderboard = () => {

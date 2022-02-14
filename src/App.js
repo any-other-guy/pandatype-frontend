@@ -23,6 +23,7 @@ const App = () => {
   const language = useSelector((state) => state.typingtest.options.language);
 
   const showTypingtest = useSelector((state) => state.typingtest.showTypingtest);
+  const showLeaderboard = useSelector((state) => state.leaderboard.showLeaderboard);
   const showSettings = useSelector((state) => state.settings.showSettings);
   const showLoginForm = useSelector((state) => state.auth.showLoginForm);
   const hasLogin = useSelector((state) => state.auth.hasLogin);
@@ -70,8 +71,8 @@ const App = () => {
       {middleSection}
 
       {/* Hidden at start */}
-      <StatsTracker />
-      <Leaderboard />
+      {showTypingtest ? <StatsTracker /> : null}
+      {showLeaderboard ? <Leaderboard /> : null}
       {showSettings ? <Settings /> : null}
       {showLoginForm ? <LoginForm /> : null}
 
