@@ -88,7 +88,7 @@ input:-webkit-autofill {
 }
 .navbar .username {
   color: var(--sub-color);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   align-self: center;
 }
 
@@ -365,7 +365,7 @@ input:-webkit-autofill {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
 }
 
 .leaderboard {
@@ -652,6 +652,20 @@ input:-webkit-autofill {
   border-radius: 1rem;
   color: var(--caret-color);
   animation: blink 1s infinite;
+  font-size: 2.2rem;
+  top: -0.6rem;
+}
+
+/* "pseudo class" for cursor*/
+.cursor_started {
+  /*这个也血妈关键，只有absolute的child，才能在flex的parent里面被忽略*/
+  position: absolute;
+  transition: left 0.1s ease;
+  /* transform-origin: top left; */
+  margin-left: -0.75rem;
+  border-radius: 1rem;
+  color: var(--caret-color);
+  animation: blink 0s infinite;
   font-size: 2.2rem;
   top: -0.6rem;
 }

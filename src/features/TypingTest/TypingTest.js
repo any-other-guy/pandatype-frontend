@@ -31,6 +31,7 @@ const TypingTest = () => {
     // Fetch action only triggered by pressing space, for less checking done
     if (/\s/.test(key)) {
       // Remove first row when cursor is at a specific position (buttom left)
+      if (wordWrapper.current === null) return;
       const activeWord = Array.from(wordWrapper.current.childNodes).find(
         (node) => node.getAttribute('active') === 'true'
       );

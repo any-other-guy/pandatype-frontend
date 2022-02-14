@@ -9,7 +9,7 @@ const LeaderboardRecordList = ({ recordListObject, testLanguage, testType, testO
     return (
       <tr key={entry.id}>
         <td className="rank">{index === 0 ? <FaCrown /> : index + 1}</td>
-        <td className="username">{entry.username}</td>
+        <td className="username">{entry.identifierStr}</td>
         <td className="wpm">
           {entry.wpm.toFixed(2)}
           <div className="sub">{entry.accuracy.toFixed(2)}</div>

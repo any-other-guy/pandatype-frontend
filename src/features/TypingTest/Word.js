@@ -1,7 +1,8 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { typingtestSelectors } from './typingtestSlice';
+import Caret from './Caret';
 
 const Word = ({ wordId }) => {
   // By only passing in the wordId itself instead of the wordObj, unnecessary rerender is prevented
@@ -13,17 +14,13 @@ const Word = ({ wordId }) => {
     <div className="word" id={wordId} active={wordObj.active.toString()} ref={thisWord}>
       {/* Render blinking cursor on active word */}
       {wordObj.active ? (
-        <span
-          className="cursor"
-          style={{
-            left:
-              wordObj.cursorPosition === 0
-                ? 2
-                : wordObj.cursorPosition * 16 - wordObj.cursorPosition * 1.5 + 1,
-          }}
-        >
-          |
-        </span>
+        <Caret
+          left={
+            wordObj.cursorPosition === 0
+              ? 2
+              : wordObj.cursorPosition * 16 - wordObj.cursorPosition * 1.5 + 1
+          }
+        />
       ) : null}
       {/* Render letters in the word */}
       {wordObj.letters.map((letterObj) => (

@@ -26,7 +26,7 @@ const App = () => {
   const showLeaderboard = useSelector((state) => state.leaderboard.showLeaderboard);
   const showSettings = useSelector((state) => state.settings.showSettings);
   const showLoginForm = useSelector((state) => state.auth.showLoginForm);
-  const hasLogin = useSelector((state) => state.auth.hasLogin);
+
   const [cookie, setCookie, removeCookie] = useCookies([]);
 
   // Load initial settings

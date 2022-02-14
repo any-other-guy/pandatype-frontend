@@ -44,22 +44,21 @@ const TestResult = () => {
   const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
 
   useEffect(() => {
-    if (hasLogin) {
-      dispatch(
-        postTestResult({
-          identifierStr: token.split(' ')[1],
-          testLanguage: language,
-          testType: mode,
-          testOption: modeOption,
-          wpm: wpm.toFixed(2),
-          rawWpm: rawWpm.toFixed(2),
-          accuracy: accuracy.toFixed(2),
-          consistency: consistency.toFixed(2),
-          testDate: utcSecondsSinceEpoch,
-          elapsedTime: elapsedTime.toFixed(2),
-        })
-      );
-    }
+    const identifierStr = token === null ? null : token.split(' ')[1];
+    dispatch(
+      postTestResult({
+        identifierStr,
+        testLanguage: language,
+        testType: mode,
+        testOption: modeOption,
+        wpm: wpm.toFixed(2),
+        rawWpm: rawWpm.toFixed(2),
+        accuracy: accuracy.toFixed(2),
+        consistency: consistency.toFixed(2),
+        testDate: utcSecondsSinceEpoch,
+        elapsedTime: elapsedTime.toFixed(2),
+      })
+    );
   }, [hasLogin]);
 
   const langDict = {
