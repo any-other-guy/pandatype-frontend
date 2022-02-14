@@ -3,7 +3,9 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react';
 import { FaUserPlus, FaSignInAlt } from 'react-icons/fa';
-import { useFormik } from 'formik';
+import { Formik } from 'formik';
+import { useDispatch, useSelector } from 'react-redux';
+import { postLogin, postRegister } from './authSlice';
 
 const validateLoginForm = (values) => {
   const errors = {};
@@ -58,151 +60,194 @@ const validateRegisterationForm = (values) => {
 };
 
 const LoginForm = () => {
-  const loginForm = useFormik({
-    initialValues: {
-      email: '',
-      password: '',
-    },
-    validateLoginForm,
-    onSubmit: (values) => {
-      // eslint-disable-next-line no-alert
-      // eslint-disable-next-line no-undef
-      alert(JSON.stringify(values, null, 2));
-    },
-  });
+  const dispatch = useDispatch();
+  const loginStatus = useSelector((state) => state.auth.login.status);
+  const registrationStatus = useSelector((state) => state.auth.registration.status);
+  const loginError = useSelector((state) => state.auth.login.error);
+  const registrationError = useSelector((state) => state.auth.registration.error);
 
-  const registerationForm = useFormik({
-    initialValues: {
-      username: '',
-      email: '',
-      verifyEmail: '',
-      password: '',
-      verifyPassword: '',
-    },
-    validateRegisterationForm,
-    onSubmit: (values) => {
-      // eslint-disable-next-line no-alert
-      // eslint-disable-next-line no-undef
-      alert(JSON.stringify(values, null, 2));
-    },
-  });
   return (
     <div className="authForms">
       <div className="registerationForm">
         <div className="title">register</div>
-        <form onSubmit={registerationForm.handleSubmit}>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            placeholder="username"
-            onChange={registerationForm.handleChange}
-            onBlur={registerationForm.handleBlur}
-            value={registerationForm.values.username}
-          />
-          {registerationForm.touched.username && registerationForm.errors.username ? (
-            <div>{registerationForm.errors.username}</div>
-          ) : null}
+        <Formik
+          initialValues={{
+            username: '',
+            email: '',
+            verifyEmail: '',
+            password: '',
+            verifyPassword: '',
+          }}
+          validate={validateRegisterationForm}
+          onSubmit={(values) => {
+            dispatch(
+              postRegister({
+                username: values.username,
+                email: values.email,
+                password: values.password,
+              })
+            );
+          }}
+        >
+          {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            submitForm,
+            isSubmitting,
+            /* and other goodies */
+          }) => (
+            <form onSubmit={handleSubmit}>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                placeholder="username"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.username}
+              />
+              {touched.username && errors.username ? (
+                <div className="errorMessage">{errors.username}</div>
+              ) : null}
 
-          <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="email"
-            onChange={registerationForm.handleChange}
-            onBlur={registerationForm.handleBlur}
-            value={registerationForm.values.email}
-          />
-          {registerationForm.touched.email && registerationForm.errors.email ? (
-            <div>{registerationForm.errors.email}</div>
-          ) : null}
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="email"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.email}
+              />
+              {touched.email && errors.email ? (
+                <div className="errorMessage">{errors.email}</div>
+              ) : null}
 
-          <input
-            id="verifyEmail"
-            name="verifyEmail"
-            type="email"
-            placeholder="verify email"
-            onChange={registerationForm.handleChange}
-            onBlur={registerationForm.handleBlur}
-            value={registerationForm.values.verifyEmail}
-          />
-          {registerationForm.touched.verifyEmail && registerationForm.errors.verifyEmail ? (
-            <div>{registerationForm.errors.verifyEmail}</div>
-          ) : null}
+              <input
+                id="verifyEmail"
+                name="verifyEmail"
+                type="email"
+                placeholder="verify email"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.verifyEmail}
+              />
+              {touched.verifyEmail && errors.verifyEmail ? (
+                <div className="errorMessage">{errors.verifyEmail}</div>
+              ) : null}
 
-          <input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="password"
-            onChange={registerationForm.handleChange}
-            onBlur={registerationForm.handleBlur}
-            value={registerationForm.values.password}
-          />
-          {registerationForm.touched.password && registerationForm.errors.password ? (
-            <div>{registerationForm.errors.password}</div>
-          ) : null}
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="password"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.password}
+              />
+              {touched.password && errors.password ? (
+                <div className="errorMessage">{errors.password}</div>
+              ) : null}
 
-          <input
-            id="verifyPassword"
-            name="verifyPassword"
-            type="password"
-            placeholder="verify password"
-            onChange={registerationForm.handleChange}
-            onBlur={registerationForm.handleBlur}
-            value={registerationForm.values.verifyPassword}
-          />
-          {registerationForm.touched.verifyPassword && registerationForm.errors.verifyPassword ? (
-            <div>{registerationForm.errors.verifyPassword}</div>
-          ) : null}
+              <input
+                id="verifyPassword"
+                name="verifyPassword"
+                type="password"
+                placeholder="verify password"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.verifyPassword}
+              />
+              {touched.verifyPassword && errors.verifyPassword ? (
+                <div className="errorMessage">{errors.verifyPassword}</div>
+              ) : null}
+              {touched.verifyPassword &&
+              registrationStatus === 'error' &&
+              registrationError !== null ? (
+                <div className="errorMessage">{registrationError}</div>
+              ) : null}
 
-          <div className="button" onClick={() => registerationForm.submitForm()}>
-            <FaUserPlus size="20px" />
-            <span>Sign Up</span>
-          </div>
-        </form>
+              <div className="button" onClick={() => submitForm()}>
+                <FaUserPlus size="20px" />
+                <span>Sign Up</span>
+              </div>
+            </form>
+          )}
+        </Formik>
       </div>
 
       <div className="loginForm">
         <div className="title">login</div>
-        <form onSubmit={loginForm.handleSubmit}>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="email"
-            onChange={loginForm.handleChange}
-            onBlur={loginForm.handleBlur}
-            value={loginForm.values.email}
-          />
-          {loginForm.touched.email && loginForm.errors.email ? (
-            <div>{loginForm.errors.email}</div>
-          ) : null}
+        <Formik
+          initialValues={{
+            email: '',
+            password: '',
+          }}
+          validate={validateLoginForm}
+          onSubmit={(values) => {
+            dispatch(postLogin({ email: values.email, password: values.password }));
+          }}
+        >
+          {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            submitForm,
+            isSubmitting,
+            /* and other goodies */
+          }) => (
+            <form onSubmit={handleSubmit}>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="email"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.email}
+              />
+              {touched.email && errors.email ? (
+                <div className="errorMessage">{errors.email}</div>
+              ) : null}
 
-          <input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="password"
-            onChange={loginForm.handleChange}
-            onBlur={loginForm.handleBlur}
-            value={loginForm.values.password}
-          />
-          {loginForm.touched.password && loginForm.errors.password ? (
-            <div>{loginForm.errors.password}</div>
-          ) : null}
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="password"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.password}
+              />
+              {touched.password && errors.password ? (
+                <div className="errorMessage">{errors.password}</div>
+              ) : null}
+              {touched.password && loginStatus === 'error' && loginError !== null ? (
+                <div className="errorMessage">{loginError}</div>
+              ) : null}
 
-          <div className="button" onClick={() => registerationForm.submitForm()}>
-            <FaSignInAlt size="20px" />
-            <span>Sign In</span>
-          </div>
-          <div
-            className="link"
-            onClick={() => window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'mywindow')}
-          >
-            Forgot password?
-          </div>
-        </form>
+              <div className="button" onClick={() => submitForm()}>
+                <FaSignInAlt size="20px" />
+                <span>Sign In</span>
+              </div>
+              <div
+                className="link"
+                onClick={() =>
+                  window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'mywindow')
+                }
+              >
+                Forgot password?
+              </div>
+            </form>
+          )}
+        </Formik>
       </div>
     </div>
   );
