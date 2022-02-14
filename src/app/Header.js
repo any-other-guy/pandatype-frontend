@@ -24,7 +24,7 @@ const Header = () => {
 
   const handleShowHide = (nextTabName) => {
     // FIXME:logout if login for now
-    if (hasLogin) {
+    if (nextTabName === 'loginform' && hasLogin) {
       dispatch(logoutAction());
       // 很奇怪，在这里没法console.log这个cookie object但是却可以remove，不做判空
       // if (cookie.username !== undefined && cookie.token !== undefined) {
