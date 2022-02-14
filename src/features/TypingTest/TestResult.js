@@ -1,7 +1,8 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import RestartButton from './RestartButton';
 import ResultChart from './ResultChart';
+import { postTestResult } from './typingtestSlice';
 
 const TestResult = () => {
   const {
@@ -17,8 +18,11 @@ const TestResult = () => {
     missedCount,
   } = useSelector((state) => state.typingtest.statistics);
 
+  const dispatch = useDispatch();
   // TODO: 研究下这样会不会只更改state.typingtest里面任何的obj就会trigger rerender? 不过反正结算界面目前也没修改typingtest state里的东西的
   const { language, mode, time, words, quote } = useSelector((state) => state.typingtest.options);
+  const hasLogin = useSelector((state) => state.auth.hasLogin);
+  const token = useSelector((state) => state.auth.token);
 
   let modeOption;
   switch (mode) {
@@ -34,6 +38,30 @@ const TestResult = () => {
     default:
       break;
   }
+
+  const now = new Date();
+  const utcMilllisecondsSinceEpoch = now.getTime() + now.getTimezoneOffset() * 60 * 1000;
+  const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
+
+  useEffect(() => {
+    if (hasLogin) {
+      dispatch(
+        postTestResult({
+          identifierStr: token.split(' ')[1],
+          testLanguage: language,
+          testType: mode,
+          testOption: modeOption,
+          wpm: wpm.toFixed(2),
+          rawWpm: rawWpm.toFixed(2),
+          accuracy: accuracy.toFixed(2),
+          consistency: consistency.toFixed(2),
+          testDate: utcSecondsSinceEpoch,
+          elapsedTime: elapsedTime.toFixed(2),
+        })
+      );
+    }
+  }, [hasLogin]);
+
   const langDict = {
     en: 'English',
     zh: '中文',
@@ -47,8 +75,7 @@ const TestResult = () => {
   const rawWpmString = !Number.isNaN(rawWpm) !== null ? rawWpm.toFixed(0) : 'N/A';
   const consistencyString =
     !Number.isNaN(consistency) && consistency >= 0 ? `${consistency.toFixed(0)}%` : 'N/A';
-  const timeString =
-    !Number.isNaN(elapsedTime) !== null ? `${Math.floor(elapsedTime / 1000)}s` : 'N/A';
+  const timeString = !Number.isNaN(elapsedTime) !== null ? `${Math.floor(elapsedTime)}s` : 'N/A';
 
   return (
     <div className="testResult">

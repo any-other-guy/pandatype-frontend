@@ -48,6 +48,7 @@ const initialStatistics = {
   zhCompleted: 0,
   zhMistake: 0,
   rawTypingHistory: '',
+  saved: false,
 };
 
 const initialState = {
@@ -90,6 +91,15 @@ export const fetchTestContent = createAsyncThunk(
     }
     // console.log(`Fetching from: ${url}`);
     const response = await client.get(url, payload);
+    return response.data;
+  }
+);
+
+export const postTestResult = createAsyncThunk(
+  'typingtest/postTestResult',
+  async (body, ...payload) => {
+    const url = `${process.env.REACT_APP_LEADERBOARD_API_URL}/saveTestResult`;
+    const response = await client.post(url, body, payload);
     return response.data;
   }
 );
@@ -451,6 +461,21 @@ export const typingtestSlice = createSlice({
       .addCase(fetchTestContent.rejected, (state, action) => {
         state.loading.status = 'failed';
         state.loading.error = action.error.message;
+      })
+      // POST leaderboard record
+      .addCase(postTestResult.pending, (state) => {
+        state.loading.status = 'loading';
+      })
+      .addCase(postTestResult.fulfilled, (state, action) => {
+        state.loading.status = 'succeeded';
+        const { status } = action.payload;
+        if (status === 'SUCCESS') {
+          state.statistics.saved = true;
+        }
+      })
+      .addCase(postTestResult.rejected, (state, action) => {
+        state.loading.status = 'failed';
+        state.loading.error = action.error.message;
       });
   },
 });
@@ -586,7 +611,7 @@ const completeTest = (state) => {
   state.status = 'completed';
   state.statistics.endTime = Date.now();
   const elapsedTime = state.statistics.endTime - state.statistics.startTime;
-  state.statistics.elapsedTime = elapsedTime;
+  state.statistics.elapsedTime = elapsedTime / 1000;
   // Prepare test result related states in store
   let total;
   let bad;

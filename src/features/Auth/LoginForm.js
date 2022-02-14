@@ -214,7 +214,7 @@ const LoginForm = () => {
           }) => (
             <form onSubmit={handleSubmit}>
               <input
-                id="email"
+                id="email_login"
                 name="email"
                 type="email"
                 placeholder="email"
@@ -227,7 +227,7 @@ const LoginForm = () => {
               ) : null}
 
               <input
-                id="password"
+                id="password_login"
                 name="password"
                 type="password"
                 placeholder="password"
