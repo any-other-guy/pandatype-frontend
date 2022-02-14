@@ -17,6 +17,7 @@ const initialState = {
   },
   token: null,
   username: null,
+  hasLogin: false,
 };
 
 export const postLogin = createAsyncThunk('auth/postLogin', async (body, ...payload) => {
@@ -38,6 +39,35 @@ const authSlice = createSlice({
     showLoginFormAction(state, action) {
       const { show } = action.payload;
       state.showLoginForm = show;
+    },
+    setAuthFromCookie(state, action) {
+      const { username, token } = action.payload;
+      if (username === null || token === null || !token.includes('Bearer')) {
+        // cookie or token issue, do nothing for now
+        return;
+      }
+      state.username = username;
+      state.token = token;
+      state.login.status = 'ok';
+      state.hasLogin = true;
+    },
+    logoutAction(state) {
+      if (state.hasLogin === false) return;
+      state.hasLogin = false;
+      state.loading = {
+        status: 'idle',
+        error: null,
+      };
+      state.login = {
+        status: null,
+        error: '',
+      };
+      state.registration = {
+        status: null,
+        error: '',
+      };
+      state.token = null;
+      state.username = null;
     },
   },
   extraReducers(builder) {
@@ -89,6 +119,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { showLoginFormAction } = authSlice.actions;
+export const { showLoginFormAction, setAuthFromCookie, logoutAction } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -1,11 +1,12 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FaUserPlus, FaSignInAlt } from 'react-icons/fa';
 import { Formik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
-import { postLogin, postRegister } from './authSlice';
+import { postLogin, postRegister, showLoginFormAction } from './authSlice';
+import { showTypingtestAction } from '../TypingTest/typingtestSlice';
 
 const validateLoginForm = (values) => {
   const errors = {};
@@ -65,6 +66,14 @@ const LoginForm = () => {
   const registrationStatus = useSelector((state) => state.auth.registration.status);
   const loginError = useSelector((state) => state.auth.login.error);
   const registrationError = useSelector((state) => state.auth.registration.error);
+  const hasLogin = useSelector((state) => state.auth.hasLogin);
+
+  useEffect(() => {
+    if (hasLogin === true) {
+      dispatch(showLoginFormAction({ show: false }));
+      dispatch(showTypingtestAction({ show: true }));
+    }
+  }, [hasLogin]);
 
   return (
     <div className="authForms">

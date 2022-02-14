@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useEffect, useRef } from 'react';
+import { useCookies } from 'react-cookie';
 import { FaKeyboard, FaCrown, FaCog, FaUserAlt } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { showLeaderboardAction } from '../features/Leaderboard/leaderboardSlice';
 import { resetTestAction, showTypingtestAction } from '../features/TypingTest/typingtestSlice';
 import { showSettingsAction } from '../features/Settings/settingsSlice';
-import { showLoginFormAction } from '../features/Auth/authSlice';
+import { logoutAction, showLoginFormAction } from '../features/Auth/authSlice';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -17,8 +18,23 @@ const Header = () => {
   const showTypingtest = useSelector((state) => state.typingtest.showTypingtest);
   const showSettings = useSelector((state) => state.settings.showSettings);
   const showLoginForm = useSelector((state) => state.auth.showLoginForm);
+  const hasLogin = useSelector((state) => state.auth.hasLogin);
+  const username = useSelector((state) => state.auth.username);
+  const [cookie, setCookie, removeCookie] = useCookies([]);
 
   const handleShowHide = (nextTabName) => {
+    // FIXME:logout if login for now
+    if (hasLogin) {
+      dispatch(logoutAction());
+      // 很奇怪，在这里没法console.log这个cookie object但是却可以remove，不做判空
+      // if (cookie.username !== undefined && cookie.token !== undefined) {
+      removeCookie('username');
+      removeCookie('token');
+      // }
+      return;
+    }
+
+    // show / hide
     const showHide = [
       {
         name: 'typingtest',
@@ -136,13 +152,15 @@ const Header = () => {
 
   return (
     <div className="headerWrapper">
-      <div className="logo">pandatype</div>
+      <div className="logo" onClick={() => handleShowHide('typingtest')}>
+        pandatype
+      </div>
       <div className="navbar">
         <div className="icon" onClick={() => handleShowHide('typingtest')}>
           <FaKeyboard size="1.2rem" />
         </div>
-        <div className="icon">
-          <FaCrown size="1.2rem" onClick={() => dispatch(showLeaderboardAction({ show: true }))} />
+        <div className="icon" onClick={() => dispatch(showLeaderboardAction({ show: true }))}>
+          <FaCrown size="1.2rem" />
         </div>
         {/* <div className="icon">
           <FaInfo size={"1.2rem"} />
@@ -150,8 +168,9 @@ const Header = () => {
         <div className="icon" onClick={() => handleShowHide('settings')}>
           <FaCog size="1.2rem" />
         </div>
-        <div className="icon">
-          <FaUserAlt size="1.2rem" onClick={() => handleShowHide('loginform')} />
+        <div className="icon" onClick={() => handleShowHide('loginform')}>
+          <FaUserAlt size="1.2rem" />
+          <div className="username">{username !== null ? username : null}</div>
         </div>
       </div>
 
