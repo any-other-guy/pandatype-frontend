@@ -106,7 +106,7 @@ const ResultChart = ({ perSecondWpm, elapsedTime }) => {
   // Remove the first dummy object in perSecondWpm array. For now
   const stats = JSON.parse(JSON.stringify(perSecondWpm));
   // Display the endTime as the last x-axis data point on graph
-  stats[stats.length - 1].index = elapsedTime / 1000;
+  stats[stats.length - 1].index = elapsedTime;
 
   const labels = stats.map((obj) => obj.index);
   const data = {
