@@ -58,7 +58,7 @@ const leaderboardSlice = createSlice({
             list.recordList.forEach((e) => {
               e.id = nanoid();
             });
-            recordListAdapters[`${list.testLanguage}${list.testOption}`].upsertMany(
+            recordListAdapters[`${list.testLanguage}${list.testOption}`].setAll(
               state[`${list.testLanguage}${list.testOption}`],
               list.recordList
             );

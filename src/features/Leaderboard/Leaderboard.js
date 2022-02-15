@@ -16,9 +16,7 @@ const Leaderboard = () => {
   const leaderboardLoadingStatus = useSelector((state) => state.leaderboard.loading.status);
   const leaderboardLoadingError = useSelector((state) => state.leaderboard.loading.error);
   useEffect(() => {
-    if (leaderboardLoadingStatus === 'idle') {
-      dispatch(fetchLeaderboard({}));
-    }
+    dispatch(fetchLeaderboard({}));
   }, []);
 
   let tables;
