@@ -6,7 +6,7 @@ import { loadState } from './localStorage';
 const Footer = () => (
   <div className="footerWrapper">
     <div className="keyTips">
-      <span>tab</span>+<span>Enter</span> - restart test
+      <span>tab</span> + <span>Enter</span> = restart test
       <br />
       <br />
       {/* <span>esc</span> or <span>ctrl/cmd</span>+<span>shift</span>+<span>p</span> - command line */}
