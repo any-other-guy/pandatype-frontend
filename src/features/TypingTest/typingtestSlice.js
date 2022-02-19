@@ -125,6 +125,8 @@ export const typingtestSlice = createSlice({
         let letterObj = wordObj.letters[letterIndex];
         wordObj.active = true;
 
+        if (wordId === undefined || wordObj === undefined) return;
+
         switch (true) {
           // Space bar is the word splitter
           case /\s/.test(key): {
@@ -182,7 +184,8 @@ export const typingtestSlice = createSlice({
             wordObj = state[language].entities[wordId];
             letterObj = wordObj.letters[letterIndex];
 
-            if (wordId === null && wordObj === null) return;
+            if (wordId === undefined || wordObj === undefined) return;
+
             wordObj.cursorPosition += 1;
 
             if (letterObj != null) {
@@ -271,8 +274,10 @@ export const typingtestSlice = createSlice({
             wordObj = state[language].entities[wordId];
             letterObj = wordObj.letters[letterIndex];
 
-            if (wordId === null && wordObj === null) return;
+            if (wordId === undefined || wordObj === undefined) return;
+
             if (wordObj.cursorPosition !== 0) wordObj.cursorPosition -= 1;
+            // FIXME: undefined?
             if (letterObj != null) {
               letterObj.status = 'untyped';
               letterObj.actuallyTyped = null;
