@@ -33,7 +33,7 @@ input:-webkit-autofill {
   display: grid;
   grid-auto-flow: row;
   min-height: 100vh; /* why does 100vh creates scrollbar?? */
-  padding: 1.1rem 2.2rem 2.4rem 2.2rem;
+  padding: 1.5rem 2.2rem 2rem 2.2rem;
   margin-left: auto;
   margin-right: auto;
   gap: 2rem;
@@ -55,14 +55,31 @@ input:-webkit-autofill {
 }
 
 .logo {
+  font-family: 'Lexend Deca';
   cursor: pointer;
   user-select: none;
-  display: grid;
-  grid-template-columns: auto 1fr;
+  display: flex;
   gap: 0.5rem;
   white-space: nowrap;
   color: var(--main-color);
-  font-size: 2.2rem;
+  font-size: 2rem;
+}
+.logo svg {
+  margin-top: 0.4rem;
+}
+
+.logo .text {
+  position: relative;
+}
+
+.logo .text .top {
+  position: absolute;
+  left: 0.25rem;
+  top: 0rem;
+  font-size: 0.65rem;
+  line-height: 0.65rem;
+  color: var(--sub-color);
+  transition: 0.25s;
 }
 
 .navbar {
@@ -73,7 +90,7 @@ input:-webkit-autofill {
   gap: 2rem;
   width: fit-content;
   margin-top: 0.5rem;
-  margin-left: 0.5rem;
+  margin-left: 1rem;
   cursor: pointer;
 }
 

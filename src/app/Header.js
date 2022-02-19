@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useEffect, useRef } from 'react';
 import { useCookies } from 'react-cookie';
-import { FaKeyboard, FaCrown, FaCog, FaUserAlt } from 'react-icons/fa';
+import { FaRegKeyboard, FaKeyboard, FaCrown, FaCog, FaUserAlt } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { showLeaderboardAction } from '../features/Leaderboard/leaderboardSlice';
 import { resetTestAction, showTypingtestAction } from '../features/TypingTest/typingtestSlice';
@@ -153,7 +153,11 @@ const Header = () => {
   return (
     <div className="headerWrapper">
       <div className="logo" onClick={() => handleShowHide('typingtest')}>
-        pandatype
+        <FaRegKeyboard size="2.3rem" />
+        <div className="text">
+          <div className="top">panda see</div>
+          pandatype
+        </div>
       </div>
       <div className="navbar">
         <div className="icon" onClick={() => handleShowHide('typingtest')}>
@@ -166,10 +170,10 @@ const Header = () => {
           <FaInfo size={"1.2rem"} />
         </div> */}
         <div className="icon" onClick={() => handleShowHide('settings')}>
-          <FaCog size="1.2rem" />
+          <FaCog size="1.1rem" />
         </div>
         <div className="icon" onClick={() => handleShowHide('loginform')}>
-          <FaUserAlt size="1.2rem" />
+          <FaUserAlt size="1.1rem" />
           <div className="username">{username !== null ? username : null}</div>
         </div>
       </div>
