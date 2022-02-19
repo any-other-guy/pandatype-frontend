@@ -20,6 +20,10 @@ const Header = () => {
   const showLoginForm = useSelector((state) => state.auth.showLoginForm);
   const hasLogin = useSelector((state) => state.auth.hasLogin);
   const username = useSelector((state) => state.auth.username);
+  const testStatus = useSelector((state) => state.typingtest.status);
+  const configGroupWrapper = useRef(null);
+  const navbar = useRef(null);
+
   const [cookie, setCookie, removeCookie] = useCookies([]);
 
   const handleShowHide = (nextTabName) => {
@@ -60,8 +64,6 @@ const Header = () => {
       dispatch(resetTestAction({ options: {} }));
     }
   };
-
-  const configGroupWrapper = useRef(null);
 
   useEffect(() => {
     // Initialize options UI
@@ -150,6 +152,17 @@ const Header = () => {
     target.classList.add('active');
   };
 
+  // hide when test is started
+  useEffect(() => {
+    if (testStatus === 'started') {
+      configGroupWrapper.current.classList.add('transparent');
+      navbar.current.classList.add('transparent');
+    } else if (testStatus === 'unstarted' || testStatus === 'completed') {
+      configGroupWrapper.current.classList.remove('transparent');
+      navbar.current.classList.remove('transparent');
+    }
+  }, [testStatus]);
+
   return (
     <div className="headerWrapper">
       <div className="logo" onClick={() => handleShowHide('typingtest')}>
@@ -159,20 +172,23 @@ const Header = () => {
           pandatype
         </div>
       </div>
-      <div className="navbar">
-        <div className="icon" onClick={() => handleShowHide('typingtest')}>
+      <div className="navbar" ref={navbar}>
+        <div className="icon fakeyboard" onClick={() => handleShowHide('typingtest')}>
           <FaKeyboard size="1.2rem" />
         </div>
-        <div className="icon" onClick={() => dispatch(showLeaderboardAction({ show: true }))}>
-          <FaCrown size="1.2rem" />
+        <div
+          className="icon facrown"
+          onClick={() => dispatch(showLeaderboardAction({ show: true }))}
+        >
+          <FaCrown size="1.3rem" />
         </div>
-        {/* <div className="icon">
+        {/* <div className="icon fainfo">
           <FaInfo size={"1.2rem"} />
         </div> */}
-        <div className="icon" onClick={() => handleShowHide('settings')}>
+        <div className="icon facog" onClick={() => handleShowHide('settings')}>
           <FaCog size="1.1rem" />
         </div>
-        <div className="icon" onClick={() => handleShowHide('loginform')}>
+        <div className="icon fauseralt" onClick={() => handleShowHide('loginform')}>
           <FaUserAlt size="1.1rem" />
           <div className="username">{username !== null ? username : null}</div>
         </div>

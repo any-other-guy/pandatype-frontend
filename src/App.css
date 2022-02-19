@@ -32,8 +32,8 @@ input:-webkit-autofill {
   max-width: 1000px;
   display: grid;
   grid-auto-flow: row;
-  min-height: 100vh; /* why does 100vh creates scrollbar?? */
-  padding: 1.5rem 2.2rem 2rem 2.2rem;
+  min-height: 100vh;
+  padding: 1.3rem 2.2rem 2rem 2.2rem;
   margin-left: auto;
   margin-right: auto;
   gap: 2rem;
@@ -52,6 +52,9 @@ input:-webkit-autofill {
   align-items: center;
   gap: 0.5rem;
   user-select: none;
+}
+
+.middleSection {
 }
 
 .logo {
@@ -83,15 +86,14 @@ input:-webkit-autofill {
 }
 
 .navbar {
-  line-height: 1rem;
   color: var(--sub-color);
   display: grid;
   grid-auto-flow: column;
   gap: 2rem;
   width: fit-content;
-  margin-top: 0.5rem;
   margin-left: 1rem;
   cursor: pointer;
+  transition: 0.25s;
 }
 
 .navbar > .icon :hover {
@@ -109,6 +111,25 @@ input:-webkit-autofill {
   align-self: center;
 }
 
+.navbar .fakeyboard {
+  margin-top: 0.3rem;
+}
+
+.navbar .facrown {
+  margin-top: 0.2rem;
+}
+
+.navbar .fainfo {
+}
+
+.navbar .facog {
+  margin-top: 0.3rem;
+}
+
+.navbar .fauseralt {
+  margin-top: 0.3rem;
+}
+
 .configGroupWrapper {
   display: grid;
   justify-self: right;
@@ -119,6 +140,7 @@ input:-webkit-autofill {
   justify-items: self-end;
   user-select: none;
   color: var(--text-color);
+  transition: 0.25s;
 }
 
 .configGroup {
@@ -141,6 +163,10 @@ input:-webkit-autofill {
 
 .display-none {
   display: none !important;
+}
+
+.transparent {
+  opacity: 0;
 }
 
 /* Test Area */
@@ -592,10 +618,10 @@ input:-webkit-autofill {
 .footerWrapper {
   display: grid;
   grid-template-rows: minmax(1fr, 100px) minmax(1fr, 100px);
+  transition: 0.25s;
 }
 
 .keyTips {
-  transition: 0.25s;
   margin-bottom: 2rem;
   color: var(--sub-color);
   text-align: center;

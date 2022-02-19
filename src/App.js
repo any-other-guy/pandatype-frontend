@@ -51,15 +51,15 @@ const App = () => {
     setCookie('token', token, { path: '/' });
   }, [username, token]);
 
-  let middleSection = null;
+  let TypingTestComponent = null;
 
   if (showTypingtest) {
     if (isTestCompleted) {
-      middleSection = <TestResult />;
+      TypingTestComponent = <TestResult />;
     } else if (language === 'zh') {
-      middleSection = <ZhTypingTest />;
+      TypingTestComponent = <ZhTypingTest />;
     } else {
-      middleSection = <TypingTest />;
+      TypingTestComponent = <TypingTest />;
     }
   }
 
@@ -67,14 +67,17 @@ const App = () => {
     <div className="mainWrapper">
       {/* top section */}
       <Header />
-      {/* middle section */}
-      {middleSection}
 
-      {/* Hidden at start */}
-      {showTypingtest ? <StatsTracker /> : null}
-      {showLeaderboard ? <Leaderboard /> : null}
-      {showSettings ? <Settings /> : null}
-      {showLoginForm ? <LoginForm /> : null}
+      {/* middle section */}
+      <div className="middleSection">
+        {TypingTestComponent}
+
+        {/* Hidden at start */}
+        {showTypingtest ? <StatsTracker /> : null}
+        {showLeaderboard ? <Leaderboard /> : null}
+        {showSettings ? <Settings /> : null}
+        {showLoginForm ? <LoginForm /> : null}
+      </div>
 
       {/* bottom section */}
       <Footer />

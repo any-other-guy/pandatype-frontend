@@ -22,7 +22,7 @@ const initialOptions =
         mode: 'time',
         time: 30,
         words: 50,
-        quote: 'medium',
+        quote: 'short',
       }
     : localOptions;
 

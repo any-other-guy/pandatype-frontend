@@ -1,31 +1,45 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { FaGithub, FaPalette } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 import { loadState } from './localStorage';
 
-const Footer = () => (
-  <div className="footerWrapper">
-    <div className="keyTips">
-      <span>tab</span> + <span>Enter</span> = restart test
-      <br />
-      <br />
-      {/* <span>esc</span> or <span>ctrl/cmd</span>+<span>shift</span>+<span>p</span> - command line */}
-    </div>
-    <div className="footer">
-      <div className="linksGroup">
-        <a href="https://github.com/any-other-guy/pandatype-frontend" tabIndex="-1">
-          <FaGithub size="12px" />
-          <span className="link">Github</span>
-        </a>
+const Footer = () => {
+  const testStatus = useSelector((state) => state.typingtest.status);
+  const footerWrapper = useRef(null);
+
+  // hide when test is started
+  useEffect(() => {
+    if (testStatus === 'started') {
+      footerWrapper.current.classList.add('transparent');
+    } else if (testStatus === 'unstarted' || testStatus === 'completed') {
+      footerWrapper.current.classList.remove('transparent');
+    }
+  }, [testStatus]);
+
+  return (
+    <div className="footerWrapper" ref={footerWrapper}>
+      <div className="keyTips">
+        <span>tab</span> + <span>Enter</span> = restart test
+        <br />
+        <br />
       </div>
-      <div className="themeVersion">
-        <a href="#" tabIndex="-1">
-          <FaPalette size="12px" />
-          <span className="link">{loadState('theme')}</span>
-        </a>
+      <div className="footer">
+        <div className="linksGroup">
+          <a href="https://github.com/any-other-guy/pandatype-frontend" tabIndex="-1">
+            <FaGithub size="12px" />
+            <span className="link">Github</span>
+          </a>
+        </div>
+        <div className="themeVersion">
+          <a href="#" tabIndex="-1">
+            <FaPalette size="12px" />
+            <span className="link">{loadState('theme')}</span>
+          </a>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Footer;
