@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useDebugValue } from 'react';
 import { useSelector } from 'react-redux';
 
 export const useKeyPress = (callback) => {
@@ -23,7 +23,7 @@ export const useKeyPress = (callback) => {
       // }, 5000);
 
       if (e.key === 'Shift') return;
-      if (language !== 'zh' && mode !== 'quote') {
+      if (!(language === 'zh' && mode === 'quote')) {
         e.preventDefault();
       }
       keyPressed.current = e.key;
@@ -33,6 +33,7 @@ export const useKeyPress = (callback) => {
       e.preventDefault();
       keyPressed.current = null;
     };
+
     window.addEventListener('keydown', downHandler);
     window.addEventListener('keyup', upHandler);
     return () => {
@@ -40,6 +41,8 @@ export const useKeyPress = (callback) => {
       window.removeEventListener('keyup', upHandler);
     };
   });
+
+  useDebugValue();
 
   return keyPressed;
 };

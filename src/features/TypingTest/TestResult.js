@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import RestartButton from './RestartButton';
 import ResultChart from './ResultChart';
 import { postTestResult } from './typingtestSlice';
+import { useKeyPress } from './keypressHook';
 
 const TestResult = () => {
   const {
@@ -23,6 +24,9 @@ const TestResult = () => {
   const { language, mode, time, words, quote } = useSelector((state) => state.typingtest.options);
   const hasLogin = useSelector((state) => state.auth.hasLogin);
   const token = useSelector((state) => state.auth.token);
+
+  // Handle 'tab' input for restart menu
+  useKeyPress((key) => {});
 
   let modeOption;
   switch (mode) {
