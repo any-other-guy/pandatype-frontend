@@ -201,6 +201,11 @@ export const typingtestSlice = createSlice({
                     letterIndex + 1 === wordObj.letters.length) ||
                   (state.options.mode === 'quote' &&
                     wordObj.wordIndex + 1 === state.loading.quoteWordCount &&
+                    letterIndex + 1 === wordObj.letters.length) ||
+                  // FIXME: 中文字数统计completeTest的条件暂时这样
+                  (state.options.language === 'zh' &&
+                    state.options.mode === 'words' &&
+                    wordObj.wordIndex + 1 >= state.options.words / 2 &&
                     letterIndex + 1 === wordObj.letters.length)
                 ) {
                   completeTest(state);
@@ -540,7 +545,8 @@ const handleZhTestContent = (state, action) => {
   switch (type) {
     case 'words': {
       if (state.options.mode === 'words') {
-        words = shuffle(testContent).slice(0, state.options.words);
+        // FIXME:中文字数统计completeTest的条件暂时这样
+        words = shuffle(testContent).slice(0, Math.floor(state.options.words / 2));
       } else if (state.options.mode === 'time') {
         words = shuffle(testContent).slice(0, 100);
       }
