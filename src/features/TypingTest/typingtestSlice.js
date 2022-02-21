@@ -600,6 +600,7 @@ const handleZhTestContent = (state, action) => {
       const quote = testContent[0].text.split('');
       wordsObj = quote.map((zi, index) => ({
         zi,
+        wordIndex: index,
         ziIndex: index,
         wordId: zi + index,
         ziPinyin: null,

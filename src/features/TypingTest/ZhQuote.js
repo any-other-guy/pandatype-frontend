@@ -12,7 +12,8 @@ const ZhQuote = ({ ziIds }) => {
   const ziPerLine = 38;
   const linesToRemove = useRef(3);
   const [rerender, setRerender] = useState(0);
-  const typedString = useRef('');
+  const currentLineString = useRef('');
+  const allTypedString = useRef([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -26,13 +27,22 @@ const ZhQuote = ({ ziIds }) => {
 
   const onInputChange = () => {
     const currentTypedValue = inputFields.current[currentField.current].value;
-    typedString.current = inputFields.current.reduce((str, field, index) => {
+    currentLineString.current = inputFields.current.reduce((str, field, index) => {
       if (index <= currentField.current && field != null) {
         str = str.concat(field.value);
       }
       return str;
     }, '');
-    dispatch(zhQuoteInputAction({ inputString: typedString.current }));
+
+    let entireString = '';
+    if (allTypedString.current.length > 0) {
+      entireString = allTypedString.current.reduce((str, entry) => {
+        str = str.concat(entry);
+        return str;
+      }, '');
+    }
+    entireString = currentLineString.current;
+    dispatch(zhQuoteInputAction({ inputString: entireString }));
 
     // "auto scrolling" visual effect
     const zhStrLength = getZhStrLength(currentTypedValue);
@@ -44,12 +54,14 @@ const ZhQuote = ({ ziIds }) => {
           .split('')
           .slice(-(zhStrLength - ziPerLine))
           .join('');
+        // and remove extra from current line
+        inputFields.current[currentField.current].value = inputFields.current[
+          currentField.current
+        ].value.slice(0, -appendToNextLine.length);
       }
 
-      // and remove extra from current line
-      inputFields.current[currentField.current].value = inputFields.current[
-        currentField.current
-      ].value.slice(0, -appendToNextLine.length);
+      // save text input from the current line
+      allTypedString.current.push(inputFields.current[currentField.current].value);
 
       // Move cursor to the next line
       currentField.current += 1;
