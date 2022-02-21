@@ -15,6 +15,13 @@ const Timer = () => {
     setTimeRemaining(totalTime);
   }, [totalTime]);
 
+  // reset time remaining on test restart
+  useEffect(() => {
+    if (testStatus === 'unstarted') {
+      setTimeRemaining(totalTime);
+    }
+  }, [testStatus]);
+
   // Timer
   useInterval(() => {
     if (testStatus === 'started') {
