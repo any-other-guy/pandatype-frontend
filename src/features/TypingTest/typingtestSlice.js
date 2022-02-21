@@ -376,13 +376,13 @@ export const typingtestSlice = createSlice({
       completeTest(state);
       // Cleanup the last overtimed entry in perSecondWpm, if any
       // FIXME: find out why this happens, for now just purge them away
-      while (
-        state.options.mode === 'time' &&
-        state.statistics.perSecondWpm[state.statistics.perSecondWpm.length - 1].index >
-          state.options.time
-      ) {
-        state.statistics.perSecondWpm.pop();
-      }
+      // while (
+      //   state.options.mode === 'time' &&
+      //   state.statistics.perSecondWpm[state.statistics.perSecondWpm.length - 1].index >
+      //     state.options.time + 1
+      // ) {
+      //   state.statistics.perSecondWpm.pop();
+      // }
     },
     resetTestAction: (state, action) => {
       const {
