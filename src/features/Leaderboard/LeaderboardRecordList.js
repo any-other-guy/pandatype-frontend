@@ -1,14 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FaCrown } from 'react-icons/fa';
+import { formatLocalTime } from '../../utils/utils';
 
 const LeaderboardRecordList = ({ recordListObject, testLanguage, testType, testOption }) => {
   testLanguage = testLanguage === 'en' ? 'English' : testLanguage;
   testLanguage = testLanguage === 'zh' ? '中文' : testLanguage;
   const leaderboardContent = Object.values(recordListObject).map((entry, index) => {
+    const dateTime = formatLocalTime(entry.testDate).split('-');
+
     return (
       <tr key={entry.id}>
-        <td className="rank">{index === 0 ? <FaCrown /> : index + 1}</td>
+        <td className="rank">{index === 0 ? <FaCrown size="1rem" /> : index + 1}</td>
         <td className="username">{entry.identifierStr}</td>
         <td className="wpm">
           {entry.wpm.toFixed(2)}
@@ -22,7 +25,10 @@ const LeaderboardRecordList = ({ recordListObject, testLanguage, testType, testO
           {entry.testType}
           <div className="sub">{entry.testOption}</div>
         </td>
-        <td className="testDate">{entry.testDate}</td>
+        <td className="testDate">
+          <div>{dateTime[0]}</div>
+          <div className="sub">{dateTime[1]}</div>
+        </td>
       </tr>
     );
   });

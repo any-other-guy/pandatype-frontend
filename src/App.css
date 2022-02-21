@@ -424,7 +424,7 @@ input:-webkit-autofill {
   padding: 2rem;
   transform: translate(-50%, -50%);
   display: grid;
-  gap: 2rem 0;
+  gap: 1.5rem 0;
   grid-template-columns: 1fr;
   grid-template-rows: 3rem auto;
 }
@@ -452,8 +452,9 @@ input:-webkit-autofill {
 }
 
 .leaderboardRecordList .title {
-  font-size: 2rem;
-  line-height: 2.5rem;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  padding: 0 0.6rem 0 0.6rem;
 }
 
 .leaderboardRecordList .table {

@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export const formatMillisecondsToDate = (milliseconds) => {
   const formattedTime = new Date(0);
   formattedTime.setMilliseconds(milliseconds);
@@ -67,4 +69,9 @@ export const setTheme = (theme) => {
     '--darker-color',
     theme['darker-color'] === undefined ? theme['bg-color'] : theme['darker-color']
   );
+};
+
+export const formatLocalTime = (date) => {
+  const str = moment(date).format('MMM DD YYYY-hh:mm');
+  return str;
 };
