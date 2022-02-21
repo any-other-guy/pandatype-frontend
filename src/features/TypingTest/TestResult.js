@@ -25,7 +25,7 @@ const TestResult = () => {
   const hasLogin = useSelector((state) => state.auth.hasLogin);
   const token = useSelector((state) => state.auth.token);
 
-  // Handle 'tab' input for restart menu
+  // Handle 'tab'  input for restart menu
   useKeyPress((key) => {});
 
   let modeOption;
@@ -65,16 +65,54 @@ const TestResult = () => {
     );
   }, [hasLogin]);
 
-  const langDict = {
-    en: 'English',
-    zh: '中文',
-  };
   const wpmString = !Number.isNaN(wpm) !== null ? wpm.toFixed(0) : 'N/A';
   const accuracyString = !Number.isNaN(accuracy) !== null ? `${accuracy.toFixed(0)}%` : 'N/A';
   const testTypeString =
     language !== null && mode !== null && modeOption !== null
-      ? `${langDict[language]} ${mode}`
+      ? `${
+          {
+            en: 'English',
+            zh: '中文',
+          }[language]
+        } ${
+          {
+            words: {
+              en: 'words',
+              zh: '按字数',
+            }[language],
+            quote: {
+              en: 'quote',
+              zh: '写段子',
+            }[language],
+            time: {
+              en: 'time',
+              zh: '倒计时',
+            }[language],
+          }[mode]
+        }`
       : 'N/A';
+  const modeOptionTextString = {
+    time,
+    words,
+    quote: {
+      all: {
+        en: 'all',
+        zh: '所有长度',
+      }[language],
+      short: {
+        en: 'words',
+        zh: '一句话',
+      }[language],
+      medium: {
+        en: 'words',
+        zh: '一段话',
+      }[language],
+      long: {
+        en: 'words',
+        zh: '小作文',
+      }[language],
+    }[quote],
+  }[mode];
   const rawWpmString = !Number.isNaN(rawWpm) !== null ? rawWpm.toFixed(0) : 'N/A';
   const consistencyString =
     !Number.isNaN(consistency) && consistency >= 0 ? `${consistency.toFixed(0)}%` : 'N/A';
@@ -84,11 +122,25 @@ const TestResult = () => {
     <div className="testResult">
       <div className="stats">
         <div className="resultGroup wpm">
-          <div className="top">wpm</div>
+          <div className="top">
+            {
+              {
+                en: 'wpm',
+                zh: '速度',
+              }[language]
+            }
+          </div>
           <div className="bottom">{wpmString}</div>
         </div>
         <div className="resultGroup acc">
-          <div className="top">acc</div>
+          <div className="top">
+            {
+              {
+                en: 'acc',
+                zh: '准确度',
+              }[language]
+            }
+          </div>
           <div className="bottom">{accuracyString}</div>
         </div>
       </div>
@@ -97,11 +149,18 @@ const TestResult = () => {
       </div>
       <div className="moreStats">
         <div className="resultGroup testType">
-          <div className="top">test type</div>
+          <div className="top">
+            {
+              {
+                en: 'test type',
+                zh: '测试类型',
+              }[language]
+            }
+          </div>
           <div className="bottom">
             {testTypeString}
             <br />
-            {modeOption}
+            {modeOptionTextString}
           </div>
         </div>
         {/* <div className="resultGroup info">
@@ -109,21 +168,49 @@ const TestResult = () => {
           <div className="bottom">any-other-guy</div>
         </div> */}
         <div className="resultGroup raw">
-          <div className="top">raw</div>
+          <div className="top">
+            {
+              {
+                en: 'raw',
+                zh: '原始速度',
+              }[language]
+            }
+          </div>
           <div className="bottom">{rawWpmString}</div>
         </div>
         <div className="resultGroup keyStat">
-          <div className="top">characters</div>
+          <div className="top">
+            {
+              {
+                en: 'characters',
+                zh: '字母统计',
+              }[language]
+            }
+          </div>
           <div className="bottom">
             {`${correctCount}/${mistakeCount}/${extraCount}/${missedCount}`}
           </div>
         </div>
         <div className="resultGroup consistency">
-          <div className="top">consistency</div>
+          <div className="top">
+            {
+              {
+                en: 'consistency',
+                zh: '速度一致性',
+              }[language]
+            }
+          </div>
           <div className="bottom">{consistencyString}</div>
         </div>
         <div className="resultGroup time">
-          <div className="top">time</div>
+          <div className="top">
+            {
+              {
+                en: 'time',
+                zh: '时间',
+              }[language]
+            }
+          </div>
           <div className="bottom">{timeString}</div>
         </div>
       </div>

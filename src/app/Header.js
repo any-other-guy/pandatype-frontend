@@ -205,13 +205,28 @@ const Header = () => {
         </div>
         <div className="configGroup modeOptions" id="modeOptions">
           <div className="text-button" mode="time" onClick={(e) => setTestMode(e)}>
-            time
+            {
+              {
+                en: 'time',
+                zh: '倒计时',
+              }[language]
+            }
           </div>
           <div className="text-button" mode="words" onClick={(e) => setTestMode(e)}>
-            words
+            {
+              {
+                en: 'words',
+                zh: '按字数',
+              }[language]
+            }
           </div>
           <div className="text-button" mode="quote" onClick={(e) => setTestMode(e)}>
-            quote
+            {
+              {
+                en: 'quote',
+                zh: '写段子',
+              }[language]
+            }
           </div>
         </div>
         <div className="configGroup timeOptions display-none" id="timeOptions">
@@ -241,16 +256,36 @@ const Header = () => {
         </div>
         <div className="configGroup quoteOptions display-none" id="quoteOptions">
           <div className="text-button" mode="all" onClick={(e) => setTestQuoteOption(e)}>
-            all
+            {
+              {
+                en: 'all',
+                zh: '所有长度',
+              }[language]
+            }
           </div>
           <div className="text-button" mode="short" onClick={(e) => setTestQuoteOption(e)}>
-            short
+            {
+              {
+                en: 'short',
+                zh: '一句话',
+              }[language]
+            }
           </div>
           <div className="text-button" mode="medium" onClick={(e) => setTestQuoteOption(e)}>
-            medium
+            {
+              {
+                en: 'medium',
+                zh: '一段话',
+              }[language]
+            }
           </div>
           <div className="text-button" mode="long" onClick={(e) => setTestQuoteOption(e)}>
-            long
+            {
+              {
+                en: 'long',
+                zh: '小作文',
+              }[language]
+            }
           </div>
         </div>
       </div>

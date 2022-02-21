@@ -169,7 +169,7 @@ export const typingtestSlice = createSlice({
             break;
           }
           // Alphabet character get pushed into current typing word
-          case /^[a-zA-Z!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]{1,1}$/.test(key): {
+          case /^[a-zA-Z!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~1234567890]{1,1}$/.test(key): {
             // Start the test if unstarted
             state.status = state.status === 'unstarted' ? 'started' : state.status;
             if (state.statistics.startTime === null) {
@@ -178,6 +178,8 @@ export const typingtestSlice = createSlice({
 
             // Pushing letter into store
             typedWordsArray[currentWordIndex] = currentWord + key;
+            state.statistics.rawCharacterCount += 1;
+            state.statistics.rawTypingHistory += key;
 
             wordId = state[language].ids[currentWordIndex];
             letterIndex = typedWordsArray[currentWordIndex].length - 1;
@@ -193,24 +195,6 @@ export const typingtestSlice = createSlice({
               if (key === letterObj.letter) {
                 letterObj.status = 'typed';
                 state.statistics.correctCount += 1;
-
-                // End test if the last letter word of the last letter is typed correctly
-                if (
-                  (state.options.mode === 'words' &&
-                    wordObj.wordIndex + 1 === state.options.words &&
-                    letterIndex + 1 === wordObj.letters.length) ||
-                  (state.options.mode === 'quote' &&
-                    wordObj.wordIndex + 1 === state.loading.quoteWordCount &&
-                    letterIndex + 1 === wordObj.letters.length) ||
-                  // FIXME: 中文字数统计completeTest的条件暂时这样
-                  (state.options.language === 'zh' &&
-                    state.options.mode === 'words' &&
-                    wordObj.wordIndex + 1 >= state.options.words / 2 &&
-                    letterIndex + 1 === wordObj.letters.length)
-                ) {
-                  completeTest(state);
-                  return;
-                }
               } else {
                 letterObj.status = 'mistake';
                 letterObj.whatActuallyTyped = key;
@@ -244,11 +228,45 @@ export const typingtestSlice = createSlice({
                 if (typedZi === ziPinyin) {
                   wordObj.ziArray[letterObj.ziIndex].status = 'typed';
                   state.statistics.zhPerfected += 1;
+                  if (letterObj.letterIndex === wordObj.letters.length - 1) {
+                    wordObj.isCompleted = true;
+                    wordObj.isPerfected = true;
+                  }
                 } else {
                   wordObj.ziArray[letterObj.ziIndex].status = 'mistake';
                   state.statistics.zhMistake += 1;
+                  if (letterObj.letterIndex === wordObj.letters.length - 1) {
+                    wordObj.isCompleted = true;
+                  }
                 }
                 state.statistics.zhCompleted += 1;
+              }
+
+              // End test if the last letter word of the last letter is typed correctly
+              if (
+                (state.options.mode === 'words' &&
+                  state[language].entities[state[language].ids[state[language].ids.length - 1]]
+                    .isPerfected) ||
+                (state.options.language === 'en' &&
+                  state.options.mode === 'quote' &&
+                  state[language].entities[state[language].ids[state[language].ids.length - 1]]
+                    .isPerfected) ||
+                (state.options.language === 'zh' &&
+                  state.options.mode === 'words' &&
+                  state[language].entities[state[language].ids[state[language].ids.length - 1]]
+                    .isPerfected)
+              ) {
+                // FIXME: 因为现在是按照空格决定一个word是否completed，所以这里补个状态给最后一个word结束自动跳转结果界面前
+                if (
+                  state.options.mode === 'words' ||
+                  (state.options.language === 'en' && state.options.mode === 'quote')
+                ) {
+                  state.statistics.wordsCompleted += 1;
+                  state[language].entities[
+                    state[language].ids[state[language].ids.length - 1]
+                  ].isCompleted = true;
+                }
+                completeTest(state);
               }
             }
             // If extra letter typed, beyond wordObj.letters[letterIndex]
@@ -267,9 +285,7 @@ export const typingtestSlice = createSlice({
                 state.statistics.zhMistake += 1;
               }
             }
-            state.statistics.rawCharacterCount += 1;
 
-            state.statistics.rawTypingHistory += key;
             break;
           }
           // Backspace slices from current typing word
@@ -350,8 +366,8 @@ export const typingtestSlice = createSlice({
       }
       state.statistics.perSecondWpm.push({
         index: state.statistics.perSecondWpm.length,
-        wpm,
-        rawWpm,
+        wpm: wpm.toFixed(2),
+        rawWpm: rawWpm.toFixed(2),
         atSecond,
         mistakesHere: 0,
       });
@@ -622,8 +638,8 @@ const completeTest = (state) => {
   state.isTestCompleted = true; // Preventing rerender on status started
   state.status = 'completed';
   state.statistics.endTime = Date.now();
-  const elapsedTime = state.statistics.endTime - state.statistics.startTime;
-  state.statistics.elapsedTime = elapsedTime / 1000;
+  const elapsedTime = (state.statistics.endTime - state.statistics.startTime) / 1000;
+  state.statistics.elapsedTime = Math.round(elapsedTime * 1e2) / 1e2;
   // Prepare test result related states in store
   let total;
   let bad;
@@ -633,8 +649,8 @@ const completeTest = (state) => {
     // Zhcn : all or nothing
     total = state.statistics.zhPerfected + state.statistics.zhMistake;
     bad = state.statistics.zhMistake;
-    wpm = (60000 / elapsedTime) * state.statistics.zhPerfected;
-    rawWpm = (60000 / elapsedTime) * state.statistics.zhCompleted;
+    wpm = (60 / elapsedTime) * state.statistics.zhPerfected;
+    rawWpm = (60 / elapsedTime) * state.statistics.zhCompleted;
   } else {
     total =
       state.statistics.correctCount +
@@ -643,13 +659,13 @@ const completeTest = (state) => {
       state.statistics.missedCount;
     bad =
       state.statistics.mistakeCount + state.statistics.extraCount + state.statistics.missedCount;
-    wpm = (60000 / elapsedTime) * state.statistics.wordsPerfected;
-    rawWpm = (60000 / elapsedTime) * state.statistics.wordsCompleted;
+    wpm = (60 / elapsedTime) * state.statistics.wordsPerfected;
+    rawWpm = (60 / elapsedTime) * state.statistics.wordsCompleted;
   }
 
-  state.statistics.accuracy = ((total - bad) / total) * 100;
-  state.statistics.wpm = wpm;
-  state.statistics.rawWpm = rawWpm;
+  state.statistics.accuracy = Math.round(((total - bad) / total) * 100 * 1e2) / 1e2;
+  state.statistics.wpm = Math.round(wpm * 1e2) / 1e2;
+  state.statistics.rawWpm = Math.round(rawWpm * 1e2) / 1e2;
 
   // Correctly count the mistake before the first perSecondWpmAction dispatched
   if (state.statistics.perSecondWpm[0].mistakesHere > 0) {
@@ -658,14 +674,23 @@ const completeTest = (state) => {
   // Cleaning up the initial 0th-second object in perSecondWpm
   state.statistics.perSecondWpm.shift();
 
+  // Modify the last entry to the result wpm/raw
+  state.statistics.perSecondWpm[state.statistics.perSecondWpm.length - 1].index =
+    Math.round(elapsedTime * 1e2) / 1e2;
+  state.statistics.perSecondWpm[state.statistics.perSecondWpm.length - 1].wpm =
+    Math.round(wpm * 1e2) / 1e2;
+  state.statistics.perSecondWpm[state.statistics.perSecondWpm.length - 1].rawWpm =
+    Math.round(rawWpm * 1e2) / 1e2;
+
   // Calculate typing speed consistency
-  state.statistics.consistency =
+  const consistency =
     state.statistics.perSecondWpm
       .reduce((list, obj) => {
         list.push(100 - Math.abs((obj.wpm - state.statistics.wpm) / state.statistics.wpm) * 100);
         return list;
       }, [])
       .reduce((sum, e) => sum + e, 0) / state.statistics.perSecondWpm.length;
+  state.statistics.consistency = Math.round(consistency * 1e2) / 1e2;
 };
 
 export const {

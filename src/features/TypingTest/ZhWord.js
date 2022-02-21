@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import { nanoid } from '@reduxjs/toolkit';
 import { typingtestSelectors } from './typingtestSlice';
 import ZhZi from './ZhZi';
 import Caret from './Caret';
@@ -42,7 +43,7 @@ const ZhWord = ({ wordId }) => {
         {/* Render extra letters typed in mistake color */}
         {wordObj.extraLetters.length !== 0
           ? wordObj.extraLetters.map((plainLetter) => (
-              <div className="letter" status="extra" key={`Extra${plainLetter.id}`}>
+              <div className="letter" status="extra" key={`Extra${nanoid()}`}>
                 {plainLetter}
               </div>
             ))

@@ -105,9 +105,6 @@ const ResultChart = ({ perSecondWpm, elapsedTime }) => {
   const themeObj = Themes.find((theme) => theme.name === loadState('theme'));
   // Remove the first dummy object in perSecondWpm array. For now
   const stats = JSON.parse(JSON.stringify(perSecondWpm));
-  // Display the endTime as the last x-axis data point on graph
-  stats[stats.length - 1].index = elapsedTime;
-
   const labels = stats.map((obj) => obj.index);
   const data = {
     labels,

@@ -618,7 +618,6 @@ input:-webkit-autofill {
 .footerWrapper {
   display: grid;
   grid-template-rows: minmax(1fr, 100px) minmax(1fr, 100px);
-  transition: 0.25s;
 }
 
 .keyTips {
@@ -634,6 +633,7 @@ input:-webkit-autofill {
   gap: 1rem;
   font-size: 0.75rem;
   color: var(--sub-color);
+  transition: 0.25s;
 }
 
 .footer .link {
