@@ -11,6 +11,8 @@ const Leaderboard = () => {
   const showLeaderboard = useSelector((state) => state.leaderboard.showLeaderboard);
   const en15 = useSelector((state) => LeaderboardSelectors.en15.selectEntities(state));
   const en60 = useSelector((state) => LeaderboardSelectors.en60.selectEntities(state));
+  const zh15 = useSelector((state) => LeaderboardSelectors.zh15.selectEntities(state));
+  const zh60 = useSelector((state) => LeaderboardSelectors.zh60.selectEntities(state));
   const showHideClassName = showLeaderboard ? 'leaderboardModal' : 'leaderboardModal display-none';
 
   const leaderboardLoadingStatus = useSelector((state) => state.leaderboard.loading.status);
@@ -26,16 +28,16 @@ const Leaderboard = () => {
     tables = (
       <div className="tables">
         <LeaderboardRecordList
-          recordListObject={en15}
-          testLanguage="en"
+          recordListObject={zh15}
+          testLanguage="zh"
           testType="time"
           testOption="15"
         />
         <LeaderboardRecordList
-          recordListObject={en60}
+          recordListObject={en15}
           testLanguage="en"
           testType="time"
-          testOption="60"
+          testOption="15"
         />
       </div>
     );

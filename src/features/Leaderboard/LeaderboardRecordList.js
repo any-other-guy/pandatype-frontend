@@ -4,8 +4,6 @@ import { FaCrown } from 'react-icons/fa';
 import { formatLocalTime } from '../../utils/utils';
 
 const LeaderboardRecordList = ({ recordListObject, testLanguage, testType, testOption }) => {
-  testLanguage = testLanguage === 'en' ? 'English' : testLanguage;
-  testLanguage = testLanguage === 'zh' ? '中文' : testLanguage;
   const leaderboardContent = Object.values(recordListObject).map((entry, index) => {
     const dateTime = formatLocalTime(entry.testDate).split('-');
 
@@ -36,7 +34,52 @@ const LeaderboardRecordList = ({ recordListObject, testLanguage, testType, testO
   return (
     <div className="leaderboardRecordList">
       <div className="title">
-        {testLanguage} {testType} {testOption}
+        {
+          {
+            en: 'English',
+            zh: '中文',
+          }[testLanguage]
+        }{' '}
+        {
+          {
+            words: {
+              en: 'words',
+              zh: '按字数',
+            }[testLanguage],
+            quote: {
+              en: 'quote',
+              zh: '写段子',
+            }[testLanguage],
+            time: {
+              en: 'time',
+              zh: '倒计时',
+            }[testLanguage],
+          }[testType]
+        }{' '}
+        {
+          {
+            time: testOption,
+            words: testOption,
+            quote: {
+              all: {
+                en: 'all',
+                zh: '所有长度',
+              }[testLanguage],
+              short: {
+                en: 'words',
+                zh: '一句话',
+              }[testLanguage],
+              medium: {
+                en: 'words',
+                zh: '一段话',
+              }[testLanguage],
+              long: {
+                en: 'words',
+                zh: '小作文',
+              }[testLanguage],
+            }[testOption],
+          }[testType]
+        }
       </div>
       <div className="table">
         <table>
