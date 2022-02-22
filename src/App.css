@@ -31,14 +31,14 @@ input:-webkit-autofill {
 .mainWrapper {
   max-width: 1000px;
   display: grid;
-  grid-auto-flow: row;
+  grid-template-rows: auto 1fr auto;
+  /* grid-auto-flow: row; */
   min-height: 100vh;
   padding: 1.3rem 2.2rem 2rem 2.2rem;
   margin-left: auto;
   margin-right: auto;
   gap: 2rem;
   align-items: center;
-  grid-template-rows: auto 1fr auto;
   width: 100%;
   z-index: 999;
 }
@@ -46,7 +46,7 @@ input:-webkit-autofill {
 /* Header */
 .headerWrapper {
   display: grid;
-  /* height: 2.3rem; */
+  height: 2.5rem; /* now this move the middle section upward a bit*/
   grid-auto-flow: column;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -315,7 +315,7 @@ input:-webkit-autofill {
 .testResult {
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-template-rows: minmax(0, 13rem) minmax(0, 4rem) minmax(0, 54px);
+  grid-template-rows: minmax(0, 12rem) minmax(0, 4rem) minmax(0, 54px);
   gap: 1rem;
   align-items: center;
   margin-bottom: 2rem; /*temp value, adjust here vertical pos here*/
@@ -352,7 +352,7 @@ input:-webkit-autofill {
 .testResult > .chart {
   grid-area: 1 / 2 / 2 / 2;
   background-color: transparent;
-  max-height: 12rem;
+  height: 100%;
 }
 
 .testResult > .bottom {

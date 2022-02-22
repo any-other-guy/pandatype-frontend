@@ -71,11 +71,6 @@ const TestResult = () => {
     language !== null && mode !== null && modeOption !== null
       ? `${
           {
-            en: 'English',
-            zh: '中文',
-          }[language]
-        } ${
-          {
             words: {
               en: 'words',
               zh: '按字数',
@@ -89,30 +84,31 @@ const TestResult = () => {
               zh: '倒计时',
             }[language],
           }[mode]
+        } ${
+          {
+            time,
+            words,
+            quote: {
+              all: {
+                en: 'all',
+                zh: '所有长度',
+              }[language],
+              short: {
+                en: 'words',
+                zh: '一句话',
+              }[language],
+              medium: {
+                en: 'words',
+                zh: '一段话',
+              }[language],
+              long: {
+                en: 'words',
+                zh: '小作文',
+              }[language],
+            }[quote],
+          }[mode]
         }`
       : 'N/A';
-  const modeOptionTextString = {
-    time,
-    words,
-    quote: {
-      all: {
-        en: 'all',
-        zh: '所有长度',
-      }[language],
-      short: {
-        en: 'words',
-        zh: '一句话',
-      }[language],
-      medium: {
-        en: 'words',
-        zh: '一段话',
-      }[language],
-      long: {
-        en: 'words',
-        zh: '小作文',
-      }[language],
-    }[quote],
-  }[mode];
   const rawWpmString = !Number.isNaN(rawWpm) !== null ? rawWpm.toFixed(0) : 'N/A';
   const consistencyString =
     !Number.isNaN(consistency) && consistency >= 0 ? `${consistency.toFixed(0)}%` : 'N/A';
@@ -160,7 +156,12 @@ const TestResult = () => {
           <div className="bottom">
             {testTypeString}
             <br />
-            {modeOptionTextString}
+            {
+              {
+                en: 'English',
+                zh: '中文',
+              }[language]
+            }
           </div>
         </div>
         {/* <div className="resultGroup info">

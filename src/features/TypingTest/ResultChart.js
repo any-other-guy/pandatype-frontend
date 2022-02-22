@@ -53,7 +53,7 @@ export const options = {
         font: {
           family: 'Roboto Mono',
         },
-        maxTicksLimit: 4,
+        maxTicksLimit: 5,
       },
       title: {
         display: true,
