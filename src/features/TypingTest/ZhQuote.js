@@ -87,6 +87,7 @@ const ZhQuote = ({ ziIds }) => {
           key={`input${ziId}${index}`}
           ref={(input) => inputFields.current.push(input)}
           type="text"
+          autoComplete="off"
           onChange={onInputChange}
         />
       );
@@ -109,6 +110,7 @@ const ZhQuote = ({ ziIds }) => {
           key={`input${ziId}${index}`}
           ref={(input) => inputFields.current.push(input)}
           type="text"
+          autoComplete="off"
           onChange={onInputChange}
         />
       );
