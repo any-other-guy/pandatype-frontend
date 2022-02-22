@@ -7,7 +7,7 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a> -->
 
-<h2 align="center">pandatype</h2>
+<h3 align="center">pandatype</h3>
 
   <p align="center">
     <p>A competitive typing speed testing, traning, and ranking front-end web application with a minimalistic design, supports typing tests in multiple languages (EN/zhCN).</p>
@@ -50,7 +50,7 @@
   </ol>
 </details>
 
-<br><br/>
+
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
@@ -86,8 +86,8 @@ Back end:
 
 - [x] Typing test
     - [x] take tests in mutiple modes (time/words/quote)
-    - [x] word sets in mutiple languages (EN/zhCN)
-    - [x] result screen displays stats in numbers and graph
+    - [x] word sets for mutiple languages (EN/zhCN)
+    - [x] result screen displays typing test statistics in numbers and graph
 - [x] Leaderboard
 - [x] Customizable theme
 - [x] Account system
