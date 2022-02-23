@@ -72,7 +72,7 @@ Front end:
 
 Back end:
 * [Spring Boot](https://spring.io/projects/spring-boot) -  built a number of RESTful API microservices
-* [Spring Security](https://spring.io/projects/spring-security) - mainly used to handle user authentication with JWK token
+* [Spring Security](https://spring.io/projects/spring-security) - mainly used to handle user authentication with JSON Web Token (JWT) token
 * [MyBatis](https://mybatis.org/mybatis-3/) - to access database
 * [MySQL](https://hub.docker.com/_/mysql) - relational database storing word sets, leaderboard records, user account, etc
 * [Docker](https://www.docker.com/) - to containerize backend services for easier times during deployment
