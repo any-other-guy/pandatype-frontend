@@ -5,9 +5,11 @@ import { useSelector } from 'react-redux';
 import { loadState } from './localStorage';
 
 const Footer = () => {
+  const showTypingtest = useSelector((state) => state.typingtest.showTypingtest);
   const testStatus = useSelector((state) => state.typingtest.status);
   const language = useSelector((state) => state.typingtest.options.language);
   const footer = useRef(null);
+  const tips = useRef(null);
 
   // hide when test is started
   useEffect(() => {
@@ -18,6 +20,14 @@ const Footer = () => {
     }
   }, [testStatus]);
 
+  useEffect(() => {
+    if (showTypingtest === false) {
+      tips.current.classList.add('transparent');
+    } else {
+      tips.current.classList.remove('transparent');
+    }
+  }, [showTypingtest]);
+
   const text = {
     en: 'restart test',
     zh: '重开吧',
@@ -25,7 +35,7 @@ const Footer = () => {
 
   return (
     <div className="footerWrapper">
-      <div className="keyTips">
+      <div className="keyTips" ref={tips}>
         <span>tab</span> + <span>Enter</span>
         {` = ${text}`}
         <br />
